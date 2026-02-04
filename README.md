@@ -14,6 +14,13 @@
 
 **Re:Music**是基于Flutter的原生桌面端音频文件管理工具。它支持读取metadata对音频文件进行批量重命名，以及编辑音频元数据（音乐标签 - 开发中）。
 
+## 界面预览
+
+<p align="center">
+  <img src="assets/images/previews/preview01.png" width="47%" alt="Preview 01">
+  <img src="assets/images/previews/preview02.png" width="47%" alt="Preview 02">
+</p>
+
 ## 主要功能
 
 *   **批量重命名**: 支持读取音频元数据（标题、艺术家、专辑等），提供灵活的重命名规则配置。
