@@ -17,8 +17,10 @@
 ## 界面预览
 
 <p align="center">
-  <img src="assets/images/previews/preview01.png" width="47%" alt="Preview 01">
-  <img src="assets/images/previews/preview02.png" width="47%" alt="Preview 02">
+  <img src="assets/images/previews/preview01.png" width="100%" alt="Preview 01">
+</p>
+<p align="center">
+  <img src="assets/images/previews/preview02.png" width="100%" alt="Preview 02">
 </p>
 
 ## 主要功能
