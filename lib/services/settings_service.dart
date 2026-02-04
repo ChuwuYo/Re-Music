@@ -55,10 +55,10 @@ class AppSettingsStore {
     final exeFile = File(_exeConfigPath());
     final userFile = File(_userConfigPath());
 
-    final exeExists = exeFile.existsSync();
-    final userExists = userFile.existsSync();
-
-    final preferExe = exeExists || (!userExists && _preferExeSaveLocation());
+    // 如果 exe 目录下的配置文件已存在，或者当前不在系统受限目录且用户配置不存在
+    // 则优先保存到 exe 目录（便携模式）
+    final preferExe = exeFile.existsSync() || (!_isSystemLocation() && !userFile.existsSync());
+    
     if (preferExe) {
       if (await _tryWrite(exeFile, content)) return true;
       return _tryWrite(userFile, content);
@@ -80,10 +80,10 @@ class AppSettingsStore {
 
   String _exeConfigPath() {
     final exeDir = File(Platform.resolvedExecutable).parent.path;
-    return p.join(exeDir, _fileName);
+    return p.join(exeDir, 'data', _fileName);
   }
 
-  bool _preferExeSaveLocation() {
+  bool _isSystemLocation() {
     final exeDir = File(Platform.resolvedExecutable).parent.path.toLowerCase();
     return exeDir.contains('program files') || exeDir.contains('windowsapps');
   }
