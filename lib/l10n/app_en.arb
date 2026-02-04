@@ -1,0 +1,78 @@
+{
+  "@@locale": "en",
+  "appTitle": "Re:Music",
+  "clearList": "Clear list",
+  "language": "Language",
+  "followSystem": "Follow system",
+  "chinese": "中文",
+  "english": "English",
+  "switchToDark": "Switch to dark mode",
+  "switchToLight": "Switch to light mode",
+  "themeColor": "Theme color",
+  "themeColorTeal": "Teal",
+  "themeColorBlue": "Blue",
+  "themeColorIndigo": "Indigo",
+  "themeColorPurple": "Purple",
+  "themeColorPink": "Pink",
+  "themeColorOrange": "Orange",
+  "themeColorGreen": "Green",
+  "themeColorRed": "Red",
+  "addFiles": "Add files",
+  "scanDirectory": "Scan folder",
+  "namingMode": "Naming pattern",
+  "namingModeHint": "Choose or enter a custom pattern (e.g. {artist} - {title})",
+  "patternArtistTitle": "Artist - Title",
+  "patternTitleArtist": "Title - Artist",
+  "patternTrackTitle": "Track - Title",
+  "patternArtistAlbumTitle": "Artist - Album - Title",
+  "customPattern": "Custom pattern",
+  "filter": "Filter",
+  "showAll": "Show all",
+  "showNoRenameNeeded": "Only show no-rename-needed",
+  "showNeedRename": "Only show needs rename",
+  "sort": "Sort",
+  "sortByName": "By file name",
+  "sortByArtist": "By artist",
+  "sortByTitle": "By title",
+  "sortBySize": "By size",
+  "sortByModifiedTime": "By modified time",
+  "emptyTitle": "Drop files here or click Add",
+  "emptySubtitle": "Supports MP3, FLAC, M4A and more",
+  "noMatchTitle": "No files match the current filter",
+  "noMatchSubtitle": "Adjust the filter to see your files",
+  "processingProgress": "Processing... {percent}%",
+  "@processingProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "totalFiles": "Total {count} files",
+  "@totalFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startRename": "Start",
+  "renameCompleted": "Done! Renamed {count} files",
+  "@renameCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readingMetadata": "Reading metadata...",
+  "readFailed": "Read failed",
+  "nameMatches": "Name matches",
+  "renameToPrefix": "Rename to: ",
+  "unknownArtist": "Unknown artist",
+  "unknownTitle": "Unknown title",
+  "unknownAlbum": "Unknown album",
+  "untitledTrack": "Untitled track",
+  "metadataReadFailed": "Failed to read metadata",
+  "unknownError": "Unknown error"
+}

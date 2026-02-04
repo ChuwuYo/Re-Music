@@ -1,0 +1,78 @@
+{
+  "@@locale": "zh",
+  "appTitle": "Re:Music",
+  "clearList": "清空列表",
+  "language": "语言",
+  "followSystem": "跟随系统",
+  "chinese": "中文",
+  "english": "English",
+  "switchToDark": "切换到深色模式",
+  "switchToLight": "切换到浅色模式",
+  "themeColor": "主题色",
+  "themeColorTeal": "青绿",
+  "themeColorBlue": "蓝色",
+  "themeColorIndigo": "靛蓝",
+  "themeColorPurple": "紫色",
+  "themeColorPink": "粉色",
+  "themeColorOrange": "橙色",
+  "themeColorGreen": "绿色",
+  "themeColorRed": "红色",
+  "addFiles": "添加文件",
+  "scanDirectory": "扫描目录",
+  "namingMode": "命名模式",
+  "namingModeHint": "选择或输入自定义模式（例如：{artist} - {title}）",
+  "patternArtistTitle": "艺术家 - 标题",
+  "patternTitleArtist": "标题 - 艺术家",
+  "patternTrackTitle": "音轨号 - 标题",
+  "patternArtistAlbumTitle": "艺术家 - 专辑 - 标题",
+  "customPattern": "自定义模式",
+  "filter": "筛选",
+  "showAll": "显示全部",
+  "showNoRenameNeeded": "仅显示无需重命名",
+  "showNeedRename": "仅显示需重命名",
+  "sort": "排序",
+  "sortByName": "按文件名",
+  "sortByArtist": "按艺术家",
+  "sortByTitle": "按标题",
+  "sortBySize": "按大小",
+  "sortByModifiedTime": "按修改时间",
+  "emptyTitle": "拖入文件或点击添加",
+  "emptySubtitle": "支持 MP3、FLAC、M4A 等常见音频格式",
+  "noMatchTitle": "没有符合当前筛选的文件",
+  "noMatchSubtitle": "请调整筛选条件后再查看",
+  "processingProgress": "处理中... {percent}%",
+  "@processingProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "totalFiles": "共 {count} 个文件",
+  "@totalFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "startRename": "开始",
+  "renameCompleted": "完成！成功重命名 {count} 个文件",
+  "@renameCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "readingMetadata": "正在读取元数据...",
+  "readFailed": "读取失败",
+  "nameMatches": "名称符合标准",
+  "renameToPrefix": "重命名为：",
+  "unknownArtist": "未知艺术家",
+  "unknownTitle": "未知标题",
+  "unknownAlbum": "未知专辑",
+  "untitledTrack": "未命名音轨",
+  "metadataReadFailed": "无法读取元数据",
+  "unknownError": "未知错误"
+}
