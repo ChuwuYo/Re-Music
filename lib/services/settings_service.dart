@@ -80,7 +80,7 @@ class AppSettingsStore {
 
   String _exeConfigPath() {
     final exeDir = File(Platform.resolvedExecutable).parent.path;
-    return p.join(exeDir, 'data', _fileName);
+    return p.join(exeDir, 'configs', _fileName);
   }
 
   bool _isSystemLocation() {

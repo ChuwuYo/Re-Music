@@ -39,8 +39,8 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Portable data folder
-/data/
+# Portable configs folder
+/configs/
 
 # Android Studio will place build artifacts here
 /android/app/debug
