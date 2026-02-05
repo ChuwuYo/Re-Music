@@ -82,8 +82,6 @@
   "metadataAlbum": "Album",
   "metadataTrackNumber": "Track No.",
   "metadataTrackTotal": "Total tracks",
-  "metadataDiscNumber": "Disc No.",
-  "metadataDiscTotal": "Total discs",
   "metadataYear": "Year",
   "metadataGenre": "Genre",
   "metadataLanguage": "Language",

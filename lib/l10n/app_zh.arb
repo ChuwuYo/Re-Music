@@ -82,8 +82,6 @@
   "metadataAlbum": "专辑",
   "metadataTrackNumber": "音轨号",
   "metadataTrackTotal": "总音轨数",
-  "metadataDiscNumber": "碟片号",
-  "metadataDiscTotal": "总碟片数",
   "metadataYear": "年份",
   "metadataGenre": "流派",
   "metadataLanguage": "语言",

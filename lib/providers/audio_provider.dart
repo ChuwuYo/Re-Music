@@ -128,8 +128,6 @@ class AudioProvider extends ChangeNotifier {
     required String album,
     required String trackNumber,
     required String trackTotal,
-    required String discNumber,
-    required String discTotal,
     required String year,
     required String genre,
     required String language,
@@ -142,8 +140,6 @@ class AudioProvider extends ChangeNotifier {
         album: _normalizeText(album),
         trackNumber: _parseInt(trackNumber),
         trackTotal: _parseInt(trackTotal),
-        discNumber: _parseInt(discNumber),
-        discTotal: _parseInt(discTotal),
         year: _parseInt(year),
         genre: _normalizeText(genre),
         pictures: [],
@@ -163,8 +159,6 @@ class AudioProvider extends ChangeNotifier {
         currentMetadata.album = _normalizeText(album);
         currentMetadata.trackNumber = _parseInt(trackNumber);
         currentMetadata.trackTotal = _parseInt(trackTotal);
-        currentMetadata.discNumber = _parseInt(discNumber);
-        currentMetadata.totalDisc = _parseInt(discTotal);
         currentMetadata.year = _parseYear(year);
         currentMetadata.language = _normalizeText(language);
         currentMetadata.genres = _parseGenres(genre);

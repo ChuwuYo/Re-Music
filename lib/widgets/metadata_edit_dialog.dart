@@ -20,8 +20,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
   late final TextEditingController _albumController;
   late final TextEditingController _trackNumberController;
   late final TextEditingController _trackTotalController;
-  late final TextEditingController _discNumberController;
-  late final TextEditingController _discTotalController;
   late final TextEditingController _yearController;
   late final TextEditingController _genreController;
   late final TextEditingController _languageController;
@@ -36,8 +34,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _albumController = TextEditingController(text: metadata?.album ?? '');
     _trackNumberController = TextEditingController(text: metadata?.trackNumber?.toString() ?? '');
     _trackTotalController = TextEditingController(text: metadata?.trackTotal?.toString() ?? '');
-    _discNumberController = TextEditingController(text: metadata?.discNumber?.toString() ?? '');
-    _discTotalController = TextEditingController(text: metadata?.totalDisc?.toString() ?? '');
     _yearController = TextEditingController(text: metadata?.year?.year.toString() ?? '');
     _genreController = TextEditingController(text: (metadata?.genres ?? []).join(', '));
     _languageController = TextEditingController(text: metadata?.language ?? '');
@@ -51,8 +47,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _albumController.dispose();
     _trackNumberController.dispose();
     _trackTotalController.dispose();
-    _discNumberController.dispose();
-    _discTotalController.dispose();
     _yearController.dispose();
     _genreController.dispose();
     _languageController.dispose();
@@ -69,8 +63,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
             album: _albumController.text,
             trackNumber: _trackNumberController.text,
             trackTotal: _trackTotalController.text,
-            discNumber: _discNumberController.text,
-            discTotal: _discTotalController.text,
             year: _yearController.text,
             genre: _genreController.text,
             language: _languageController.text,
@@ -147,28 +139,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                               child: _buildTextField(
                                 _trackTotalController,
                                 l10n.metadataTrackTotal,
-                                keyboardType: TextInputType.number,
-                                isNumeric: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildTextField(
-                                _discNumberController,
-                                l10n.metadataDiscNumber,
-                                keyboardType: TextInputType.number,
-                                isNumeric: true,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildTextField(
-                                _discTotalController,
-                                l10n.metadataDiscTotal,
                                 keyboardType: TextInputType.number,
                                 isNumeric: true,
                               ),
