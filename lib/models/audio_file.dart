@@ -8,6 +8,7 @@ class AudioFile {
   final int size;
   final DateTime modified;
   AudioMetadata? metadata;
+  String? comment;
   String? newFileName;
   ProcessingStatus status;
   String? errorMessage;
@@ -18,6 +19,7 @@ class AudioFile {
     required this.size,
     required this.modified,
     this.metadata,
+    this.comment,
     this.newFileName,
     this.status = ProcessingStatus.pending,
     this.errorMessage,

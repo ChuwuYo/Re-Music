@@ -177,4 +177,58 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get unknownError => '未知错误';
+
+  @override
+  String get editTags => '编辑标签';
+
+  @override
+  String get metadataEditorTitle => '编辑元数据';
+
+  @override
+  String get metadataTitle => '标题';
+
+  @override
+  String get metadataArtist => '艺术家';
+
+  @override
+  String get metadataAlbum => '专辑';
+
+  @override
+  String get metadataTrackNumber => '音轨号';
+
+  @override
+  String get metadataTrackTotal => '总音轨数';
+
+  @override
+  String get metadataDiscNumber => '碟片号';
+
+  @override
+  String get metadataDiscTotal => '总碟片数';
+
+  @override
+  String get metadataYear => '年份';
+
+  @override
+  String get metadataGenre => '流派';
+
+  @override
+  String get metadataLanguage => '语言';
+
+  @override
+  String get metadataComment => '注释';
+
+  @override
+  String get apply => '应用';
+
+  @override
+  String get confirm => '确认';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get close => '关闭';
+
+  @override
+  String get invalidNumber => '请输入有效的数字';
 }

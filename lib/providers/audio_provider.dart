@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import 'package:audiotags/audiotags.dart' as at;
 import '../models/audio_file.dart';
 import '../services/file_service.dart';
 import '../services/metadata_service.dart';
@@ -116,6 +118,73 @@ class AudioProvider extends ChangeNotifier {
           index: i + 1,
         );
       }
+    }
+  }
+
+  Future<void> updateMetadata(
+    AudioFile file, {
+    required String title,
+    required String artist,
+    required String album,
+    required String trackNumber,
+    required String trackTotal,
+    required String discNumber,
+    required String discTotal,
+    required String year,
+    required String genre,
+    required String language,
+    required String comment,
+  }) async {
+    try {
+      final tags = at.Tag(
+        title: _normalizeText(title),
+        trackArtist: _normalizeText(artist),
+        album: _normalizeText(album),
+        trackNumber: _parseInt(trackNumber),
+        trackTotal: _parseInt(trackTotal),
+        discNumber: _parseInt(discNumber),
+        discTotal: _parseInt(discTotal),
+        year: _parseInt(year),
+        genre: _normalizeText(genre),
+        pictures: [],
+      );
+
+      await at.AudioTags.write(file.path, tags);
+
+      // Re-read metadata to ensure consistency
+      final metadata = await MetadataService.getMetadata(file.path);
+      if (metadata != null) {
+        file.metadata = metadata;
+      } else {
+        // Fallback if re-read fails
+        final currentMetadata = file.metadata ?? AudioMetadata(file: File(file.path));
+        currentMetadata.title = _normalizeText(title);
+        currentMetadata.artist = _normalizeText(artist);
+        currentMetadata.album = _normalizeText(album);
+        currentMetadata.trackNumber = _parseInt(trackNumber);
+        currentMetadata.trackTotal = _parseInt(trackTotal);
+        currentMetadata.discNumber = _parseInt(discNumber);
+        currentMetadata.totalDisc = _parseInt(discTotal);
+        currentMetadata.year = _parseYear(year);
+        currentMetadata.language = _normalizeText(language);
+        currentMetadata.genres = _parseGenres(genre);
+        file.metadata = currentMetadata;
+      }
+      
+      file.comment = _normalizeText(comment);
+      
+      if (file.status != ProcessingStatus.success) {
+        file.status = ProcessingStatus.success;
+        file.errorMessage = null;
+      }
+      _updateNewFileNames();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error writing metadata: $e');
+      file.status = ProcessingStatus.error;
+      file.errorMessage = e.toString();
+      notifyListeners();
+      rethrow;
     }
   }
 
@@ -240,5 +309,32 @@ class AudioProvider extends ChangeNotifier {
         _files.sort((a, b) => a.modified.compareTo(b.modified));
         return;
     }
+  }
+
+  String? _normalizeText(String value) {
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  int? _parseInt(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    return int.tryParse(trimmed);
+  }
+
+  DateTime? _parseYear(String value) {
+    final number = _parseInt(value);
+    if (number == null) return null;
+    return DateTime(number);
+  }
+
+  List<String> _parseGenres(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return [];
+    return trimmed
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
   }
 }

@@ -421,6 +421,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unknown error'**
   String get unknownError;
+
+  /// No description provided for @editTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit tags'**
+  String get editTags;
+
+  /// No description provided for @metadataEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit metadata'**
+  String get metadataEditorTitle;
+
+  /// No description provided for @metadataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get metadataTitle;
+
+  /// No description provided for @metadataArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist'**
+  String get metadataArtist;
+
+  /// No description provided for @metadataAlbum.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get metadataAlbum;
+
+  /// No description provided for @metadataTrackNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Track No.'**
+  String get metadataTrackNumber;
+
+  /// No description provided for @metadataTrackTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total tracks'**
+  String get metadataTrackTotal;
+
+  /// No description provided for @metadataDiscNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Disc No.'**
+  String get metadataDiscNumber;
+
+  /// No description provided for @metadataDiscTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total discs'**
+  String get metadataDiscTotal;
+
+  /// No description provided for @metadataYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get metadataYear;
+
+  /// No description provided for @metadataGenre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre'**
+  String get metadataGenre;
+
+  /// No description provided for @metadataLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get metadataLanguage;
+
+  /// No description provided for @metadataComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get metadataComment;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number'**
+  String get invalidNumber;
 }
 
 class _AppLocalizationsDelegate

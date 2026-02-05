@@ -177,4 +177,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownError => 'Unknown error';
+
+  @override
+  String get editTags => 'Edit tags';
+
+  @override
+  String get metadataEditorTitle => 'Edit metadata';
+
+  @override
+  String get metadataTitle => 'Title';
+
+  @override
+  String get metadataArtist => 'Artist';
+
+  @override
+  String get metadataAlbum => 'Album';
+
+  @override
+  String get metadataTrackNumber => 'Track No.';
+
+  @override
+  String get metadataTrackTotal => 'Total tracks';
+
+  @override
+  String get metadataDiscNumber => 'Disc No.';
+
+  @override
+  String get metadataDiscTotal => 'Total discs';
+
+  @override
+  String get metadataYear => 'Year';
+
+  @override
+  String get metadataGenre => 'Genre';
+
+  @override
+  String get metadataLanguage => 'Language';
+
+  @override
+  String get metadataComment => 'Comment';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get invalidNumber => 'Please enter a valid number';
 }

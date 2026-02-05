@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remusic/l10n/app_localizations.dart';
 import '../models/audio_file.dart';
+import 'metadata_edit_dialog.dart';
 
 class FileListItem extends StatelessWidget {
   final AudioFile file;
@@ -28,20 +29,48 @@ class FileListItem extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: _buildSubtitle(context, colorScheme),
-        trailing: file.status == ProcessingStatus.error
-            ? Tooltip(
-                message: _errorText(l10n),
-                child: Icon(Icons.error_outline, color: colorScheme.error),
-              )
-            : null,
+        trailing: _buildTrailing(context, l10n, colorScheme),
       ),
     );
+  }
+
+  Widget _buildTrailing(BuildContext context, AppLocalizations l10n, ColorScheme colorScheme) {
+    final canEdit = file.status == ProcessingStatus.success;
+    final editButton = IconButton(
+      tooltip: l10n.editTags,
+      onPressed: canEdit
+          ? () {
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => MetadataEditDialog(file: file),
+              );
+            }
+          : null,
+      icon: const Icon(Icons.edit_note_outlined),
+    );
+
+    if (file.status == ProcessingStatus.error) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Tooltip(
+            message: _errorText(l10n),
+            child: Icon(Icons.error_outline, color: colorScheme.error),
+          ),
+          const SizedBox(width: 6),
+          editButton,
+        ],
+      );
+    }
+
+    return editButton;
   }
 
   String _errorText(AppLocalizations l10n) {
     final key = file.errorMessage;
     if (key == 'metadataReadFailed') return l10n.metadataReadFailed;
-    return l10n.unknownError;
+    return key ?? l10n.unknownError;
   }
 
   Color _getCardColor(ColorScheme colorScheme) {
