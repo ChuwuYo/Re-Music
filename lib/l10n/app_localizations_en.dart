@@ -200,12 +200,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get metadataTrackTotal => 'Total tracks';
 
   @override
-  String get metadataDiscNumber => 'Disc No.';
-
-  @override
-  String get metadataDiscTotal => 'Total discs';
-
-  @override
   String get metadataYear => 'Year';
 
   @override

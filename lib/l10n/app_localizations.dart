@@ -464,18 +464,6 @@ abstract class AppLocalizations {
   /// **'Total tracks'**
   String get metadataTrackTotal;
 
-  /// No description provided for @metadataDiscNumber.
-  ///
-  /// In en, this message translates to:
-  /// **'Disc No.'**
-  String get metadataDiscNumber;
-
-  /// No description provided for @metadataDiscTotal.
-  ///
-  /// In en, this message translates to:
-  /// **'Total discs'**
-  String get metadataDiscTotal;
-
   /// No description provided for @metadataYear.
   ///
   /// In en, this message translates to:

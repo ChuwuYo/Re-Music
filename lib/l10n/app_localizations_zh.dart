@@ -200,12 +200,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get metadataTrackTotal => '总音轨数';
 
   @override
-  String get metadataDiscNumber => '碟片号';
-
-  @override
-  String get metadataDiscTotal => '总碟片数';
-
-  @override
   String get metadataYear => '年份';
 
   @override
