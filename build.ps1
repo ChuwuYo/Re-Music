@@ -7,6 +7,11 @@ param (
     [string]$Version
 )
 
+if ($Version -notmatch '^\d+\.\d+\.\d+$') {
+    Write-Host "错误: 版本号格式无效，应为 x.y.z（例如 0.0.2）" -ForegroundColor Red
+    exit 1
+}
+
 $pubspecPath = "pubspec.yaml"
 
 if (-not (Test-Path $pubspecPath)) {
@@ -16,10 +21,24 @@ if (-not (Test-Path $pubspecPath)) {
 
 Write-Host "--- 开始自动化版本更新与构建 ---" -ForegroundColor Cyan
 
-# 1. 读取并解析 pubspec.yaml
-$content = Get-Content $pubspecPath -Raw
+# 2. 静态检查
+Write-Host "正在执行 flutter analyze..." -ForegroundColor Cyan
+flutter analyze
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 静态检查未通过，构建终止。" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
 
-# 匹配 version: x.y.z+n
+# 3. 单元测试
+Write-Host "正在执行 flutter test..." -ForegroundColor Cyan
+flutter test
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 单元测试失败，构建终止。" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
+# 4. 读取并更新版本
+$content = Get-Content $pubspecPath -Raw
 if ($content -match "version:\s*([\d\.]+)\+(\d+)") {
     $oldVersionName = $Matches[1]
     $oldBuildNumber = [int]$Matches[2]
@@ -40,7 +59,7 @@ if ($content -match "version:\s*([\d\.]+)\+(\d+)") {
     exit 1
 }
 
-# 2. 执行 Flutter 构建
+# 5. 执行 Flutter 构建
 Write-Host "正在执行 flutter build windows --release..." -ForegroundColor Cyan
 
 # 记录开始时间

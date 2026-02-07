@@ -46,7 +46,10 @@ class FileService {
     try {
       final file = File(oldPath);
       final dir = p.dirname(oldPath);
-      final newPath = p.join(dir, newName);
+      final safeName = p.basename(newName.trim());
+      if (safeName.isEmpty || safeName == '.' || safeName == '..') return false;
+
+      final newPath = p.join(dir, safeName);
       
       if (oldPath == newPath) return true;
       
