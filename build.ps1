@@ -19,7 +19,23 @@ Write-Host "--- 开始自动化版本更新与构建 ---" -ForegroundColor Cyan
 # 1. 读取并解析 pubspec.yaml
 $content = Get-Content $pubspecPath -Raw
 
-# 匹配 version: x.y.z+n
+# 2. 静态检查
+Write-Host "正在执行 flutter analyze..." -ForegroundColor Cyan
+flutter analyze
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 静态检查未通过，构建终止。" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
+# 3. 单元测试
+Write-Host "正在执行 flutter test..." -ForegroundColor Cyan
+flutter test
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 单元测试失败，构建终止。" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
+# 4. 版本更新逻辑
 if ($content -match "version:\s*([\d\.]+)\+(\d+)") {
     $oldVersionName = $Matches[1]
     $oldBuildNumber = [int]$Matches[2]
@@ -40,7 +56,7 @@ if ($content -match "version:\s*([\d\.]+)\+(\d+)") {
     exit 1
 }
 
-# 2. 执行 Flutter 构建
+# 5. 执行 Flutter 构建
 Write-Host "正在执行 flutter build windows --release..." -ForegroundColor Cyan
 
 # 记录开始时间
