@@ -8,6 +8,10 @@
   <b>一款现代化的音频标签管理与批量重命名工具</b>
 </p>
 
+<p align="center">
+  <a href="docs/READMEs/README_EN.md">English</a> | <b>简体中文</b>
+</p>
+
 ---
 
 ## 项目简介
@@ -30,6 +34,18 @@
 *   **文件管理**: 支持拖拽导入文件夹或文件，文件列表筛选与排序。
 *   **个性化**: 内置亮色与暗色模式，多种MD3色彩模式，支持中英文多语言。
 
+## 支持格式
+
+**Re:Music** 支持多种常见的音频文件格式：
+
+*   **MP3** (`.mp3`)
+*   **FLAC** (`.flac`)
+*   **M4A / AAC** (`.m4a`, `.aac`)
+*   **OGG / Opus** (`.ogg`, `.opus`)
+*   **WMA** (`.wma`)
+*   **WavPack** (`.wv`)
+*   **DSD** (`.dsf`, `.dff`)
+
 ## 技术栈
 
 本项目基于 **Flutter** 构建，主要使用了以下技术与库：
@@ -38,7 +54,8 @@
 *   **Language**: Dart
 *   **State Management**: `provider`
 *   **Core Dependencies**:
-    *   `audio_metadata_reader`: 音频元数据读写。
+    *   `audio_metadata_reader`: 音频元数据读取。
+    *   `audiotags`: 音频元数据写入。
     *   `window_manager`: 桌面窗口管理。
     *   `file_picker`: 文件选择器。
     *   `intl`: 国际化。
