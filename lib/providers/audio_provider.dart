@@ -255,20 +255,30 @@ class AudioProvider extends ChangeNotifier {
     _progress = 0;
     notifyListeners();
 
-    int successCount = 0;
-    for (int i = 0; i < _files.length; i++) {
-      final file = _files[i];
-      if (file.status == ProcessingStatus.success && file.newFileName != null) {
-        if (file.originalFileName == file.newFileName) {
-          successCount++;
-        } else {
-          final success = await FileService.renameFile(file.path, file.newFileName!);
-          if (success) {
-            successCount++;
-          }
-        }
+    final filesToRename = _files
+        .where(
+          (f) =>
+              f.status == ProcessingStatus.success &&
+              f.newFileName != null &&
+              f.originalFileName != f.newFileName,
+        )
+        .toList();
+
+    if (filesToRename.isEmpty) {
+      await clearFiles();
+      _isProcessing = false;
+      notifyListeners();
+      return 0;
+    }
+
+    var successCount = 0;
+    for (var i = 0; i < filesToRename.length; i++) {
+      final file = filesToRename[i];
+      final success = await FileService.renameFile(file.path, file.newFileName!);
+      if (success) {
+        successCount++;
       }
-      _progress = (i + 1) / _files.length;
+      _progress = (i + 1) / filesToRename.length;
       notifyListeners();
     }
 
