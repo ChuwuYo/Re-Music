@@ -29,7 +29,7 @@ class AudioProvider extends ChangeNotifier {
     if (_filter == FileFilter.all) return _files;
     
     return _files.where((f) {
-      if (f.status != ProcessingStatus.success || f.newFileName == null) return true;
+      if (f.status != ProcessingStatus.success || f.newFileName == null) return false;
       final isValid = f.originalFileName == f.newFileName;
       return _filter == FileFilter.valid ? isValid : !isValid;
     }).toList();
