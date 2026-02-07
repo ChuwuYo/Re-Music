@@ -7,6 +7,11 @@ param (
     [string]$Version
 )
 
+if ($Version -notmatch '^\d+\.\d+\.\d+$') {
+    Write-Host "错误: 版本号格式无效，应为 x.y.z（例如 0.0.2）" -ForegroundColor Red
+    exit 1
+}
+
 $pubspecPath = "pubspec.yaml"
 
 if (-not (Test-Path $pubspecPath)) {
@@ -15,9 +20,6 @@ if (-not (Test-Path $pubspecPath)) {
 }
 
 Write-Host "--- 开始自动化版本更新与构建 ---" -ForegroundColor Cyan
-
-# 1. 读取并解析 pubspec.yaml
-$content = Get-Content $pubspecPath -Raw
 
 # 2. 静态检查
 Write-Host "正在执行 flutter analyze..." -ForegroundColor Cyan
@@ -35,7 +37,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-# 4. 版本更新逻辑
+# 4. 读取并更新版本
+$content = Get-Content $pubspecPath -Raw
 if ($content -match "version:\s*([\d\.]+)\+(\d+)") {
     $oldVersionName = $Matches[1]
     $oldBuildNumber = [int]$Matches[2]
