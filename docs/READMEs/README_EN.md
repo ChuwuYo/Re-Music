@@ -74,8 +74,8 @@ Ensure your development environment has:
 
 1.  **Clone the project**
     ```bash
-    git clone https://github.com/your-repo/audiorename.git
-    cd audiorename
+    git clone https://github.com/ChuwuYo/ReMusic.git
+    cd ReMusic
     ```
 
 2.  **Manage Dependencies**

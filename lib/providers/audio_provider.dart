@@ -274,7 +274,8 @@ class AudioProvider extends ChangeNotifier {
     var successCount = 0;
     for (var i = 0; i < filesToRename.length; i++) {
       final file = filesToRename[i];
-      final success = await FileService.renameFile(file.path, file.newFileName!);
+      final success =
+          await FileService.renameFile(file.path, p.basename(file.newFileName!));
       if (success) {
         successCount++;
       }
