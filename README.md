@@ -9,14 +9,14 @@
 </p>
 
 <p align="center">
-  <a href="docs/READMEs/README.zh-CN.md">简体中文</a> | <b>English</b>
+  <b>English</b> | <a href="docs/READMEs/README.zh-CN.md">简体中文</a>
 </p>
 
 ---
 
 ## Introduction
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and editing music tags (WIP).
+**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and music tag editing (WIP).
 
 ## Preview
 
@@ -30,9 +30,13 @@
 ## Key Features
 
 *   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration.
-*   **Music Tag Editing (WIP)**: Edit audio metadata, with batch modification and saving capabilities.
+*   **Music Tag Editing (WIP)**: Allows editing of audio metadata, with batch modification and saving capabilities.
 *   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting.
 *   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English.
+
+## Constants Management
+
+All constants used in the application are centrally managed in `lib/constants.dart` for easy maintenance and consistency.
 
 ## Supported Formats
 
@@ -93,11 +97,13 @@ Ensure your development environment has:
 
 #### 1. Automated Build (Recommended)
 This project provides a PowerShell script that automatically increments the build number and completes the Release compilation:
+
 ```powershell
 .\build.ps1 -Version "0.0.1"
 ```
 
 #### 2. Manual Portable Build
+
 ```bash
 flutter build windows --release
 ```
