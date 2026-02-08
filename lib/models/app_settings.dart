@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../providers/theme_provider.dart';
-import '../providers/audio_provider.dart';
+import '../constants.dart';
 
 class AppSettings {
   final String? locale;
@@ -21,12 +20,12 @@ class AppSettings {
 
   static AppSettings defaults() {
     return const AppSettings(
-      locale: null,
-      themeMode: ThemeMode.light,
-      seedColor: AppSeedColor.teal,
-      sortCriteria: 'name',
-      pattern: '{artist} - {title}',
-      filter: FileFilter.all,
+      locale: AppConstants.defaultLocale,
+      themeMode: AppConstants.defaultThemeMode,
+      seedColor: AppConstants.defaultSeedColor,
+      sortCriteria: AppConstants.defaultSortCriteria,
+      pattern: AppConstants.defaultNamingPattern,
+      filter: AppConstants.defaultFileFilter,
     );
   }
 
@@ -43,7 +42,9 @@ class AppSettings {
       themeMode: _parseThemeMode(themeModeRaw),
       seedColor: _parseSeedColor(seedColorRaw),
       sortCriteria: _parseSortCriteria(sortCriteriaRaw),
-      pattern: pattern is String && pattern.isNotEmpty ? pattern : AppSettings.defaults().pattern,
+      pattern: pattern is String && pattern.isNotEmpty
+          ? pattern
+          : AppSettings.defaults().pattern,
       filter: _parseFilter(filterRaw),
     );
   }
@@ -115,5 +116,6 @@ class AppSettings {
   }
 
   @override
-  int get hashCode => Object.hash(locale, themeMode, seedColor, sortCriteria, pattern, filter);
+  int get hashCode =>
+      Object.hash(locale, themeMode, seedColor, sortCriteria, pattern, filter);
 }

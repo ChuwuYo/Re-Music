@@ -1,6 +1,5 @@
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
-
-enum ProcessingStatus { pending, success, error }
+import '../constants.dart';
 
 class AudioFile {
   final String path;

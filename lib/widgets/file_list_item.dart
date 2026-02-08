@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:remusic/l10n/app_localizations.dart';
 import '../models/audio_file.dart';
 import 'metadata_edit_dialog.dart';
+import '../constants.dart';
 
 class FileListItem extends StatelessWidget {
   final AudioFile file;
@@ -34,7 +35,11 @@ class FileListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildTrailing(BuildContext context, AppLocalizations l10n, ColorScheme colorScheme) {
+  Widget _buildTrailing(
+    BuildContext context,
+    AppLocalizations l10n,
+    ColorScheme colorScheme,
+  ) {
     final canEdit = file.status == ProcessingStatus.success;
     final editButton = IconButton(
       tooltip: l10n.editTags,
@@ -74,8 +79,12 @@ class FileListItem extends StatelessWidget {
   }
 
   Color _getCardColor(ColorScheme colorScheme) {
-    if (file.status == ProcessingStatus.error) return colorScheme.errorContainer.withValues(alpha: 0.1);
-    if (file.originalFileName == file.newFileName) return colorScheme.tertiaryContainer.withValues(alpha: 0.1);
+    if (file.status == ProcessingStatus.error) {
+      return colorScheme.errorContainer.withValues(alpha: 0.1);
+    }
+    if (file.originalFileName == file.newFileName) {
+      return colorScheme.tertiaryContainer.withValues(alpha: 0.1);
+    }
     return colorScheme.surface;
   }
 
@@ -88,7 +97,11 @@ class FileListItem extends StatelessWidget {
   Widget _buildLeading(ColorScheme colorScheme) {
     switch (file.status) {
       case ProcessingStatus.pending:
-        return const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2));
+        return const SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        );
       case ProcessingStatus.success:
         return Icon(Icons.music_note, color: colorScheme.primary);
       case ProcessingStatus.error:
@@ -110,7 +123,11 @@ class FileListItem extends StatelessWidget {
     if (file.originalFileName == file.newFileName) {
       return Row(
         children: [
-          Icon(Icons.check_circle_outline, size: 14, color: colorScheme.tertiary),
+          Icon(
+            Icons.check_circle_outline,
+            size: 14,
+            color: colorScheme.tertiary,
+          ),
           const SizedBox(width: 4),
           Text(l10n.nameMatches, style: TextStyle(color: colorScheme.tertiary)),
         ],
@@ -126,7 +143,10 @@ class FileListItem extends StatelessWidget {
           TextSpan(text: l10n.renameToPrefix),
           TextSpan(
             text: file.newFileName ?? '',
-            style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

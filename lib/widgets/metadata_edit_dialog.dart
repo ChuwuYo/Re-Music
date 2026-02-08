@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../l10n/app_localizations.dart';
 import '../models/audio_file.dart';
 import '../providers/audio_provider.dart';
+import '../constants.dart';
 
 class MetadataEditDialog extends StatefulWidget {
   final AudioFile file;
@@ -32,10 +33,18 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _titleController = TextEditingController(text: metadata?.title ?? '');
     _artistController = TextEditingController(text: metadata?.artist ?? '');
     _albumController = TextEditingController(text: metadata?.album ?? '');
-    _trackNumberController = TextEditingController(text: metadata?.trackNumber?.toString() ?? '');
-    _trackTotalController = TextEditingController(text: metadata?.trackTotal?.toString() ?? '');
-    _yearController = TextEditingController(text: metadata?.year?.year.toString() ?? '');
-    _genreController = TextEditingController(text: (metadata?.genres ?? []).join(', '));
+    _trackNumberController = TextEditingController(
+      text: metadata?.trackNumber?.toString() ?? '',
+    );
+    _trackTotalController = TextEditingController(
+      text: metadata?.trackTotal?.toString() ?? '',
+    );
+    _yearController = TextEditingController(
+      text: metadata?.year?.year.toString() ?? '',
+    );
+    _genreController = TextEditingController(
+      text: (metadata?.genres ?? []).join(', '),
+    );
     _languageController = TextEditingController(text: metadata?.language ?? '');
     _commentController = TextEditingController(text: widget.file.comment ?? '');
   }
@@ -57,17 +66,17 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
   void _applyChanges({required bool close}) {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AudioProvider>().updateMetadata(
-            widget.file,
-            title: _titleController.text,
-            artist: _artistController.text,
-            album: _albumController.text,
-            trackNumber: _trackNumberController.text,
-            trackTotal: _trackTotalController.text,
-            year: _yearController.text,
-            genre: _genreController.text,
-            language: _languageController.text,
-            comment: _commentController.text,
-          );
+        widget.file,
+        title: _titleController.text,
+        artist: _artistController.text,
+        album: _albumController.text,
+        trackNumber: _trackNumberController.text,
+        trackTotal: _trackTotalController.text,
+        year: _yearController.text,
+        genre: _genreController.text,
+        language: _languageController.text,
+        comment: _commentController.text,
+      );
       if (close) {
         Navigator.of(context).pop();
       }
@@ -79,11 +88,17 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     final l10n = AppLocalizations.of(context)!;
     final textTheme = Theme.of(context).textTheme;
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.dialogHorizontalPadding,
+        vertical: AppConstants.dialogVerticalPadding,
+      ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 720, maxHeight: 640),
+        constraints: const BoxConstraints(
+          maxWidth: AppConstants.dialogMaxWidth,
+          maxHeight: AppConstants.dialogMaxHeight,
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(AppConstants.dialogPadding),
           child: Column(
             children: [
               Row(
@@ -93,7 +108,10 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.metadataEditorTitle, style: textTheme.titleLarge),
+                        Text(
+                          l10n.metadataEditorTitle,
+                          style: textTheme.titleLarge,
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           widget.file.originalFileName,
@@ -158,7 +176,10 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                             ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: _buildTextField(_genreController, l10n.metadataGenre),
+                              child: _buildTextField(
+                                _genreController,
+                                l10n.metadataGenre,
+                              ),
                             ),
                           ],
                         ),
@@ -166,7 +187,10 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                         Row(
                           children: [
                             Expanded(
-                              child: _buildTextField(_languageController, l10n.metadataLanguage),
+                              child: _buildTextField(
+                                _languageController,
+                                l10n.metadataLanguage,
+                              ),
                             ),
                             const SizedBox(width: 12),
                             const Expanded(child: SizedBox()),
@@ -223,10 +247,7 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        filled: true,
-      ),
+      decoration: InputDecoration(labelText: label, filled: true),
       validator: (value) {
         if (isNumeric && value != null && value.isNotEmpty) {
           if (int.tryParse(value) == null) {

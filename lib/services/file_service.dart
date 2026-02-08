@@ -2,11 +2,10 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
+import '../constants.dart';
 
 class FileService {
-  static const supportedExtensions = [
-    'mp3', 'flac', 'ogg', 'm4a', 'aac', 'wma', 'wv', 'opus', 'dsf', 'dff'
-  ];
+  static const supportedExtensions = AppConstants.supportedAudioExtensions;
 
   static Future<List<String>> pickFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -28,11 +27,17 @@ class FileService {
   static Future<List<String>> scanDirectory(String dirPath) async {
     final dir = Directory(dirPath);
     final files = <String>[];
-    
+
     if (await dir.exists()) {
-      await for (final entity in dir.list(recursive: true, followLinks: false)) {
+      await for (final entity in dir.list(
+        recursive: true,
+        followLinks: false,
+      )) {
         if (entity is File) {
-          final ext = p.extension(entity.path).toLowerCase().replaceAll('.', '');
+          final ext = p
+              .extension(entity.path)
+              .toLowerCase()
+              .replaceAll('.', '');
           if (supportedExtensions.contains(ext)) {
             files.add(entity.path);
           }
@@ -50,9 +55,9 @@ class FileService {
       if (safeName.isEmpty || safeName == '.' || safeName == '..') return false;
 
       final newPath = p.join(dir, safeName);
-      
+
       if (oldPath == newPath) return true;
-      
+
       await file.rename(newPath);
       return true;
     } catch (e) {

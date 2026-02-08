@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import '../constants.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});
@@ -14,22 +15,22 @@ class EmptyState extends StatelessWidget {
         children: [
           Icon(
             Icons.library_music_outlined,
-            size: 80,
+            size: AppConstants.iconSizeHuge,
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           const SizedBox(height: 24),
           Text(
             l10n.emptyTitle,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             l10n.emptySubtitle,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
         ],
       ),
@@ -49,22 +50,22 @@ class NoMatchState extends StatelessWidget {
         children: [
           Icon(
             Icons.filter_alt_off_outlined,
-            size: 72,
+            size: AppConstants.iconSizeExtraLarge,
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           const SizedBox(height: 24),
           Text(
             l10n.noMatchTitle,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             l10n.noMatchSubtitle,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
         ],
       ),

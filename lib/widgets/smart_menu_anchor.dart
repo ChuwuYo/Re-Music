@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 /// A robust MenuAnchor wrapper that handles positioning logic intelligently.
 /// Ensures the menu is centered below the anchor button and stays within the viewport.
@@ -8,7 +9,7 @@ class SmartMenuAnchor extends StatefulWidget {
   final List<Widget> menuChildren;
   final double? estimatedMenuWidth;
   final VoidCallback? onBeforeOpen;
-  
+
   /// If provided, used to calculate the menu width dynamically based on labels.
   final List<String>? widthEstimationLabels;
   final bool useFilledButton;
@@ -40,7 +41,10 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
   Widget build(BuildContext context) {
     // Pre-calculate width if possible to apply to MenuStyle
     if (widget.widthEstimationLabels != null) {
-      _calculatedMenuWidth = _estimateMenuWidthFromLabels(context, widget.widthEstimationLabels!);
+      _calculatedMenuWidth = _estimateMenuWidthFromLabels(
+        context,
+        widget.widthEstimationLabels!,
+      );
     } else {
       _calculatedMenuWidth = widget.estimatedMenuWidth;
     }
@@ -50,11 +54,13 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       menuChildren: widget.menuChildren,
       style: MenuStyle(
         alignment: _currentAlignment ?? AlignmentDirectional.bottomStart,
-        minimumSize: _calculatedMenuWidth != null 
+        minimumSize: _calculatedMenuWidth != null
             ? WidgetStatePropertyAll(Size(_calculatedMenuWidth!, 0))
             : null,
-        maximumSize: _calculatedMenuWidth != null 
-            ? WidgetStatePropertyAll(Size(_calculatedMenuWidth!, double.infinity))
+        maximumSize: _calculatedMenuWidth != null
+            ? WidgetStatePropertyAll(
+                Size(_calculatedMenuWidth!, double.infinity),
+              )
             : null,
       ),
       builder: (context, controller, child) {
@@ -95,11 +101,17 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
 
     final windowWidth = MediaQuery.sizeOf(context).width;
     final anchorTopLeft = renderObject.localToGlobal(Offset.zero);
-    final anchorBottomRight = renderObject.localToGlobal(renderObject.size.bottomRight(Offset.zero));
-    final menuWidth = _calculatedMenuWidth ??
+    final anchorBottomRight = renderObject.localToGlobal(
+      renderObject.size.bottomRight(Offset.zero),
+    );
+    final menuWidth =
+        _calculatedMenuWidth ??
         (widget.widthEstimationLabels != null
-            ? _estimateMenuWidthFromLabels(context, widget.widthEstimationLabels!)
-            : widget.estimatedMenuWidth ?? 260.0);
+            ? _estimateMenuWidthFromLabels(
+                context,
+                widget.widthEstimationLabels!,
+              )
+            : widget.estimatedMenuWidth ?? AppConstants.defaultMenuWidth);
 
     final leftSpace = anchorBottomRight.dx;
     final rightSpace = windowWidth - anchorTopLeft.dx;
@@ -107,7 +119,7 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
     AlignmentGeometry targetAlignment;
     final proximityRight = windowWidth - anchorBottomRight.dx;
     final proximityLeft = anchorTopLeft.dx;
-    const edgeThreshold = 48.0;
+    const edgeThreshold = AppConstants.edgeThreshold;
     if (proximityRight <= edgeThreshold) {
       targetAlignment = Alignment.bottomRight;
     } else if (proximityLeft <= edgeThreshold) {
@@ -119,14 +131,16 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
     } else if (leftSpace >= menuWidth && rightSpace >= menuWidth) {
       targetAlignment = Alignment.bottomCenter;
     } else {
-      targetAlignment = leftSpace >= rightSpace ? Alignment.bottomRight : Alignment.bottomLeft;
+      targetAlignment = leftSpace >= rightSpace
+          ? Alignment.bottomRight
+          : Alignment.bottomLeft;
     }
 
     if (_currentAlignment != targetAlignment) {
       setState(() {
         _currentAlignment = targetAlignment;
       });
-      
+
       // Open the menu after the rebuild ensures the new alignment is applied
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _controller.open();
@@ -140,10 +154,12 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
   double _estimateMenuWidthFromLabels(
     BuildContext context,
     List<String> labels, {
-    double minWidth = 140,
-    double maxWidth = 320,
+    double minWidth = AppConstants.menuMinWidth,
+    double maxWidth = AppConstants.menuMaxWidth,
   }) {
-    final style = Theme.of(context).textTheme.labelLarge ?? DefaultTextStyle.of(context).style;
+    final style =
+        Theme.of(context).textTheme.labelLarge ??
+        DefaultTextStyle.of(context).style;
     final direction = Directionality.of(context);
     double maxLabelWidth = 0;
     for (final label in labels) {
@@ -157,7 +173,9 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       }
     }
 
-    final estimated = maxLabelWidth + 56; // Padding + Icon space
+    final estimated =
+        maxLabelWidth +
+        AppConstants.menuPaddingAndIconSpace; // Padding + Icon space
     if (estimated < minWidth) return minWidth;
     if (estimated > maxWidth) return maxWidth;
     return estimated;

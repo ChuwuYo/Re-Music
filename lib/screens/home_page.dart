@@ -27,11 +27,11 @@ class HomePage extends StatelessWidget {
                   builder: (context, provider, child) {
                     final hasAnyFiles = provider.totalFilesCount > 0;
                     return CustomScrollView(
-                      physics: hasAnyFiles ? null : const NeverScrollableScrollPhysics(),
+                      physics: hasAnyFiles
+                          ? null
+                          : const NeverScrollableScrollPhysics(),
                       slivers: [
-                        SliverToBoxAdapter(
-                          child: const RenameControlPanel(),
-                        ),
+                        SliverToBoxAdapter(child: const RenameControlPanel()),
                         if (!hasAnyFiles)
                           SliverFillRemaining(
                             hasScrollBody: false,
@@ -46,12 +46,14 @@ class HomePage extends StatelessWidget {
                           SliverPadding(
                             padding: const EdgeInsets.only(bottom: 80),
                             sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  return FileListItem(file: provider.files[index]);
-                                },
-                                childCount: provider.files.length,
-                              ),
+                              delegate: SliverChildBuilderDelegate((
+                                context,
+                                index,
+                              ) {
+                                return FileListItem(
+                                  file: provider.files[index],
+                                );
+                              }, childCount: provider.files.length),
                             ),
                           ),
                       ],
@@ -61,9 +63,7 @@ class HomePage extends StatelessWidget {
                 Positioned(
                   right: 16,
                   bottom: 16,
-                  child: SafeArea(
-                    child: const BottomRightPanel(),
-                  ),
+                  child: SafeArea(child: const BottomRightPanel()),
                 ),
               ],
             ),

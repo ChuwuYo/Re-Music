@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/audio_provider.dart';
 import '../services/file_service.dart';
 import 'smart_menu_anchor.dart';
+import '../constants.dart';
 
 class RenameControlPanel extends StatefulWidget {
   const RenameControlPanel({super.key});
@@ -123,7 +124,8 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                         label: _patternLabel(l10n, pattern),
                         trailingIcon: Text(
                           pattern,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
@@ -169,17 +171,23 @@ class _FilterMenu extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.all),
-              leadingIcon: provider.filter == FileFilter.all ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.all
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showAll),
             ),
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.valid),
-              leadingIcon: provider.filter == FileFilter.valid ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.valid
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showNoRenameNeeded),
             ),
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.invalid),
-              leadingIcon: provider.filter == FileFilter.invalid ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.invalid
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showNeedRename),
             ),
           ],
