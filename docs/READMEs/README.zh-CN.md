@@ -107,6 +107,7 @@
 ```bash
 flutter build windows --release
 ```
+
 构建产物位于 `build/windows/runner/Release/` 目录下，直接压缩该文件夹即可分发。
 
 #### 3. 安装版 (Installer)

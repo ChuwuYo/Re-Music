@@ -107,6 +107,7 @@ This project provides a PowerShell script that automatically increments the buil
 ```bash
 flutter build windows --release
 ```
+
 The build artifacts are located in the `build/windows/runner/Release/` directory. You can distribute this folder directly as a zip.
 
 #### 3. Installer
