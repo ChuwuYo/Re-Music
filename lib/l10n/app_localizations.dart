@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @chinese.
   ///
   /// In en, this message translates to:
-  /// **'中文'**
+  /// **'简体中文'**
   String get chinese;
 
   /// No description provided for @english.
