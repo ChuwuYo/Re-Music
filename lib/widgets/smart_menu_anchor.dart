@@ -117,13 +117,11 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
     final rightSpace = windowWidth - anchorBottomRight.dx;
 
     AlignmentGeometry targetAlignment;
-    final proximityRight = windowWidth - anchorBottomRight.dx;
-    final proximityLeft = anchorTopLeft.dx;
     const edgeThreshold = AppConstants.edgeThreshold;
-    if (proximityRight <= edgeThreshold) {
+    if (rightSpace <= edgeThreshold) {
       // 靠近右边缘：菜单右边缘对齐按钮右边缘
       targetAlignment = Alignment.bottomRight;
-    } else if (proximityLeft <= edgeThreshold) {
+    } else if (leftSpace <= edgeThreshold) {
       // 靠近左边缘：菜单左边缘对齐按钮左边缘
       targetAlignment = Alignment.bottomLeft;
     } else if (rightSpace < menuWidth && leftSpace >= menuWidth) {
