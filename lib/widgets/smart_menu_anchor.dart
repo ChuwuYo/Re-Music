@@ -113,24 +113,30 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
               )
             : widget.estimatedMenuWidth ?? AppConstants.defaultMenuWidth);
 
-    final leftSpace = anchorBottomRight.dx;
-    final rightSpace = windowWidth - anchorTopLeft.dx;
+    final leftSpace = anchorTopLeft.dx;
+    final rightSpace = windowWidth - anchorBottomRight.dx;
 
     AlignmentGeometry targetAlignment;
     final proximityRight = windowWidth - anchorBottomRight.dx;
     final proximityLeft = anchorTopLeft.dx;
     const edgeThreshold = AppConstants.edgeThreshold;
     if (proximityRight <= edgeThreshold) {
+      // 靠近右边缘：菜单右边缘对齐按钮右边缘
       targetAlignment = Alignment.bottomRight;
     } else if (proximityLeft <= edgeThreshold) {
+      // 靠近左边缘：菜单左边缘对齐按钮左边缘
       targetAlignment = Alignment.bottomLeft;
     } else if (rightSpace < menuWidth && leftSpace >= menuWidth) {
+      // 右侧空间不足：菜单右边缘对齐按钮右边缘
       targetAlignment = Alignment.bottomRight;
     } else if (leftSpace < menuWidth && rightSpace >= menuWidth) {
+      // 左侧空间不足：菜单左边缘对齐按钮左边缘
       targetAlignment = Alignment.bottomLeft;
     } else if (leftSpace >= menuWidth && rightSpace >= menuWidth) {
+      // 两侧空间充足：菜单居中
       targetAlignment = Alignment.bottomCenter;
     } else {
+      // 两侧空间都不足：根据哪边空间大选择对齐方式
       targetAlignment = leftSpace >= rightSpace
           ? Alignment.bottomRight
           : Alignment.bottomLeft;

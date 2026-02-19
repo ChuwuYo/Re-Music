@@ -52,7 +52,7 @@ lib/
 
 ### Prerequisites
 
-*   Flutter SDK (3.10.0+)
+*   Flutter SDK (3.10.8+)
 *   Visual Studio C++ Tools
 
 ### Getting Started
