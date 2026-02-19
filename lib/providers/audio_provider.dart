@@ -12,6 +12,7 @@ class AudioProvider extends ChangeNotifier {
   List<AudioFile> _files = [];
   FileFilter _filter = AppConstants.defaultFileFilter;
   String _sortCriteria = AppConstants.defaultSortCriteria;
+  bool _sortAscending = true;
 
   int get totalFilesCount => _files.length;
   bool get hasRenameCandidates {
@@ -38,9 +39,25 @@ class AudioProvider extends ChangeNotifier {
 
   FileFilter get filter => _filter;
   String get sortCriteria => _sortCriteria;
+  bool get sortAscending => _sortAscending;
 
   void setFilter(FileFilter filter) {
     _filter = filter;
+    notifyListeners();
+  }
+
+  void toggleSortOrder() {
+    _sortAscending = !_sortAscending;
+    _sortFiles(_sortCriteria);
+    _updateNewFileNames();
+    notifyListeners();
+  }
+
+  void setSortAscending(bool ascending) {
+    if (_sortAscending == ascending) return;
+    _sortAscending = ascending;
+    _sortFiles(_sortCriteria);
+    _updateNewFileNames();
     notifyListeners();
   }
 
@@ -301,19 +318,34 @@ class AudioProvider extends ChangeNotifier {
   void _sortFiles(String criteria) {
     switch (criteria) {
       case 'name':
-        _files.sort((a, b) => a.originalFileName.compareTo(b.originalFileName));
+        _files.sort((a, b) {
+          final cmp = a.originalFileName.compareTo(b.originalFileName);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'artist':
-        _files.sort((a, b) => a.artist.compareTo(b.artist));
+        _files.sort((a, b) {
+          final cmp = a.artist.compareTo(b.artist);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'title':
-        _files.sort((a, b) => a.title.compareTo(b.title));
+        _files.sort((a, b) {
+          final cmp = a.title.compareTo(b.title);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'size':
-        _files.sort((a, b) => a.size.compareTo(b.size));
+        _files.sort((a, b) {
+          final cmp = a.size.compareTo(b.size);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'date':
-        _files.sort((a, b) => a.modified.compareTo(b.modified));
+        _files.sort((a, b) {
+          final cmp = a.modified.compareTo(b.modified);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
     }
   }

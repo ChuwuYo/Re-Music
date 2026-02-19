@@ -225,4 +225,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get invalidNumber => '请输入有效的数字';
+
+  @override
+  String get sortAscending => '升序';
+
+  @override
+  String get sortDescending => '降序';
 }

@@ -99,6 +99,8 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                 _FilterMenu(),
                 const SizedBox(width: 8),
                 _SortMenu(),
+                const SizedBox(width: 8),
+                _SortOrderButton(),
               ],
             ),
             const SizedBox(height: 16),
@@ -216,25 +218,62 @@ class _SortMenu extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.sortBy('name'),
+              leadingIcon: provider.sortCriteria == 'name'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByName),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('artist'),
+              leadingIcon: provider.sortCriteria == 'artist'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByArtist),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('title'),
+              leadingIcon: provider.sortCriteria == 'title'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByTitle),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('size'),
+              leadingIcon: provider.sortCriteria == 'size'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('date'),
+              leadingIcon: provider.sortCriteria == 'date'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _SortOrderButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AudioProvider>(
+      builder: (context, provider, child) {
+        final l10n = AppLocalizations.of(context)!;
+        return IconButton(
+          tooltip: provider.sortAscending
+              ? l10n.sortAscending
+              : l10n.sortDescending,
+          icon: Icon(
+            provider.sortAscending
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
+          ),
+          onPressed: () => provider.toggleSortOrder(),
         );
       },
     );

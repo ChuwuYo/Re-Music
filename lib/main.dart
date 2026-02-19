@@ -26,6 +26,7 @@ void main() async {
     themeController.setThemeMode(settings.themeMode);
     themeController.setSeedColor(settings.seedColor);
     audioProvider.setSortCriteria(settings.sortCriteria);
+    audioProvider.setSortAscending(settings.sortAscending);
     audioProvider.setPattern(settings.pattern);
     audioProvider.setFilter(settings.filter);
   }
@@ -36,6 +37,7 @@ void main() async {
       themeMode: themeController.themeMode,
       seedColor: themeController.seedColor,
       sortCriteria: audioProvider.sortCriteria,
+      sortAscending: audioProvider.sortAscending,
       pattern: audioProvider.pattern,
       filter: audioProvider.filter,
     ),
@@ -48,6 +50,7 @@ void main() async {
         themeMode: themeController.themeMode,
         seedColor: themeController.seedColor,
         sortCriteria: audioProvider.sortCriteria,
+        sortAscending: audioProvider.sortAscending,
         pattern: audioProvider.pattern,
         filter: audioProvider.filter,
       ),
