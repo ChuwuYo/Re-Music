@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 /// 集中管理项目中的所有常量，提高代码可维护性
 
 class AppConstants {
+  AppConstants._();
+
   /// 支持的音频文件扩展名
   static const List<String> supportedAudioExtensions = [
     'mp3',
@@ -166,61 +168,7 @@ extension AppSeedColorExtension on AppSeedColor {
         return Colors.red;
     }
   }
-
-  String get name {
-    switch (this) {
-      case AppSeedColor.teal:
-        return 'teal';
-      case AppSeedColor.blue:
-        return 'blue';
-      case AppSeedColor.indigo:
-        return 'indigo';
-      case AppSeedColor.purple:
-        return 'purple';
-      case AppSeedColor.pink:
-        return 'pink';
-      case AppSeedColor.orange:
-        return 'orange';
-      case AppSeedColor.green:
-        return 'green';
-      case AppSeedColor.red:
-        return 'red';
-    }
-  }
-}
-
-/// 排序标准枚举
-enum SortCriteria { name, artist, title, size, date }
-
-extension SortCriteriaExtension on SortCriteria {
-  String get value {
-    switch (this) {
-      case SortCriteria.name:
-        return 'name';
-      case SortCriteria.artist:
-        return 'artist';
-      case SortCriteria.title:
-        return 'title';
-      case SortCriteria.size:
-        return 'size';
-      case SortCriteria.date:
-        return 'date';
-    }
-  }
 }
 
 /// 处理状态枚举
 enum ProcessingStatus { pending, success, error }
-
-extension ProcessingStatusExtension on ProcessingStatus {
-  String get name {
-    switch (this) {
-      case ProcessingStatus.pending:
-        return 'pending';
-      case ProcessingStatus.success:
-        return 'success';
-      case ProcessingStatus.error:
-        return 'error';
-    }
-  }
-}

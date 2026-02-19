@@ -48,7 +48,7 @@ class AppSettings {
       sortCriteria: _parseSortCriteria(sortCriteriaRaw),
       sortAscending: sortAscendingRaw is bool
           ? sortAscendingRaw
-          : AppSettings.defaults().sortAscending,
+          : AppConstants.defaultSortAscending,
       pattern: pattern is String && pattern.isNotEmpty
           ? pattern
           : AppSettings.defaults().pattern,

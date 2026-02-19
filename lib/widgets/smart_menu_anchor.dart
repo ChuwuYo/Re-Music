@@ -175,6 +175,7 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       if (painter.width > maxLabelWidth) {
         maxLabelWidth = painter.width;
       }
+      painter.dispose();
     }
 
     final estimated =

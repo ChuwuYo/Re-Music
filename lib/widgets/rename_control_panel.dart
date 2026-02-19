@@ -266,8 +266,8 @@ class _SortOrderButton extends StatelessWidget {
         final l10n = AppLocalizations.of(context)!;
         return IconButton(
           tooltip: provider.sortAscending
-              ? l10n.sortAscending
-              : l10n.sortDescending,
+              ? l10n.sortDescending
+              : l10n.sortAscending,
           icon: Icon(
             provider.sortAscending
                 ? Icons.keyboard_arrow_up
