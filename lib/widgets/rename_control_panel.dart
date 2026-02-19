@@ -25,8 +25,22 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
     _patternController.addListener(_onPatternChanged);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // locale 切换时 DropdownMenu 重建可能短暂清空 controller，
+    // 以 provider 的 pattern 为准恢复显示
+    final providerPattern = context.read<AudioProvider>().pattern;
+    if (_patternController.text.isEmpty && providerPattern.isNotEmpty) {
+      _patternController.text = providerPattern;
+    }
+  }
+
   void _onPatternChanged() {
-    context.read<AudioProvider>().setPattern(_patternController.text);
+    if (!mounted) return;
+    final text = _patternController.text;
+    if (text.isEmpty) return; // 忽略 DropdownMenu 重建期间的临时空值
+    context.read<AudioProvider>().setPattern(text);
   }
 
   @override
@@ -106,8 +120,12 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
+                final dropWidth = constraints.maxWidth.clamp(
+                  0.0,
+                  double.infinity,
+                );
                 return DropdownMenu<String>(
-                  width: constraints.maxWidth,
+                  width: dropWidth,
                   controller: _patternController,
                   label: Text(l10n.namingMode),
                   hintText: l10n.namingModeHint('{artist}', '{title}'),

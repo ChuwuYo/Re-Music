@@ -35,6 +35,7 @@
 *   **Audio Resampling (WIP)**: Lossless audio downsampling for audio files
 *   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting.
 *   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English.
+*   **Responsive Layout**: Left sidebar that auto-collapses when the window is narrow.
 
 ## Constants Management
 

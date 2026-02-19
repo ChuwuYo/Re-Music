@@ -71,10 +71,13 @@ class AppConstants {
   static const String defaultUntitledTrack = 'Untitled track';
 
   /// 窗口配置
-  static const double defaultWindowWidth = 1200;
-  static const double defaultWindowHeight = 800;
-  static const double minimumWindowWidth = 800;
+  static const double defaultWindowWidth = 1440;
+  static const double defaultWindowHeight = 900;
+  static const double minimumWindowWidth = 860;
   static const double minimumWindowHeight = 600;
+
+  /// 左侧栏响应式：窗口宽度低于此值时自动收起
+  static const double sidebarAutoCollapseWidth = 1000.0;
 
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;

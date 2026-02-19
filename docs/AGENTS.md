@@ -45,6 +45,9 @@ lib/
 │   ├── metadata_service.dart   # Audio metadata reading/formatting
 │   └── settings_service.dart   # Settings persistence
 ├── widgets/                    # UI components
+│   ├── left_sidebar.dart       # Left sidebar (language, theme, color, etc.)
+│   ├── rename_control_panel.dart # Rename pattern configuration
+│   └── ...
 └── l10n/                       # Internationalization (ARB files)
 ```
 

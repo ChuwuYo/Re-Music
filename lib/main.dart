@@ -8,6 +8,7 @@ import 'providers/locale_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_page.dart';
 import 'services/settings_service.dart';
+import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +63,14 @@ void main() async {
   audioProvider.addListener(scheduleSave);
 
   const windowOptions = WindowOptions(
+    size: Size(
+      AppConstants.defaultWindowWidth,
+      AppConstants.defaultWindowHeight,
+    ),
+    minimumSize: Size(
+      AppConstants.minimumWindowWidth,
+      AppConstants.minimumWindowHeight,
+    ),
     titleBarStyle: TitleBarStyle.hidden,
     windowButtonVisibility: false,
   );
@@ -117,12 +126,16 @@ class MyApp extends StatelessWidget {
       themeMode: theme.themeMode,
       builder: (context, child) {
         final l10n = AppLocalizations.of(context)!;
-        context.read<AudioProvider>().setNamingPlaceholders(
-          unknownArtist: l10n.unknownArtist,
-          unknownTitle: l10n.unknownTitle,
-          unknownAlbum: l10n.unknownAlbum,
-          untitledTrack: l10n.untitledTrack,
-        );
+        // 延迟到帧末执行，避免在 build 阶段调用 notifyListeners 导致竞争
+        final audioProvider = context.read<AudioProvider>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          audioProvider.setNamingPlaceholders(
+            unknownArtist: l10n.unknownArtist,
+            unknownTitle: l10n.unknownTitle,
+            unknownAlbum: l10n.unknownAlbum,
+            untitledTrack: l10n.untitledTrack,
+          );
+        });
         return child ?? const SizedBox.shrink();
       },
       home: const HomePage(),

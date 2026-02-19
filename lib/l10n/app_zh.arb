@@ -92,5 +92,8 @@
   "close": "关闭",
   "invalidNumber": "请输入有效的数字",
   "sortAscending": "升序",
-  "sortDescending": "降序"
+  "sortDescending": "降序",
+  "sidebarExpand": "展开侧边栏",
+  "sidebarCollapse": "收起侧边栏",
+  "sidebarTooNarrow": "窗口太窄，拖宽窗口后可展开"
 }
