@@ -35,6 +35,9 @@ class AppConstants {
   /// 默认排序标准
   static const String defaultSortCriteria = 'name';
 
+  /// 默认排序顺序（升序）
+  static const bool defaultSortAscending = true;
+
   /// 文件名非法字符正则表达式
   static final RegExp invalidFilenameChars = RegExp(r'[\\/:*?"<>|]');
 

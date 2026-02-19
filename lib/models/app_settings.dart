@@ -26,7 +26,7 @@ class AppSettings {
       themeMode: AppConstants.defaultThemeMode,
       seedColor: AppConstants.defaultSeedColor,
       sortCriteria: AppConstants.defaultSortCriteria,
-      sortAscending: true,
+      sortAscending: AppConstants.defaultSortAscending,
       pattern: AppConstants.defaultNamingPattern,
       filter: AppConstants.defaultFileFilter,
     );

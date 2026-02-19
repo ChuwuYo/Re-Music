@@ -12,7 +12,7 @@ class AudioProvider extends ChangeNotifier {
   List<AudioFile> _files = [];
   FileFilter _filter = AppConstants.defaultFileFilter;
   String _sortCriteria = AppConstants.defaultSortCriteria;
-  bool _sortAscending = true;
+  bool _sortAscending = AppConstants.defaultSortAscending;
 
   int get totalFilesCount => _files.length;
   bool get hasRenameCandidates {
