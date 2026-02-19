@@ -21,6 +21,14 @@ if (-not (Test-Path $pubspecPath)) {
 
 Write-Host "--- 开始自动化版本更新与构建 ---" -ForegroundColor Cyan
 
+# 1. 代码格式化检查
+Write-Host "正在执行 dart format ...." -ForegroundColor Cyan
+dart format .
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 代码格式化未通过，构建终止。" -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
 # 2. 静态检查
 Write-Host "正在执行 flutter analyze..." -ForegroundColor Cyan
 flutter analyze

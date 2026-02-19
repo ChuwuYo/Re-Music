@@ -4,7 +4,7 @@
   "clearList": "清空列表",
   "language": "语言",
   "followSystem": "跟随系统",
-  "chinese": "中文",
+  "chinese": "简体中文",
   "english": "English",
   "switchToDark": "切换到深色模式",
   "switchToLight": "切换到浅色模式",
@@ -90,5 +90,7 @@
   "confirm": "确认",
   "cancel": "取消",
   "close": "关闭",
-  "invalidNumber": "请输入有效的数字"
+  "invalidNumber": "请输入有效的数字",
+  "sortAscending": "升序",
+  "sortDescending": "降序"
 }

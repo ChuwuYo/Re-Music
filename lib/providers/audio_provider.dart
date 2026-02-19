@@ -6,14 +6,14 @@ import '../models/audio_file.dart';
 import '../services/file_service.dart';
 import '../services/metadata_service.dart';
 import 'package:path/path.dart' as p;
-
-enum FileFilter { all, valid, invalid }
+import '../constants.dart';
 
 class AudioProvider extends ChangeNotifier {
   List<AudioFile> _files = [];
-  FileFilter _filter = FileFilter.all;
-  String _sortCriteria = 'name';
-  
+  FileFilter _filter = AppConstants.defaultFileFilter;
+  String _sortCriteria = AppConstants.defaultSortCriteria;
+  bool _sortAscending = AppConstants.defaultSortAscending;
+
   int get totalFilesCount => _files.length;
   bool get hasRenameCandidates {
     for (final file in _files) {
@@ -27,19 +27,37 @@ class AudioProvider extends ChangeNotifier {
 
   List<AudioFile> get files {
     if (_filter == FileFilter.all) return _files;
-    
+
     return _files.where((f) {
-      if (f.status != ProcessingStatus.success || f.newFileName == null) return false;
+      if (f.status != ProcessingStatus.success || f.newFileName == null) {
+        return false;
+      }
       final isValid = f.originalFileName == f.newFileName;
       return _filter == FileFilter.valid ? isValid : !isValid;
     }).toList();
   }
-  
+
   FileFilter get filter => _filter;
   String get sortCriteria => _sortCriteria;
+  bool get sortAscending => _sortAscending;
 
   void setFilter(FileFilter filter) {
     _filter = filter;
+    notifyListeners();
+  }
+
+  void toggleSortOrder() {
+    _sortAscending = !_sortAscending;
+    _sortFiles(_sortCriteria);
+    _updateNewFileNames();
+    notifyListeners();
+  }
+
+  void setSortAscending(bool ascending) {
+    if (_sortAscending == ascending) return;
+    _sortAscending = ascending;
+    _sortFiles(_sortCriteria);
+    _updateNewFileNames();
     notifyListeners();
   }
 
@@ -51,20 +69,16 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _pattern = '{artist} - {title}';
+  String _pattern = AppConstants.defaultNamingPattern;
   String get pattern => _pattern;
 
-  static const List<Map<String, String>> predefinedPatterns = [
-    {'name': 'Artist - Title', 'pattern': '{artist} - {title}'},
-    {'name': 'Title - Artist', 'pattern': '{title} - {artist}'},
-    {'name': 'Track - Title', 'pattern': '{track} - {title}'},
-    {'name': 'Artist - Album - Title', 'pattern': '{artist} - {album} - {title}'},
-  ];
+  static const List<Map<String, String>> predefinedPatterns =
+      AppConstants.predefinedPatterns;
 
-  String _unknownArtist = 'Unknown artist';
-  String _unknownTitle = 'Unknown title';
-  String _unknownAlbum = 'Unknown album';
-  String _untitledTrack = 'Untitled track';
+  String _unknownArtist = AppConstants.defaultUnknownArtist;
+  String _unknownTitle = AppConstants.defaultUnknownTitle;
+  String _unknownAlbum = AppConstants.defaultUnknownAlbum;
+  String _untitledTrack = AppConstants.defaultUntitledTrack;
 
   void setNamingPlaceholders({
     required String unknownArtist,
@@ -153,7 +167,8 @@ class AudioProvider extends ChangeNotifier {
         file.metadata = metadata;
       } else {
         // Fallback if re-read fails
-        final currentMetadata = file.metadata ?? AudioMetadata(file: File(file.path));
+        final currentMetadata =
+            file.metadata ?? AudioMetadata(file: File(file.path));
         currentMetadata.title = _normalizeText(title);
         currentMetadata.artist = _normalizeText(artist);
         currentMetadata.album = _normalizeText(album);
@@ -164,9 +179,9 @@ class AudioProvider extends ChangeNotifier {
         currentMetadata.genres = _parseGenres(genre);
         file.metadata = currentMetadata;
       }
-      
+
       file.comment = _normalizeText(comment);
-      
+
       if (file.status != ProcessingStatus.success) {
         file.status = ProcessingStatus.success;
         file.errorMessage = null;
@@ -192,12 +207,14 @@ class AudioProvider extends ChangeNotifier {
       final file = File(path);
       if (await file.exists()) {
         final stat = await file.stat();
-        newFiles.add(AudioFile(
-          path: path,
-          extension: p.extension(path),
-          size: stat.size,
-          modified: stat.modified,
-        ));
+        newFiles.add(
+          AudioFile(
+            path: path,
+            extension: p.extension(path),
+            size: stat.size,
+            modified: stat.modified,
+          ),
+        );
       }
     }
 
@@ -274,8 +291,10 @@ class AudioProvider extends ChangeNotifier {
     var successCount = 0;
     for (var i = 0; i < filesToRename.length; i++) {
       final file = filesToRename[i];
-      final success =
-          await FileService.renameFile(file.path, p.basename(file.newFileName!));
+      final success = await FileService.renameFile(
+        file.path,
+        p.basename(file.newFileName!),
+      );
       if (success) {
         successCount++;
       }
@@ -299,19 +318,34 @@ class AudioProvider extends ChangeNotifier {
   void _sortFiles(String criteria) {
     switch (criteria) {
       case 'name':
-        _files.sort((a, b) => a.originalFileName.compareTo(b.originalFileName));
+        _files.sort((a, b) {
+          final cmp = a.originalFileName.compareTo(b.originalFileName);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'artist':
-        _files.sort((a, b) => a.artist.compareTo(b.artist));
+        _files.sort((a, b) {
+          final cmp = a.artist.compareTo(b.artist);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'title':
-        _files.sort((a, b) => a.title.compareTo(b.title));
+        _files.sort((a, b) {
+          final cmp = a.title.compareTo(b.title);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'size':
-        _files.sort((a, b) => a.size.compareTo(b.size));
+        _files.sort((a, b) {
+          final cmp = a.size.compareTo(b.size);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
       case 'date':
-        _files.sort((a, b) => a.modified.compareTo(b.modified));
+        _files.sort((a, b) {
+          final cmp = a.modified.compareTo(b.modified);
+          return _sortAscending ? cmp : -cmp;
+        });
         return;
     }
   }

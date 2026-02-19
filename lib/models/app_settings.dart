@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../providers/theme_provider.dart';
-import '../providers/audio_provider.dart';
+import '../constants.dart';
 
 class AppSettings {
   final String? locale;
   final ThemeMode themeMode;
   final AppSeedColor seedColor;
   final String sortCriteria;
+  final bool sortAscending;
   final String pattern;
   final FileFilter filter;
 
@@ -15,18 +15,20 @@ class AppSettings {
     required this.themeMode,
     required this.seedColor,
     required this.sortCriteria,
+    required this.sortAscending,
     required this.pattern,
     required this.filter,
   });
 
   static AppSettings defaults() {
     return const AppSettings(
-      locale: null,
-      themeMode: ThemeMode.light,
-      seedColor: AppSeedColor.teal,
-      sortCriteria: 'name',
-      pattern: '{artist} - {title}',
-      filter: FileFilter.all,
+      locale: AppConstants.defaultLocale,
+      themeMode: AppConstants.defaultThemeMode,
+      seedColor: AppConstants.defaultSeedColor,
+      sortCriteria: AppConstants.defaultSortCriteria,
+      sortAscending: AppConstants.defaultSortAscending,
+      pattern: AppConstants.defaultNamingPattern,
+      filter: AppConstants.defaultFileFilter,
     );
   }
 
@@ -35,6 +37,7 @@ class AppSettings {
     final themeModeRaw = json['themeMode'];
     final seedColorRaw = json['seedColor'];
     final sortCriteriaRaw = json['sortCriteria'];
+    final sortAscendingRaw = json['sortAscending'];
     final pattern = json['pattern'];
     final filterRaw = json['filter'];
 
@@ -43,7 +46,12 @@ class AppSettings {
       themeMode: _parseThemeMode(themeModeRaw),
       seedColor: _parseSeedColor(seedColorRaw),
       sortCriteria: _parseSortCriteria(sortCriteriaRaw),
-      pattern: pattern is String && pattern.isNotEmpty ? pattern : AppSettings.defaults().pattern,
+      sortAscending: sortAscendingRaw is bool
+          ? sortAscendingRaw
+          : AppSettings.defaults().sortAscending,
+      pattern: pattern is String && pattern.isNotEmpty
+          ? pattern
+          : AppSettings.defaults().pattern,
       filter: _parseFilter(filterRaw),
     );
   }
@@ -54,6 +62,7 @@ class AppSettings {
       'themeMode': themeMode.name,
       'seedColor': seedColor.name,
       'sortCriteria': sortCriteria,
+      'sortAscending': sortAscending,
       'pattern': pattern,
       'filter': filter.name,
     };
@@ -110,10 +119,19 @@ class AppSettings {
         other.themeMode == themeMode &&
         other.seedColor == seedColor &&
         other.sortCriteria == sortCriteria &&
+        other.sortAscending == sortAscending &&
         other.pattern == pattern &&
         other.filter == filter;
   }
 
   @override
-  int get hashCode => Object.hash(locale, themeMode, seedColor, sortCriteria, pattern, filter);
+  int get hashCode => Object.hash(
+    locale,
+    themeMode,
+    seedColor,
+    sortCriteria,
+    sortAscending,
+    pattern,
+    filter,
+  );
 }

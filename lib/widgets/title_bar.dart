@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
+import '../constants.dart';
 
 class ReMusicTitleBar extends StatefulWidget {
-  const ReMusicTitleBar({
-    super.key,
-    required this.title,
-  });
+  const ReMusicTitleBar({super.key, required this.title});
 
   final String title;
 
@@ -80,11 +78,13 @@ class _ReMusicTitleBarState extends State<ReMusicTitleBar> with WindowListener {
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
+            bottom: BorderSide(
+              color: scheme.outlineVariant.withValues(alpha: 0.7),
+            ),
           ),
         ),
         child: SizedBox(
-          height: 40,
+          height: AppConstants.titleBarHeight,
           child: Row(
             children: [
               Expanded(
@@ -93,7 +93,10 @@ class _ReMusicTitleBarState extends State<ReMusicTitleBar> with WindowListener {
                     behavior: HitTestBehavior.opaque,
                     onDoubleTap: canUseWindowControls ? _toggleMaximize : null,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 8),
+                      padding: const EdgeInsets.only(
+                        left: AppConstants.titleBarLeftPadding,
+                        right: AppConstants.titleBarRightPadding,
+                      ),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
@@ -101,11 +104,13 @@ class _ReMusicTitleBarState extends State<ReMusicTitleBar> with WindowListener {
                           children: [
                             Image.asset(
                               'assets/images/Logos/1024.png',
-                              width: 28,
-                              height: 28,
+                              width: AppConstants.titleBarLogoWidth,
+                              height: AppConstants.titleBarLogoHeight,
                               filterQuality: FilterQuality.medium,
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(
+                              width: AppConstants.titleBarIconSpacing,
+                            ),
                             Text(
                               widget.title,
                               maxLines: 1,
@@ -120,18 +125,31 @@ class _ReMusicTitleBarState extends State<ReMusicTitleBar> with WindowListener {
                 ),
               ),
               IconButton(
-                onPressed: canUseWindowControls ? () => windowManager.minimize() : null,
-                icon: const Icon(Icons.remove, size: 18),
+                onPressed: canUseWindowControls
+                    ? () => windowManager.minimize()
+                    : null,
+                icon: const Icon(
+                  Icons.remove,
+                  size: AppConstants.iconSizeMedium,
+                ),
               ),
               IconButton(
                 onPressed: canUseWindowControls ? _toggleMaximize : null,
-                icon: Icon(_isMaximized ? Icons.filter_none : Icons.crop_square, size: 16),
+                icon: Icon(
+                  _isMaximized ? Icons.filter_none : Icons.crop_square,
+                  size: AppConstants.iconSizeSmall,
+                ),
               ),
               IconButton(
-                onPressed: canUseWindowControls ? () => windowManager.close() : null,
-                icon: const Icon(Icons.close, size: 18),
+                onPressed: canUseWindowControls
+                    ? () => windowManager.close()
+                    : null,
+                icon: const Icon(
+                  Icons.close,
+                  size: AppConstants.iconSizeMedium,
+                ),
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: AppConstants.titleBarRightMargin),
             ],
           ),
         ),

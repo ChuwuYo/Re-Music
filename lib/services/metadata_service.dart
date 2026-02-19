@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import '../constants.dart';
 
 class MetadataService {
   static Future<AudioMetadata?> getMetadata(String filePath) async {
@@ -27,12 +28,34 @@ class MetadataService {
     int? index,
   }) {
     String baseName;
-    final indexStr = index != null ? index.toString().padLeft(2, '0') : '';
+    final indexStr = index != null
+        ? index.toString().padLeft(AppConstants.numberPaddingLength, '0')
+        : '';
 
-    final cleanArtist = artist.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
-    final cleanTitle = title.replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
-    final cleanAlbum = (album ?? '').replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
-    final cleanTrack = (track ?? '').replaceAll(RegExp(r'[\\/:*?"<>|]'), '_').trim();
+    final cleanArtist = artist
+        .replaceAll(
+          AppConstants.invalidFilenameChars,
+          AppConstants.invalidFilenameReplacement,
+        )
+        .trim();
+    final cleanTitle = title
+        .replaceAll(
+          AppConstants.invalidFilenameChars,
+          AppConstants.invalidFilenameReplacement,
+        )
+        .trim();
+    final cleanAlbum = (album ?? '')
+        .replaceAll(
+          AppConstants.invalidFilenameChars,
+          AppConstants.invalidFilenameReplacement,
+        )
+        .trim();
+    final cleanTrack = (track ?? '')
+        .replaceAll(
+          AppConstants.invalidFilenameChars,
+          AppConstants.invalidFilenameReplacement,
+        )
+        .trim();
 
     final artistValue = cleanArtist.isEmpty ? unknownArtist : cleanArtist;
     final titleValue = cleanTitle.isEmpty ? unknownTitle : cleanTitle;
@@ -66,7 +89,9 @@ class MetadataService {
 
     baseName = baseName.trim();
     if (baseName.isEmpty) {
-      baseName = cleanTitle.isNotEmpty ? cleanTitle : (cleanArtist.isNotEmpty ? cleanArtist : untitledTrack);
+      baseName = cleanTitle.isNotEmpty
+          ? cleanTitle
+          : (cleanArtist.isNotEmpty ? cleanArtist : untitledTrack);
     }
 
     final ext = extension.startsWith('.') ? extension : '.$extension';

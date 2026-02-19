@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import '../models/app_settings.dart';
+import '../constants.dart';
 
 class AppSettingsStore {
-  static const _fileName = 'remusic.settings.json';
+  static const _fileName = AppConstants.settingsFileName;
   AppSettings? _lastQueued;
   AppSettings? _lastSaved;
   Timer? _debounce;
@@ -30,7 +31,7 @@ class AppSettingsStore {
     if (_lastSaved == settings && _lastQueued == settings) return;
     _lastQueued = settings;
     _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 200), () async {
+    _debounce = Timer(AppConstants.settingsSaveDebounce, () async {
       final toSave = _lastQueued;
       if (toSave == null || _lastSaved == toSave) return;
       final saved = await _save(toSave);
@@ -51,14 +52,18 @@ class AppSettingsStore {
   }
 
   Future<bool> _save(AppSettings settings) async {
-    final content = const JsonEncoder.withIndent('  ').convert(settings.toJson());
+    final content = const JsonEncoder.withIndent(
+      AppConstants.jsonIndent,
+    ).convert(settings.toJson());
     final exeFile = File(_exeConfigPath());
     final userFile = File(_userConfigPath());
 
     // 如果 exe 目录下的配置文件已存在，或者当前不在系统受限目录且用户配置不存在
     // 则优先保存到 exe 目录（便携模式）
-    final preferExe = exeFile.existsSync() || (!_isSystemLocation() && !userFile.existsSync());
-    
+    final preferExe =
+        exeFile.existsSync() ||
+        (!_isSystemLocation() && !userFile.existsSync());
+
     if (preferExe) {
       if (await _tryWrite(exeFile, content)) return true;
       return _tryWrite(userFile, content);
@@ -85,13 +90,15 @@ class AppSettingsStore {
 
   bool _isSystemLocation() {
     final exeDir = File(Platform.resolvedExecutable).parent.path.toLowerCase();
-    return exeDir.contains('program files') || exeDir.contains('windowsapps');
+    return exeDir.contains(AppConstants.programFilesPath) ||
+        exeDir.contains(AppConstants.windowsAppsPath);
   }
 
   String _userConfigPath() {
-    final base = Platform.environment['LOCALAPPDATA'] ??
+    final base =
+        Platform.environment['LOCALAPPDATA'] ??
         Platform.environment['APPDATA'] ??
         Directory.current.path;
-    return p.join(base, 'ReMusic', _fileName);
+    return p.join(base, AppConstants.appName, _fileName);
   }
 }

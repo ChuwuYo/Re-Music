@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followSystem => 'Follow system';
 
   @override
-  String get chinese => '中文';
+  String get chinese => '简体中文';
 
   @override
   String get english => 'English';
@@ -225,4 +225,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidNumber => 'Please enter a valid number';
+
+  @override
+  String get sortAscending => 'Ascending';
+
+  @override
+  String get sortDescending => 'Descending';
 }

@@ -20,10 +20,13 @@ void main() async {
 
   final settings = await settingsStore.load();
   if (settings != null) {
-    localeController.setLocale(settings.locale == null ? null : Locale(settings.locale!));
+    localeController.setLocale(
+      settings.locale == null ? null : Locale(settings.locale!),
+    );
     themeController.setThemeMode(settings.themeMode);
     themeController.setSeedColor(settings.seedColor);
     audioProvider.setSortCriteria(settings.sortCriteria);
+    audioProvider.setSortAscending(settings.sortAscending);
     audioProvider.setPattern(settings.pattern);
     audioProvider.setFilter(settings.filter);
   }
@@ -34,6 +37,7 @@ void main() async {
       themeMode: themeController.themeMode,
       seedColor: themeController.seedColor,
       sortCriteria: audioProvider.sortCriteria,
+      sortAscending: audioProvider.sortAscending,
       pattern: audioProvider.pattern,
       filter: audioProvider.filter,
     ),
@@ -46,6 +50,7 @@ void main() async {
         themeMode: themeController.themeMode,
         seedColor: themeController.seedColor,
         sortCriteria: audioProvider.sortCriteria,
+        sortAscending: audioProvider.sortAscending,
         pattern: audioProvider.pattern,
         filter: audioProvider.filter,
       ),
@@ -84,7 +89,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = context.watch<LocaleController>().locale;
     final theme = context.watch<ThemeController>();
-    final seed = theme.seedColor.color;
+    final seed = theme.seedColorValue;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -113,11 +118,11 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         final l10n = AppLocalizations.of(context)!;
         context.read<AudioProvider>().setNamingPlaceholders(
-              unknownArtist: l10n.unknownArtist,
-              unknownTitle: l10n.unknownTitle,
-              unknownAlbum: l10n.unknownAlbum,
-              untitledTrack: l10n.untitledTrack,
-            );
+          unknownArtist: l10n.unknownArtist,
+          unknownTitle: l10n.unknownTitle,
+          unknownAlbum: l10n.unknownAlbum,
+          untitledTrack: l10n.untitledTrack,
+        );
         return child ?? const SizedBox.shrink();
       },
       home: const HomePage(),

@@ -21,7 +21,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get followSystem => '跟随系统';
 
   @override
-  String get chinese => '中文';
+  String get chinese => '简体中文';
 
   @override
   String get english => 'English';
@@ -225,4 +225,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get invalidNumber => '请输入有效的数字';
+
+  @override
+  String get sortAscending => '升序';
+
+  @override
+  String get sortDescending => '降序';
 }

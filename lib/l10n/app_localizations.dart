@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @chinese.
   ///
   /// In en, this message translates to:
-  /// **'中文'**
+  /// **'简体中文'**
   String get chinese;
 
   /// No description provided for @english.
@@ -517,6 +517,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid number'**
   String get invalidNumber;
+
+  /// No description provided for @sortAscending.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending'**
+  String get sortAscending;
+
+  /// No description provided for @sortDescending.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get sortDescending;
 }
 
 class _AppLocalizationsDelegate

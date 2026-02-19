@@ -4,7 +4,7 @@
   "clearList": "Clear list",
   "language": "Language",
   "followSystem": "Follow system",
-  "chinese": "中文",
+  "chinese": "简体中文",
   "english": "English",
   "switchToDark": "Switch to dark mode",
   "switchToLight": "Switch to light mode",
@@ -90,5 +90,7 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "close": "Close",
-  "invalidNumber": "Please enter a valid number"
+  "invalidNumber": "Please enter a valid number",
+  "sortAscending": "Ascending",
+  "sortDescending": "Descending"
 }

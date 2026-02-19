@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/audio_provider.dart';
 import '../services/file_service.dart';
 import 'smart_menu_anchor.dart';
+import '../constants.dart';
 
 class RenameControlPanel extends StatefulWidget {
   const RenameControlPanel({super.key});
@@ -96,8 +97,10 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                   ),
                 ),
                 _FilterMenu(),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppConstants.spacingSmall),
                 _SortMenu(),
+                const SizedBox(width: AppConstants.spacingSmall),
+                _SortOrderButton(),
               ],
             ),
             const SizedBox(height: 16),
@@ -123,7 +126,8 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                         label: _patternLabel(l10n, pattern),
                         trailingIcon: Text(
                           pattern,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
@@ -169,17 +173,23 @@ class _FilterMenu extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.all),
-              leadingIcon: provider.filter == FileFilter.all ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.all
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showAll),
             ),
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.valid),
-              leadingIcon: provider.filter == FileFilter.valid ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.valid
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showNoRenameNeeded),
             ),
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.invalid),
-              leadingIcon: provider.filter == FileFilter.invalid ? const Icon(Icons.check) : const SizedBox(width: 24),
+              leadingIcon: provider.filter == FileFilter.invalid
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.showNeedRename),
             ),
           ],
@@ -208,25 +218,62 @@ class _SortMenu extends StatelessWidget {
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.sortBy('name'),
+              leadingIcon: provider.sortCriteria == 'name'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByName),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('artist'),
+              leadingIcon: provider.sortCriteria == 'artist'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByArtist),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('title'),
+              leadingIcon: provider.sortCriteria == 'title'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByTitle),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('size'),
+              leadingIcon: provider.sortCriteria == 'size'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
               onPressed: () => provider.sortBy('date'),
+              leadingIcon: provider.sortCriteria == 'date'
+                  ? const Icon(Icons.check)
+                  : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _SortOrderButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AudioProvider>(
+      builder: (context, provider, child) {
+        final l10n = AppLocalizations.of(context)!;
+        return IconButton(
+          tooltip: provider.sortAscending
+              ? l10n.sortAscending
+              : l10n.sortDescending,
+          icon: Icon(
+            provider.sortAscending
+                ? Icons.keyboard_arrow_up
+                : Icons.keyboard_arrow_down,
+          ),
+          onPressed: () => provider.toggleSortOrder(),
         );
       },
     );

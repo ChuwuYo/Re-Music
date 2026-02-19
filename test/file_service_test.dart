@@ -5,23 +5,25 @@ import 'package:path/path.dart' as p;
 import 'package:remusic/services/file_service.dart';
 
 void main() {
-  test('renameFile strips directory components and keeps file in original dir',
-      () async {
-    final dir = await Directory.systemTemp.createTemp('remusic_test_');
-    try {
-      final oldPath = p.join(dir.path, 'a.txt');
-      await File(oldPath).writeAsString('x');
+  test(
+    'renameFile strips directory components and keeps file in original dir',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('remusic_test_');
+      try {
+        final oldPath = p.join(dir.path, 'a.txt');
+        await File(oldPath).writeAsString('x');
 
-      final ok = await FileService.renameFile(oldPath, '..\\evil.txt');
-      expect(ok, isTrue);
+        final ok = await FileService.renameFile(oldPath, '..\\evil.txt');
+        expect(ok, isTrue);
 
-      final expectedNewPath = p.join(dir.path, 'evil.txt');
-      expect(await File(expectedNewPath).exists(), isTrue);
-      expect(await File(oldPath).exists(), isFalse);
-    } finally {
-      await dir.delete(recursive: true);
-    }
-  });
+        final expectedNewPath = p.join(dir.path, 'evil.txt');
+        expect(await File(expectedNewPath).exists(), isTrue);
+        expect(await File(oldPath).exists(), isFalse);
+      } finally {
+        await dir.delete(recursive: true);
+      }
+    },
+  );
 
   test('renameFile rejects empty/dot names', () async {
     final dir = await Directory.systemTemp.createTemp('remusic_test_');

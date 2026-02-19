@@ -6,6 +6,7 @@ import '../providers/audio_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/theme_provider.dart';
 import 'smart_menu_anchor.dart';
+import '../constants.dart';
 
 class ReMusicToolbarRow extends StatelessWidget {
   const ReMusicToolbarRow({super.key});
@@ -43,7 +44,9 @@ class ReMusicToolbarRow extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
+            bottom: BorderSide(
+              color: scheme.outlineVariant.withValues(alpha: 0.7),
+            ),
           ),
         ),
         child: SizedBox(
@@ -57,20 +60,26 @@ class ReMusicToolbarRow extends StatelessWidget {
                 icon: const Icon(Icons.language),
                 menuChildren: [
                   MenuItemButton(
-                    onPressed: () => context.read<LocaleController>().setLocale(null),
-                    leadingIcon:
-                        localeController.locale == null ? const Icon(Icons.check) : const SizedBox(width: 24),
+                    onPressed: () =>
+                        context.read<LocaleController>().setLocale(null),
+                    leadingIcon: localeController.locale == null
+                        ? const Icon(Icons.check)
+                        : const SizedBox(width: 24),
                     child: Text(l10n.followSystem),
                   ),
                   MenuItemButton(
-                    onPressed: () => context.read<LocaleController>().setLocale(const Locale('zh')),
+                    onPressed: () => context.read<LocaleController>().setLocale(
+                      const Locale('zh'),
+                    ),
                     leadingIcon: localeController.locale?.languageCode == 'zh'
                         ? const Icon(Icons.check)
                         : const SizedBox(width: 24),
                     child: Text(l10n.chinese),
                   ),
                   MenuItemButton(
-                    onPressed: () => context.read<LocaleController>().setLocale(const Locale('en')),
+                    onPressed: () => context.read<LocaleController>().setLocale(
+                      const Locale('en'),
+                    ),
                     leadingIcon: localeController.locale?.languageCode == 'en'
                         ? const Icon(Icons.check)
                         : const SizedBox(width: 24),
@@ -79,9 +88,14 @@ class ReMusicToolbarRow extends StatelessWidget {
                 ],
               ),
               IconButton(
-                tooltip: themeController.isDark ? l10n.switchToLight : l10n.switchToDark,
-                icon: Icon(themeController.isDark ? Icons.light_mode : Icons.dark_mode),
-                onPressed: () => context.read<ThemeController>().toggleThemeMode(),
+                tooltip: themeController.isDark
+                    ? l10n.switchToLight
+                    : l10n.switchToDark,
+                icon: Icon(
+                  themeController.isDark ? Icons.light_mode : Icons.dark_mode,
+                ),
+                onPressed: () =>
+                    context.read<ThemeController>().toggleThemeMode(),
               ),
               SmartMenuAnchor(
                 useFilledButton: false,
@@ -91,8 +105,11 @@ class ReMusicToolbarRow extends StatelessWidget {
                 menuChildren: AppSeedColor.values.map((seed) {
                   final selected = themeController.seedColor;
                   return MenuItemButton(
-                    onPressed: () => context.read<ThemeController>().setSeedColor(seed),
-                    leadingIcon: seed == selected ? const Icon(Icons.check) : const SizedBox(width: 24),
+                    onPressed: () =>
+                        context.read<ThemeController>().setSeedColor(seed),
+                    leadingIcon: seed == selected
+                        ? const Icon(Icons.check)
+                        : const SizedBox(width: 24),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -115,7 +132,9 @@ class ReMusicToolbarRow extends StatelessWidget {
                 builder: (context, provider, child) {
                   return IconButton(
                     icon: const Icon(Icons.delete_sweep_outlined),
-                    onPressed: provider.totalFilesCount == 0 ? null : () => provider.clearFiles(),
+                    onPressed: provider.totalFilesCount == 0
+                        ? null
+                        : () => provider.clearFiles(),
                     tooltip: l10n.clearList,
                   );
                 },

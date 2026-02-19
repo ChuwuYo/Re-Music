@@ -1,36 +1,13 @@
 import 'package:flutter/material.dart';
-
-enum AppSeedColor { teal, blue, indigo, purple, pink, orange, green, red }
-
-extension AppSeedColorExtension on AppSeedColor {
-  Color get color {
-    switch (this) {
-      case AppSeedColor.teal:
-        return Colors.teal;
-      case AppSeedColor.blue:
-        return Colors.blue;
-      case AppSeedColor.indigo:
-        return Colors.indigo;
-      case AppSeedColor.purple:
-        return Colors.purple;
-      case AppSeedColor.pink:
-        return Colors.pink;
-      case AppSeedColor.orange:
-        return Colors.orange;
-      case AppSeedColor.green:
-        return Colors.green;
-      case AppSeedColor.red:
-        return Colors.red;
-    }
-  }
-}
+import '../constants.dart';
 
 class ThemeController extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.light;
-  AppSeedColor _seedColor = AppSeedColor.teal;
+  ThemeMode _themeMode = AppConstants.defaultThemeMode;
+  AppSeedColor _seedColor = AppConstants.defaultSeedColor;
 
   ThemeMode get themeMode => _themeMode;
   AppSeedColor get seedColor => _seedColor;
+  Color get seedColorValue => _seedColor.color;
 
   bool get isDark => _themeMode == ThemeMode.dark;
 
