@@ -37,17 +37,26 @@ lib/
 ├── providers/
 │   ├── audio_provider.dart     # Core audio file state management
 │   ├── locale_provider.dart
+│   ├── navigation_provider.dart # Page navigation state (home / settings)
 │   └── theme_provider.dart
 ├── screens/
-│   └── home_page.dart          # Main page
+│   ├── home_page.dart          # Main page shell (UI assembly only)
+│   └── settings_page.dart      # Settings page shell (UI assembly only)
 ├── services/
 │   ├── file_service.dart       # File operations (pick, scan, rename)
 │   ├── metadata_service.dart   # Audio metadata reading/formatting
 │   └── settings_service.dart   # Settings persistence
-├── widgets/                    # UI components
-│   ├── left_sidebar.dart       # Left sidebar (language, theme, color, etc.)
-│   ├── rename_control_panel.dart # Rename pattern configuration
-│   └── ...
+├── widgets/
+│   ├── common/                 # Shared layout widgets
+│   │   ├── left_sidebar.dart
+│   │   ├── metadata_edit_dialog.dart
+│   │   ├── smart_menu_anchor.dart
+│   │   └── title_bar.dart
+│   └── home/                   # Home page specific widgets
+│       ├── bottom_right_panel.dart
+│       ├── file_list_item.dart
+│       ├── list_states.dart
+│       └── rename_control_panel.dart
 └── l10n/                       # Internationalization (ARB files)
 ```
 

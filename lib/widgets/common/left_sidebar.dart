@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../constants.dart';
-import '../l10n/app_localizations.dart';
-import '../providers/audio_provider.dart';
-import '../providers/locale_provider.dart';
-import '../providers/navigation_provider.dart';
-import '../providers/theme_provider.dart';
+import '../../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/audio_provider.dart';
+import '../../providers/locale_provider.dart';
+import '../../providers/navigation_provider.dart';
+import '../../providers/theme_provider.dart';
 
 /// 左侧竖向工具栏：支持展开（图标+文字）和收起（仅图标）两种状态。
 /// 窗口宽度小于 [AppConstants.sidebarAutoCollapseWidth] 时自动收起。

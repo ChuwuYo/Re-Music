@@ -5,12 +5,12 @@ import '../constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/audio_provider.dart';
 import '../providers/navigation_provider.dart';
-import '../widgets/bottom_right_panel.dart';
-import '../widgets/file_list_item.dart';
-import '../widgets/left_sidebar.dart';
-import '../widgets/list_states.dart';
-import '../widgets/rename_control_panel.dart';
-import '../widgets/title_bar.dart';
+import '../widgets/common/left_sidebar.dart';
+import '../widgets/common/title_bar.dart';
+import '../widgets/home/bottom_right_panel.dart';
+import '../widgets/home/file_list_item.dart';
+import '../widgets/home/list_states.dart';
+import '../widgets/home/rename_control_panel.dart';
 import 'settings_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -36,7 +36,10 @@ class HomePage extends StatelessWidget {
                     switchOutCurve: Curves.easeInOut,
                     transitionBuilder: (child, animation) {
                       final offsetAnimation = Tween<Offset>(
-                        begin: const Offset(0.03, 0),
+                        begin: const Offset(
+                          AppConstants.pageTransitionSlideOffset,
+                          0,
+                        ),
                         end: Offset.zero,
                       ).animate(animation);
                       return FadeTransition(
@@ -90,7 +93,9 @@ class _HomeContent extends StatelessWidget {
                   )
                 else
                   SliverPadding(
-                    padding: const EdgeInsets.only(bottom: 80),
+                    padding: const EdgeInsets.only(
+                      bottom: AppConstants.homeListBottomPadding,
+                    ),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) =>

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../../constants.dart';
 
 /// A robust MenuAnchor wrapper that handles positioning logic intelligently.
 /// Ensures the menu is centered below the anchor button and stays within the viewport.
@@ -178,9 +178,7 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       painter.dispose();
     }
 
-    final estimated =
-        maxLabelWidth +
-        AppConstants.menuPaddingAndIconSpace; // Padding + Icon space
+    final estimated = maxLabelWidth + AppConstants.menuPaddingAndIconSpace;
     if (estimated < minWidth) return minWidth;
     if (estimated > maxWidth) return maxWidth;
     return estimated;

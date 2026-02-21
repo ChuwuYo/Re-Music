@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../l10n/app_localizations.dart';
-import '../providers/audio_provider.dart';
-import '../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/audio_provider.dart';
+import '../../constants.dart';
 
 class BottomRightPanel extends StatelessWidget {
   const BottomRightPanel({super.key});

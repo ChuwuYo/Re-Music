@@ -116,6 +116,12 @@ class AppConstants {
   static const double highlightBlurRadius = 12.0;
   static const double highlightOffsetY = -2.0;
 
+  /// 主页文件列表底部留白（为 BottomRightPanel 悬浮面板预留空间）
+  static const double homeListBottomPadding = 80.0;
+
+  /// 页面切换动画横向位移量（AnimatedSwitcher slide offset）
+  static const double pageTransitionSlideOffset = 0.03;
+
   /// 对话框相关常量
   static const double dialogMaxWidth = 720.0;
   static const double dialogMaxHeight = 640.0;

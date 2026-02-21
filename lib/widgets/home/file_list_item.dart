@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:remusic/l10n/app_localizations.dart';
-import '../models/audio_file.dart';
-import 'metadata_edit_dialog.dart';
-import '../constants.dart';
+
+import '../../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../models/audio_file.dart';
+import '../common/metadata_edit_dialog.dart';
 
 class FileListItem extends StatelessWidget {
   final AudioFile file;

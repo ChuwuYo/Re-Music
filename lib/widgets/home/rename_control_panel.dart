@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../l10n/app_localizations.dart';
-import '../providers/audio_provider.dart';
-import '../services/file_service.dart';
-import 'smart_menu_anchor.dart';
-import '../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/audio_provider.dart';
+import '../../services/file_service.dart';
+import '../common/smart_menu_anchor.dart';
+import '../../constants.dart';
 
 class RenameControlPanel extends StatefulWidget {
   const RenameControlPanel({super.key});
@@ -226,45 +226,39 @@ class _SortMenu extends StatelessWidget {
         return SmartMenuAnchor(
           tooltip: l10n.sort,
           icon: const Icon(Icons.sort),
-          widthEstimationLabels: [
-            l10n.sortByName,
-            l10n.sortByArtist,
-            l10n.sortByTitle,
-            l10n.sortBySize,
-            l10n.sortByModifiedTime,
-          ],
+          estimatedMenuWidth: 220,
           menuChildren: [
             MenuItemButton(
-              onPressed: () => provider.sortBy('name'),
+              onPressed: () => provider.setSortCriteria('name'),
               leadingIcon: provider.sortCriteria == 'name'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByName),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('artist'),
+              onPressed: () => provider.setSortCriteria('artist'),
               leadingIcon: provider.sortCriteria == 'artist'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByArtist),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('title'),
+              onPressed: () => provider.setSortCriteria('title'),
               leadingIcon: provider.sortCriteria == 'title'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByTitle),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('size'),
+              onPressed: () => provider.setSortCriteria('size'),
               leadingIcon: provider.sortCriteria == 'size'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('date'),
-              leadingIcon: provider.sortCriteria == 'date'
+              onPressed: () => provider.setSortCriteria('modified'),
+              leadingIcon: provider.sortCriteria == 'modified'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),
@@ -282,16 +276,11 @@ class _SortOrderButton extends StatelessWidget {
     return Consumer<AudioProvider>(
       builder: (context, provider, child) {
         final l10n = AppLocalizations.of(context)!;
+        final ascending = provider.sortAscending;
         return IconButton(
-          tooltip: provider.sortAscending
-              ? l10n.sortDescending
-              : l10n.sortAscending,
-          icon: Icon(
-            provider.sortAscending
-                ? Icons.keyboard_arrow_up
-                : Icons.keyboard_arrow_down,
-          ),
-          onPressed: () => provider.toggleSortOrder(),
+          tooltip: ascending ? l10n.sortAscending : l10n.sortDescending,
+          icon: Icon(ascending ? Icons.arrow_upward : Icons.arrow_downward),
+          onPressed: () => provider.setSortAscending(!ascending),
         );
       },
     );
