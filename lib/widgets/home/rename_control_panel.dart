@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../l10n/app_localizations.dart';
-import '../providers/audio_provider.dart';
-import '../services/file_service.dart';
-import 'smart_menu_anchor.dart';
-import '../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../providers/audio_provider.dart';
+import '../../services/file_service.dart';
+import '../common/smart_menu_anchor.dart';
+import '../../constants.dart';
 
 class RenameControlPanel extends StatefulWidget {
   const RenameControlPanel({super.key});
@@ -25,8 +25,22 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
     _patternController.addListener(_onPatternChanged);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // locale 切换时 DropdownMenu 重建可能短暂清空 controller，
+    // 以 provider 的 pattern 为准恢复显示
+    final providerPattern = context.read<AudioProvider>().pattern;
+    if (_patternController.text.isEmpty && providerPattern.isNotEmpty) {
+      _patternController.text = providerPattern;
+    }
+  }
+
   void _onPatternChanged() {
-    context.read<AudioProvider>().setPattern(_patternController.text);
+    if (!mounted) return;
+    final text = _patternController.text;
+    if (text.isEmpty) return; // 忽略 DropdownMenu 重建期间的临时空值
+    context.read<AudioProvider>().setPattern(text);
   }
 
   @override
@@ -106,8 +120,9 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
+                final dropWidth = constraints.maxWidth;
                 return DropdownMenu<String>(
-                  width: constraints.maxWidth,
+                  width: dropWidth,
                   controller: _patternController,
                   label: Text(l10n.namingMode),
                   hintText: l10n.namingModeHint('{artist}', '{title}'),
@@ -142,7 +157,7 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                   onSelected: (value) {
                     if (value != null && value.isNotEmpty) {
                       _patternController.text = value;
-                      context.read<AudioProvider>().setPattern(value);
+                      // setPattern is invoked by _patternController listener
                     }
                   },
                 );
@@ -169,7 +184,11 @@ class _FilterMenu extends StatelessWidget {
                 ? Theme.of(context).colorScheme.primary
                 : null,
           ),
-          estimatedMenuWidth: 200,
+          widthEstimationLabels: [
+            l10n.showAll,
+            l10n.showNoRenameNeeded,
+            l10n.showNeedRename,
+          ],
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.all),
@@ -217,36 +236,36 @@ class _SortMenu extends StatelessWidget {
           ],
           menuChildren: [
             MenuItemButton(
-              onPressed: () => provider.sortBy('name'),
+              onPressed: () => provider.setSortCriteria('name'),
               leadingIcon: provider.sortCriteria == 'name'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByName),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('artist'),
+              onPressed: () => provider.setSortCriteria('artist'),
               leadingIcon: provider.sortCriteria == 'artist'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByArtist),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('title'),
+              onPressed: () => provider.setSortCriteria('title'),
               leadingIcon: provider.sortCriteria == 'title'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByTitle),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('size'),
+              onPressed: () => provider.setSortCriteria('size'),
               leadingIcon: provider.sortCriteria == 'size'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
-              onPressed: () => provider.sortBy('date'),
-              leadingIcon: provider.sortCriteria == 'date'
+              onPressed: () => provider.setSortCriteria('modified'),
+              leadingIcon: provider.sortCriteria == 'modified'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),
@@ -264,16 +283,11 @@ class _SortOrderButton extends StatelessWidget {
     return Consumer<AudioProvider>(
       builder: (context, provider, child) {
         final l10n = AppLocalizations.of(context)!;
+        final ascending = provider.sortAscending;
         return IconButton(
-          tooltip: provider.sortAscending
-              ? l10n.sortAscending
-              : l10n.sortDescending,
-          icon: Icon(
-            provider.sortAscending
-                ? Icons.keyboard_arrow_up
-                : Icons.keyboard_arrow_down,
-          ),
-          onPressed: () => provider.toggleSortOrder(),
+          tooltip: ascending ? l10n.sortAscending : l10n.sortDescending,
+          icon: Icon(ascending ? Icons.arrow_upward : Icons.arrow_downward),
+          onPressed: () => provider.setSortAscending(!ascending),
         );
       },
     );

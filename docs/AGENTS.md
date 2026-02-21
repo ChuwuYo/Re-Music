@@ -32,19 +32,31 @@ lib/
 ├── constants.dart              # All constants centralized here
 ├── main.dart                   # App entry point
 ├── models/
-│   ├── app_settings.dart       # Settings model
+│   ├── app_configs.dart        # App configuration model
 │   └── audio_file.dart         # Audio file model
 ├── providers/
 │   ├── audio_provider.dart     # Core audio file state management
 │   ├── locale_provider.dart
+│   ├── navigation_provider.dart # Page navigation state (home / settings)
 │   └── theme_provider.dart
 ├── screens/
-│   └── home_page.dart          # Main page
+│   ├── home_page.dart          # Main page shell (UI assembly only)
+│   └── settings_page.dart      # Settings page shell (UI assembly only)
 ├── services/
 │   ├── file_service.dart       # File operations (pick, scan, rename)
 │   ├── metadata_service.dart   # Audio metadata reading/formatting
-│   └── settings_service.dart   # Settings persistence
-├── widgets/                    # UI components
+│   └── configs_service.dart    # Configs persistence
+├── widgets/
+│   ├── common/                 # Shared layout widgets
+│   │   ├── left_sidebar.dart
+│   │   ├── metadata_edit_dialog.dart
+│   │   ├── smart_menu_anchor.dart
+│   │   └── title_bar.dart
+│   └── home/                   # Home page specific widgets
+│       ├── bottom_right_panel.dart
+│       ├── file_list_item.dart
+│       ├── list_states.dart
+│       └── rename_control_panel.dart
 └── l10n/                       # Internationalization (ARB files)
 ```
 
@@ -52,15 +64,15 @@ lib/
 
 ### Prerequisites
 
-*   Flutter SDK (3.10.8+)
+*   Flutter SDK (>= 3.38.6)
 *   Visual Studio C++ Tools
 
 ### Getting Started
 
 ```bash
 # Clone the project
-git clone https://github.com/ChuwuYo/ReMusic.git
-cd ReMusic
+git clone https://github.com/ChuwuYo/Re-Music.git
+cd Re-Music
 
 # Install dependencies
 flutter pub get
@@ -105,6 +117,31 @@ Build output: `build/windows/runner/Release/`
 - Run all tests: `flutter test`
 - Run specific test: `flutter test test/file_service_test.dart`
 - **All tests must pass before committing.**
+
+## Architecture Guidelines
+
+### Feature Modularity
+
+- **Screen files** (`lib/screens/`) are **UI-only** — they assemble widgets and wire up providers, but contain no business logic.
+- Each feature is self-contained:
+  - UI sections live in `lib/widgets/<feature>/` (one file per logical section).
+  - State and business logic live in `lib/providers/<feature>_provider.dart`.
+  - I/O, persistence, or external calls live in `lib/services/<feature>_service.dart`.
+- No logic (computation, I/O, state mutation) belongs in screen or widget files — dispatch to a provider or service instead.
+
+Standard layout when adding a new feature:
+```
+lib/
+├── providers/
+│   └── <feature>_provider.dart     # State + business logic
+├── services/
+│   └── <feature>_service.dart      # Persistence / I/O (if needed)
+├── screens/
+│   └── <feature>_page.dart         # UI assembly only
+└── widgets/
+    └── <feature>/
+        └── <section>_widget.dart   # Reusable UI sections
+```
 
 ## Code Style Guidelines
 

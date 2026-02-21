@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:remusic/main.dart';
 import 'package:remusic/providers/audio_provider.dart';
 import 'package:remusic/providers/locale_provider.dart';
+import 'package:remusic/providers/navigation_provider.dart';
 import 'package:remusic/providers/theme_provider.dart';
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
     final audioProvider = AudioProvider();
     final localeController = LocaleController();
     final themeController = ThemeController();
+    final navigationController = NavigationController();
 
     await tester.pumpWidget(
       MultiProvider(
@@ -19,6 +21,7 @@ void main() {
           ChangeNotifierProvider.value(value: audioProvider),
           ChangeNotifierProvider.value(value: localeController),
           ChangeNotifierProvider.value(value: themeController),
+          ChangeNotifierProvider.value(value: navigationController),
         ],
         child: const MyApp(),
       ),

@@ -529,6 +529,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Descending'**
   String get sortDescending;
+
+  /// No description provided for @sidebarExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand sidebar'**
+  String get sidebarExpand;
+
+  /// No description provided for @sidebarCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse sidebar'**
+  String get sidebarCollapse;
+
+  /// No description provided for @sidebarTooNarrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Window too narrow — resize to expand'**
+  String get sidebarTooNarrow;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
 }
 
 class _AppLocalizationsDelegate

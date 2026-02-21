@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'l10n/app_localizations.dart';
-import 'models/app_settings.dart';
+import 'models/app_configs.dart';
 import 'providers/audio_provider.dart';
 import 'providers/locale_provider.dart';
+import 'providers/navigation_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_page.dart';
-import 'services/settings_service.dart';
+import 'services/configs_service.dart';
+import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  final settingsStore = AppSettingsStore();
+  final configsStore = AppConfigsStore();
   final audioProvider = AudioProvider();
   final localeController = LocaleController();
   final themeController = ThemeController();
+  final navigationController = NavigationController();
 
-  final settings = await settingsStore.load();
+  final settings = await configsStore.load();
   if (settings != null) {
     localeController.setLocale(
       settings.locale == null ? null : Locale(settings.locale!),
@@ -31,8 +34,8 @@ void main() async {
     audioProvider.setFilter(settings.filter);
   }
 
-  settingsStore.setBaseline(
-    AppSettings(
+  configsStore.setBaseline(
+    AppConfigs(
       locale: localeController.locale?.languageCode,
       themeMode: themeController.themeMode,
       seedColor: themeController.seedColor,
@@ -44,8 +47,8 @@ void main() async {
   );
 
   void scheduleSave() {
-    settingsStore.scheduleSave(
-      AppSettings(
+    configsStore.scheduleSave(
+      AppConfigs(
         locale: localeController.locale?.languageCode,
         themeMode: themeController.themeMode,
         seedColor: themeController.seedColor,
@@ -62,6 +65,14 @@ void main() async {
   audioProvider.addListener(scheduleSave);
 
   const windowOptions = WindowOptions(
+    size: Size(
+      AppConstants.defaultWindowWidth,
+      AppConstants.defaultWindowHeight,
+    ),
+    minimumSize: Size(
+      AppConstants.minimumWindowWidth,
+      AppConstants.minimumWindowHeight,
+    ),
     titleBarStyle: TitleBarStyle.hidden,
     windowButtonVisibility: false,
   );
@@ -76,6 +87,7 @@ void main() async {
         ChangeNotifierProvider.value(value: audioProvider),
         ChangeNotifierProvider.value(value: localeController),
         ChangeNotifierProvider.value(value: themeController),
+        ChangeNotifierProvider.value(value: navigationController),
       ],
       child: const MyApp(),
     ),
@@ -117,12 +129,16 @@ class MyApp extends StatelessWidget {
       themeMode: theme.themeMode,
       builder: (context, child) {
         final l10n = AppLocalizations.of(context)!;
-        context.read<AudioProvider>().setNamingPlaceholders(
-          unknownArtist: l10n.unknownArtist,
-          unknownTitle: l10n.unknownTitle,
-          unknownAlbum: l10n.unknownAlbum,
-          untitledTrack: l10n.untitledTrack,
-        );
+        // 延迟到帧末执行，避免在 build 阶段调用 notifyListeners 导致竞争
+        final audioProvider = context.read<AudioProvider>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          audioProvider.setNamingPlaceholders(
+            unknownArtist: l10n.unknownArtist,
+            unknownTitle: l10n.unknownTitle,
+            unknownAlbum: l10n.unknownAlbum,
+            untitledTrack: l10n.untitledTrack,
+          );
+        });
         return child ?? const SizedBox.shrink();
       },
       home: const HomePage(),

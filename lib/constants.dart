@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 /// 集中管理项目中的所有常量，提高代码可维护性
 
 class AppConstants {
+  AppConstants._();
+
   /// 支持的音频文件扩展名
   static const List<String> supportedAudioExtensions = [
     'mp3',
@@ -69,10 +71,13 @@ class AppConstants {
   static const String defaultUntitledTrack = 'Untitled track';
 
   /// 窗口配置
-  static const double defaultWindowWidth = 1200;
-  static const double defaultWindowHeight = 800;
-  static const double minimumWindowWidth = 800;
+  static const double defaultWindowWidth = 1440;
+  static const double defaultWindowHeight = 900;
+  static const double minimumWindowWidth = 860;
   static const double minimumWindowHeight = 600;
+
+  /// 左侧栏响应式：窗口宽度低于此值时自动收起
+  static const double sidebarAutoCollapseWidth = 1000.0;
 
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;
@@ -89,6 +94,9 @@ class AppConstants {
   /// 动画时长
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
   static const Duration fastAnimationDuration = Duration(milliseconds: 150);
+
+  /// 元数据并发读取数量上限
+  static const int metadataConcurrency = 8;
 
   /// 设置相关常量
   static const String settingsFileName = 'remusic.settings.json';
@@ -110,6 +118,12 @@ class AppConstants {
   static const double shadowOffsetY = 8.0;
   static const double highlightBlurRadius = 12.0;
   static const double highlightOffsetY = -2.0;
+
+  /// 主页文件列表底部留白（为 BottomRightPanel 悬浮面板预留空间）
+  static const double homeListBottomPadding = 80.0;
+
+  /// 页面切换动画横向位移量（AnimatedSwitcher slide offset）
+  static const double pageTransitionSlideOffset = 0.03;
 
   /// 对话框相关常量
   static const double dialogMaxWidth = 720.0;
@@ -166,61 +180,10 @@ extension AppSeedColorExtension on AppSeedColor {
         return Colors.red;
     }
   }
-
-  String get name {
-    switch (this) {
-      case AppSeedColor.teal:
-        return 'teal';
-      case AppSeedColor.blue:
-        return 'blue';
-      case AppSeedColor.indigo:
-        return 'indigo';
-      case AppSeedColor.purple:
-        return 'purple';
-      case AppSeedColor.pink:
-        return 'pink';
-      case AppSeedColor.orange:
-        return 'orange';
-      case AppSeedColor.green:
-        return 'green';
-      case AppSeedColor.red:
-        return 'red';
-    }
-  }
-}
-
-/// 排序标准枚举
-enum SortCriteria { name, artist, title, size, date }
-
-extension SortCriteriaExtension on SortCriteria {
-  String get value {
-    switch (this) {
-      case SortCriteria.name:
-        return 'name';
-      case SortCriteria.artist:
-        return 'artist';
-      case SortCriteria.title:
-        return 'title';
-      case SortCriteria.size:
-        return 'size';
-      case SortCriteria.date:
-        return 'date';
-    }
-  }
 }
 
 /// 处理状态枚举
 enum ProcessingStatus { pending, success, error }
 
-extension ProcessingStatusExtension on ProcessingStatus {
-  String get name {
-    switch (this) {
-      case ProcessingStatus.pending:
-        return 'pending';
-      case ProcessingStatus.success:
-        return 'success';
-      case ProcessingStatus.error:
-        return 'error';
-    }
-  }
-}
+/// 应用页面枚举
+enum AppPage { home, settings }

@@ -92,5 +92,10 @@
   "close": "Close",
   "invalidNumber": "Please enter a valid number",
   "sortAscending": "Ascending",
-  "sortDescending": "Descending"
+  "sortDescending": "Descending",
+  "sidebarExpand": "Expand sidebar",
+  "sidebarCollapse": "Collapse sidebar",
+  "sidebarTooNarrow": "Window too narrow — resize to expand",
+  "navHome": "Home",
+  "navSettings": "Settings"
 }

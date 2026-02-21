@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/app_localizations.dart';
-import '../constants.dart';
+import '../../l10n/app_localizations.dart';
+import '../../constants.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key});

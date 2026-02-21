@@ -1,11 +1,12 @@
 ﻿name: remusic
-description: "A new Flutter project."
+description: "A modern audio file management tool with batch renaming, tag editing, and audio resampling"
 publish_to: 'none'
 
-version: 0.0.4+6
+version: 0.0.8+20
 
 environment:
   sdk: ^3.10.8
+  flutter: ">=3.38.6"
 
 dependencies:
   flutter:

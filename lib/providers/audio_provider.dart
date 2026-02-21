@@ -46,13 +46,6 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSortOrder() {
-    _sortAscending = !_sortAscending;
-    _sortFiles(_sortCriteria);
-    _updateNewFileNames();
-    notifyListeners();
-  }
-
   void setSortAscending(bool ascending) {
     if (_sortAscending == ascending) return;
     _sortAscending = ascending;
@@ -229,31 +222,32 @@ class AudioProvider extends ChangeNotifier {
   }
 
   Future<void> _fetchMetadata(List<AudioFile> filesToProcess) async {
-    int count = 0;
-    for (final file in filesToProcess) {
-      final metadata = await MetadataService.getMetadata(file.path);
-      if (metadata != null) {
-        file.metadata = metadata;
-        file.status = ProcessingStatus.success;
-        file.newFileName = MetadataService.formatNewFileName(
-          artist: file.artist,
-          title: file.title,
-          album: file.album,
-          track: file.track,
-          extension: file.extension,
-          pattern: _pattern,
-          unknownArtist: _unknownArtist,
-          unknownTitle: _unknownTitle,
-          unknownAlbum: _unknownAlbum,
-          untitledTrack: _untitledTrack,
-          index: _files.indexOf(file) + 1,
-        );
-      } else {
-        file.status = ProcessingStatus.error;
-        file.errorMessage = 'metadataReadFailed';
-      }
-      count++;
-      _progress = count / filesToProcess.length;
+    int completed = 0;
+    final total = filesToProcess.length;
+
+    for (int i = 0; i < total; i += AppConstants.metadataConcurrency) {
+      final chunk = filesToProcess
+          .skip(i)
+          .take(AppConstants.metadataConcurrency);
+      await Future.wait(
+        chunk.map((file) async {
+          try {
+            final metadata = await MetadataService.getMetadata(file.path);
+            if (metadata != null) {
+              file.metadata = metadata;
+              file.status = ProcessingStatus.success;
+            } else {
+              file.status = ProcessingStatus.error;
+              file.errorMessage = 'metadataReadFailed';
+            }
+          } catch (e) {
+            file.status = ProcessingStatus.error;
+            file.errorMessage = e.toString();
+          }
+          completed++;
+          _progress = completed / total;
+        }),
+      );
       notifyListeners();
     }
 
@@ -289,6 +283,7 @@ class AudioProvider extends ChangeNotifier {
     }
 
     var successCount = 0;
+    final stopwatch = Stopwatch()..start();
     for (var i = 0; i < filesToRename.length; i++) {
       final file = filesToRename[i];
       final success = await FileService.renameFile(
@@ -299,20 +294,18 @@ class AudioProvider extends ChangeNotifier {
         successCount++;
       }
       _progress = (i + 1) / filesToRename.length;
-      notifyListeners();
+
+      // Throttle UI updates to ~60fps (16ms) or update on the last item
+      if (stopwatch.elapsedMilliseconds > 16 || i == filesToRename.length - 1) {
+        notifyListeners();
+        stopwatch.reset();
+      }
     }
 
     await clearFiles();
     _isProcessing = false;
     notifyListeners();
     return successCount;
-  }
-
-  void sortBy(String criteria) {
-    _sortCriteria = criteria;
-    _sortFiles(criteria);
-    _updateNewFileNames();
-    notifyListeners();
   }
 
   void _sortFiles(String criteria) {
@@ -341,7 +334,7 @@ class AudioProvider extends ChangeNotifier {
           return _sortAscending ? cmp : -cmp;
         });
         return;
-      case 'date':
+      case 'modified':
         _files.sort((a, b) {
           final cmp = a.modified.compareTo(b.modified);
           return _sortAscending ? cmp : -cmp;

@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
-import '../constants.dart';
+
+import '../../constants.dart';
 
 class ReMusicTitleBar extends StatefulWidget {
   const ReMusicTitleBar({super.key, required this.title});

@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <b>A modern music tag manager and batch renaming tool</b>
+  <b>A modern audio file management tool with batch renaming, tag editing, and audio resampling</b>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
 
 ## Introduction
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and music tag editing (WIP).
+**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata, music tag editing, online metadata retrieval (WIP), and audio resampling with format conversion (WIP)
 
 ## Preview
 
@@ -29,14 +29,17 @@
 
 ## Key Features
 
-*   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration.
-*   **Music Tag Editing (WIP)**: Allows editing of audio metadata, with batch modification and saving capabilities.
-*   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting.
-*   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English.
+*   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration
+*   **Music Tag Editing**: Allows editing of audio metadata, with batch modification and saving capabilities
+*   **Online Metadata Retrieval (WIP)**: Fetch song tags and cover art from online sources
+*   **Audio Resampling (WIP)**: Lossless audio downsampling for improved compatibility.
+*   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting
+*   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English
+*   **Responsive Layout**: Left sidebar that auto-collapses when the window is narrow
 
 ## Constants Management
 
-All constants used in the application are centrally managed in `lib/constants.dart` for easy maintenance and consistency.
+All constants used in the application are centrally managed in `lib/constants.dart` for easy maintenance and consistency
 
 ## Supported Formats
 
@@ -71,7 +74,7 @@ This project is built with **Flutter** and primarily uses the following technolo
 ### Prerequisites
 
 Ensure your development environment has:
-*   Flutter SDK (3.10.0+)
+*   Flutter SDK (3.38.6+)
 *   Visual Studio C++ Tools
 
 ### Running and Development
@@ -79,8 +82,8 @@ Ensure your development environment has:
 1.  **Clone the project**
     
     ```bash
-    git clone https://github.com/ChuwuYo/ReMusic.git
-    cd ReMusic
+    git clone https://github.com/ChuwuYo/Re-Music.git
+    cd Re-Music
     ```
 
 2.  **Manage Dependencies**
@@ -108,11 +111,12 @@ This project provides a PowerShell script that automatically increments the buil
 flutter build windows --release
 ```
 
-The build artifacts are located in the `build/windows/runner/Release/` directory. You can distribute this folder directly as a zip.
+The build artifacts are located in the `build/windows/runner/Release/` directory
+Distribute this folder directly as a zip file
 
 #### 3. Installer
-To generate an installer like `.exe`, you need to use third-party tools (such as NSIS / Inno Setup) to package the portable build files.
-*Note: This project currently does not integrate an automatic packaging script.*
+To generate an installer like `.exe`, you need to use third-party tools (such as NSIS / Inno Setup) to package the portable build files
+*Note: This project currently does not integrate an automatic packaging script*
 
 ## License
 

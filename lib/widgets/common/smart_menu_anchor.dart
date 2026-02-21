@@ -1,5 +1,7 @@
+import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../../constants.dart';
 
 /// A robust MenuAnchor wrapper that handles positioning logic intelligently.
 /// Ensures the menu is centered below the anchor button and stays within the viewport.
@@ -35,16 +37,24 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
   final MenuController _controller = MenuController();
   final GlobalKey _buttonKey = GlobalKey();
   double? _calculatedMenuWidth;
-  AlignmentGeometry? _currentAlignment;
+  List<String>? _lastWidthLabels;
+  Locale? _lastLocale;
 
   @override
   Widget build(BuildContext context) {
-    // Pre-calculate width if possible to apply to MenuStyle
     if (widget.widthEstimationLabels != null) {
-      _calculatedMenuWidth = _estimateMenuWidthFromLabels(
-        context,
-        widget.widthEstimationLabels!,
-      );
+      // 仅在标签内容或语言环境变化时重新计算，避免每次 build 都运行 TextPainter
+      final currentLocale = Localizations.localeOf(context);
+      if (_calculatedMenuWidth == null ||
+          !listEquals(widget.widthEstimationLabels, _lastWidthLabels) ||
+          currentLocale != _lastLocale) {
+        _calculatedMenuWidth = _estimateMenuWidthFromLabels(
+          context,
+          widget.widthEstimationLabels!,
+        );
+        _lastWidthLabels = List.of(widget.widthEstimationLabels!);
+        _lastLocale = currentLocale;
+      }
     } else {
       _calculatedMenuWidth = widget.estimatedMenuWidth;
     }
@@ -53,7 +63,6 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       controller: _controller,
       menuChildren: widget.menuChildren,
       style: MenuStyle(
-        alignment: _currentAlignment ?? AlignmentDirectional.bottomStart,
         minimumSize: _calculatedMenuWidth != null
             ? WidgetStatePropertyAll(Size(_calculatedMenuWidth!, 0))
             : null,
@@ -93,17 +102,13 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       return;
     }
 
-    final renderObject = _buttonKey.currentContext?.findRenderObject();
-    if (renderObject is! RenderBox || !renderObject.hasSize) {
+    final renderBox = _buttonKey.currentContext?.findRenderObject();
+    if (renderBox is! RenderBox || !renderBox.hasSize) {
       _controller.open();
       return;
     }
 
     final windowWidth = MediaQuery.sizeOf(context).width;
-    final anchorTopLeft = renderObject.localToGlobal(Offset.zero);
-    final anchorBottomRight = renderObject.localToGlobal(
-      renderObject.size.bottomRight(Offset.zero),
-    );
     final menuWidth =
         _calculatedMenuWidth ??
         (widget.widthEstimationLabels != null
@@ -113,46 +118,22 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
               )
             : widget.estimatedMenuWidth ?? AppConstants.defaultMenuWidth);
 
-    final leftSpace = anchorTopLeft.dx;
-    final rightSpace = windowWidth - anchorBottomRight.dx;
+    final buttonTopLeft = renderBox.localToGlobal(Offset.zero);
+    final buttonWidth = renderBox.size.width;
+    final buttonHeight = renderBox.size.height;
 
-    AlignmentGeometry targetAlignment;
-    const edgeThreshold = AppConstants.edgeThreshold;
-    if (rightSpace <= edgeThreshold) {
-      // 靠近右边缘：菜单右边缘对齐按钮右边缘
-      targetAlignment = Alignment.bottomRight;
-    } else if (leftSpace <= edgeThreshold) {
-      // 靠近左边缘：菜单左边缘对齐按钮左边缘
-      targetAlignment = Alignment.bottomLeft;
-    } else if (rightSpace < menuWidth && leftSpace >= menuWidth) {
-      // 右侧空间不足：菜单右边缘对齐按钮右边缘
-      targetAlignment = Alignment.bottomRight;
-    } else if (leftSpace < menuWidth && rightSpace >= menuWidth) {
-      // 左侧空间不足：菜单左边缘对齐按钮左边缘
-      targetAlignment = Alignment.bottomLeft;
-    } else if (leftSpace >= menuWidth && rightSpace >= menuWidth) {
-      // 两侧空间充足：菜单居中
-      targetAlignment = Alignment.bottomCenter;
-    } else {
-      // 两侧空间都不足：根据哪边空间大选择对齐方式
-      targetAlignment = leftSpace >= rightSpace
-          ? Alignment.bottomRight
-          : Alignment.bottomLeft;
-    }
+    // 理想 anchor 相对 X：菜单中心对齐按钮中心
+    final idealRelX = (buttonWidth - menuWidth) / 2;
 
-    if (_currentAlignment != targetAlignment) {
-      setState(() {
-        _currentAlignment = targetAlignment;
-      });
+    // 转换到全局做越界检查，再转回相对坐标
+    const margin = 8.0;
+    final idealScreenX = buttonTopLeft.dx + idealRelX;
+    final clampMax = math.max(margin, windowWidth - menuWidth - margin);
+    final clampedScreenX = idealScreenX.clamp(margin, clampMax);
+    final relativeX = clampedScreenX - buttonTopLeft.dx;
 
-      // Open the menu after the rebuild ensures the new alignment is applied
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _controller.open();
-      });
-    } else {
-      // Alignment is already correct, open immediately
-      _controller.open();
-    }
+    // 一次性打开菜单
+    _controller.open(position: Offset(relativeX, buttonHeight));
   }
 
   double _estimateMenuWidthFromLabels(
@@ -175,11 +156,10 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       if (painter.width > maxLabelWidth) {
         maxLabelWidth = painter.width;
       }
+      painter.dispose();
     }
 
-    final estimated =
-        maxLabelWidth +
-        AppConstants.menuPaddingAndIconSpace; // Padding + Icon space
+    final estimated = maxLabelWidth + AppConstants.menuPaddingAndIconSpace;
     if (estimated < minWidth) return minWidth;
     if (estimated > maxWidth) return maxWidth;
     return estimated;
