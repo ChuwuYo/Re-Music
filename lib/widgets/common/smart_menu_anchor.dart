@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 
@@ -35,15 +37,24 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
   final MenuController _controller = MenuController();
   final GlobalKey _buttonKey = GlobalKey();
   double? _calculatedMenuWidth;
+  List<String>? _lastWidthLabels;
+  Locale? _lastLocale;
 
   @override
   Widget build(BuildContext context) {
-    // Pre-calculate width if possible to apply to MenuStyle
     if (widget.widthEstimationLabels != null) {
-      _calculatedMenuWidth = _estimateMenuWidthFromLabels(
-        context,
-        widget.widthEstimationLabels!,
-      );
+      // 仅在标签内容或语言环境变化时重新计算，避免每次 build 都运行 TextPainter
+      final currentLocale = Localizations.localeOf(context);
+      if (_calculatedMenuWidth == null ||
+          !listEquals(widget.widthEstimationLabels, _lastWidthLabels) ||
+          currentLocale != _lastLocale) {
+        _calculatedMenuWidth = _estimateMenuWidthFromLabels(
+          context,
+          widget.widthEstimationLabels!,
+        );
+        _lastWidthLabels = List.of(widget.widthEstimationLabels!);
+        _lastLocale = currentLocale;
+      }
     } else {
       _calculatedMenuWidth = widget.estimatedMenuWidth;
     }
@@ -111,15 +122,15 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
     final buttonWidth = renderBox.size.width;
     final buttonHeight = renderBox.size.height;
 
-    // 理想位置：菜单中心对齐按钮中心
-    double menuScreenX = buttonTopLeft.dx + (buttonWidth - menuWidth) / 2;
+    // 理想 anchor 相对 X：菜单中心对齐按钮中心
+    final idealRelX = (buttonWidth - menuWidth) / 2;
 
-    // 限制在屏幕范围内（留 8px 边距）
+    // 转换到全局做越界检查，再转回相对坐标
     const margin = 8.0;
-    menuScreenX = menuScreenX.clamp(margin, windowWidth - menuWidth - margin);
-
-    // 转换为 MenuAnchor 本地坐标（open(position:) 坐标系以 MenuAnchor 左上角为原点）
-    final relativeX = menuScreenX - buttonTopLeft.dx;
+    final idealScreenX = buttonTopLeft.dx + idealRelX;
+    final clampMax = math.max(margin, windowWidth - menuWidth - margin);
+    final clampedScreenX = idealScreenX.clamp(margin, clampMax);
+    final relativeX = clampedScreenX - buttonTopLeft.dx;
 
     // 一次性打开菜单
     _controller.open(position: Offset(relativeX, buttonHeight));

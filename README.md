@@ -82,8 +82,8 @@ Ensure your development environment has:
 1.  **Clone the project**
     
     ```bash
-    git clone https://github.com/ChuwuYo/ReMusic.git
-    cd ReMusic
+    git clone https://github.com/ChuwuYo/Re-Music.git
+    cd Re-Music
     ```
 
 2.  **Manage Dependencies**

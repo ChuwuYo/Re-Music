@@ -27,7 +27,7 @@
 
 ## Project Structure
 
-```text
+```
 lib/
 ├── constants.dart              # All constants centralized here
 ├── main.dart                   # App entry point
@@ -72,7 +72,7 @@ lib/
 ```bash
 # Clone the project
 git clone https://github.com/ChuwuYo/Re-Music.git
-cd ReMusic
+cd Re-Music
 
 # Install dependencies
 flutter pub get
@@ -130,7 +130,7 @@ Build output: `build/windows/runner/Release/`
 - No logic (computation, I/O, state mutation) belongs in screen or widget files — dispatch to a provider or service instead.
 
 Standard layout when adding a new feature:
-```text
+```
 lib/
 ├── providers/
 │   └── <feature>_provider.dart     # State + business logic

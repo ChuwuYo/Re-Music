@@ -32,18 +32,24 @@ class HomePage extends StatelessWidget {
                 Expanded(
                   child: AnimatedSwitcher(
                     duration: AppConstants.defaultAnimationDuration,
-                    switchInCurve: Curves.easeInOut,
-                    switchOutCurve: Curves.easeInOut,
                     transitionBuilder: (child, animation) {
+                      // 进入页面从右侧滑入，离场页面向左滑出
+                      final isIncoming = child.key == ValueKey(currentPage);
+                      final curved = CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeInOut,
+                      );
                       final offsetAnimation = Tween<Offset>(
-                        begin: const Offset(
-                          AppConstants.pageTransitionSlideOffset,
+                        begin: Offset(
+                          isIncoming
+                              ? AppConstants.pageTransitionSlideOffset
+                              : -AppConstants.pageTransitionSlideOffset,
                           0,
                         ),
                         end: Offset.zero,
-                      ).animate(animation);
+                      ).animate(curved);
                       return FadeTransition(
-                        opacity: animation,
+                        opacity: curved,
                         child: SlideTransition(
                           position: offsetAnimation,
                           child: child,
