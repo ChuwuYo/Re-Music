@@ -229,32 +229,41 @@ class AudioProvider extends ChangeNotifier {
   }
 
   Future<void> _fetchMetadata(List<AudioFile> filesToProcess) async {
-    int count = 0;
-    for (final file in filesToProcess) {
-      final metadata = await MetadataService.getMetadata(file.path);
-      if (metadata != null) {
-        file.metadata = metadata;
-        file.status = ProcessingStatus.success;
-        file.newFileName = MetadataService.formatNewFileName(
-          artist: file.artist,
-          title: file.title,
-          album: file.album,
-          track: file.track,
-          extension: file.extension,
-          pattern: _pattern,
-          unknownArtist: _unknownArtist,
-          unknownTitle: _unknownTitle,
-          unknownAlbum: _unknownAlbum,
-          untitledTrack: _untitledTrack,
-          index: _files.indexOf(file) + 1,
-        );
-      } else {
-        file.status = ProcessingStatus.error;
-        file.errorMessage = 'metadataReadFailed';
-      }
-      count++;
-      _progress = count / filesToProcess.length;
-      notifyListeners();
+    int completed = 0;
+    final total = filesToProcess.length;
+
+    for (int i = 0; i < total; i += AppConstants.metadataConcurrency) {
+      final chunk = filesToProcess
+          .skip(i)
+          .take(AppConstants.metadataConcurrency);
+      await Future.wait(
+        chunk.map((file) async {
+          final metadata = await MetadataService.getMetadata(file.path);
+          if (metadata != null) {
+            file.metadata = metadata;
+            file.status = ProcessingStatus.success;
+            file.newFileName = MetadataService.formatNewFileName(
+              artist: file.artist,
+              title: file.title,
+              album: file.album,
+              track: file.track,
+              extension: file.extension,
+              pattern: _pattern,
+              unknownArtist: _unknownArtist,
+              unknownTitle: _unknownTitle,
+              unknownAlbum: _unknownAlbum,
+              untitledTrack: _untitledTrack,
+              index: _files.indexOf(file) + 1,
+            );
+          } else {
+            file.status = ProcessingStatus.error;
+            file.errorMessage = 'metadataReadFailed';
+          }
+          completed++;
+          _progress = completed / total;
+          notifyListeners();
+        }),
+      );
     }
 
     _sortFiles(_sortCriteria);

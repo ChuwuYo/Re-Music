@@ -95,6 +95,9 @@ class AppConstants {
   static const Duration defaultAnimationDuration = Duration(milliseconds: 300);
   static const Duration fastAnimationDuration = Duration(milliseconds: 150);
 
+  /// 元数据并发读取数量上限
+  static const int metadataConcurrency = 8;
+
   /// 设置相关常量
   static const String settingsFileName = 'remusic.settings.json';
   static const Duration settingsSaveDebounce = Duration(milliseconds: 200);
