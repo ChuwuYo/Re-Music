@@ -29,6 +29,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Re:Music'), findsWidgets);
-    expect(find.byIcon(Icons.language), findsWidgets);
+    expect(find.byIcon(Icons.language), findsOneWidget);
   });
 }

@@ -1,4 +1,5 @@
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import 'package:path/path.dart' as p;
 import '../constants.dart';
 
 class AudioFile {
@@ -24,7 +25,7 @@ class AudioFile {
     this.errorMessage,
   });
 
-  String get originalFileName => path.split('\\').last;
+  String get originalFileName => p.basename(path);
 
   String get artist => (metadata?.artist ?? '').trim();
 

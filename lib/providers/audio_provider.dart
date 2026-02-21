@@ -238,32 +238,24 @@ class AudioProvider extends ChangeNotifier {
           .take(AppConstants.metadataConcurrency);
       await Future.wait(
         chunk.map((file) async {
-          final metadata = await MetadataService.getMetadata(file.path);
-          if (metadata != null) {
-            file.metadata = metadata;
-            file.status = ProcessingStatus.success;
-            file.newFileName = MetadataService.formatNewFileName(
-              artist: file.artist,
-              title: file.title,
-              album: file.album,
-              track: file.track,
-              extension: file.extension,
-              pattern: _pattern,
-              unknownArtist: _unknownArtist,
-              unknownTitle: _unknownTitle,
-              unknownAlbum: _unknownAlbum,
-              untitledTrack: _untitledTrack,
-              index: _files.indexOf(file) + 1,
-            );
-          } else {
+          try {
+            final metadata = await MetadataService.getMetadata(file.path);
+            if (metadata != null) {
+              file.metadata = metadata;
+              file.status = ProcessingStatus.success;
+            } else {
+              file.status = ProcessingStatus.error;
+              file.errorMessage = 'metadataReadFailed';
+            }
+          } catch (e) {
             file.status = ProcessingStatus.error;
-            file.errorMessage = 'metadataReadFailed';
+            file.errorMessage = e.toString();
           }
           completed++;
           _progress = completed / total;
-          notifyListeners();
         }),
       );
+      notifyListeners();
     }
 
     _sortFiles(_sortCriteria);
@@ -298,6 +290,7 @@ class AudioProvider extends ChangeNotifier {
     }
 
     var successCount = 0;
+    final stopwatch = Stopwatch()..start();
     for (var i = 0; i < filesToRename.length; i++) {
       final file = filesToRename[i];
       final success = await FileService.renameFile(
@@ -308,7 +301,12 @@ class AudioProvider extends ChangeNotifier {
         successCount++;
       }
       _progress = (i + 1) / filesToRename.length;
-      notifyListeners();
+
+      // Throttle UI updates to ~60fps (16ms) or update on the last item
+      if (stopwatch.elapsedMilliseconds > 16 || i == filesToRename.length - 1) {
+        notifyListeners();
+        stopwatch.reset();
+      }
     }
 
     await clearFiles();

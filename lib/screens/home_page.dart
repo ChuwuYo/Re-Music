@@ -92,17 +92,22 @@ class _HomeContent extends StatelessWidget {
                     child: NoMatchState(),
                   )
                 else
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      bottom: AppConstants.homeListBottomPadding,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) =>
-                            FileListItem(file: provider.files[index]),
-                        childCount: provider.files.length,
-                      ),
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final files = provider.files;
+                      return SliverPadding(
+                        padding: const EdgeInsets.only(
+                          bottom: AppConstants.homeListBottomPadding,
+                        ),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) =>
+                                FileListItem(file: files[index]),
+                            childCount: files.length,
+                          ),
+                        ),
+                      );
+                    },
                   ),
               ],
             );

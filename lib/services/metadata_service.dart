@@ -6,10 +6,17 @@ import '../constants.dart';
 class MetadataService {
   static Future<AudioMetadata?> getMetadata(String filePath) async {
     try {
-      final metadata = readMetadata(File(filePath), getImage: false);
-      return metadata;
+      return await compute(_readMetadataIsolate, filePath);
     } catch (e) {
       debugPrint('Error reading metadata for $filePath: $e');
+      return null;
+    }
+  }
+
+  static AudioMetadata? _readMetadataIsolate(String filePath) {
+    try {
+      return readMetadata(File(filePath), getImage: false);
+    } catch (e) {
       return null;
     }
   }

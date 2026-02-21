@@ -64,14 +64,14 @@ lib/
 
 ### Prerequisites
 
-*   Flutter SDK (3.10.8+)
+*   Flutter SDK (>= 3.38.6)
 *   Visual Studio C++ Tools
 
 ### Getting Started
 
 ```bash
 # Clone the project
-git clone https://github.com/ChuwuYo/ReMusic.git
+git clone https://github.com/ChuwuYo/Re-Music.git
 cd ReMusic
 
 # Install dependencies

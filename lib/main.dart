@@ -15,13 +15,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
-  final settingsStore = AppSettingsStore();
+  final configsStore = AppConfigsStore();
   final audioProvider = AudioProvider();
   final localeController = LocaleController();
   final themeController = ThemeController();
   final navigationController = NavigationController();
 
-  final settings = await settingsStore.load();
+  final settings = await configsStore.load();
   if (settings != null) {
     localeController.setLocale(
       settings.locale == null ? null : Locale(settings.locale!),
@@ -34,7 +34,7 @@ void main() async {
     audioProvider.setFilter(settings.filter);
   }
 
-  settingsStore.setBaseline(
+  configsStore.setBaseline(
     AppConfigs(
       locale: localeController.locale?.languageCode,
       themeMode: themeController.themeMode,
@@ -47,7 +47,7 @@ void main() async {
   );
 
   void scheduleSave() {
-    settingsStore.scheduleSave(
+    configsStore.scheduleSave(
       AppConfigs(
         locale: localeController.locale?.languageCode,
         themeMode: themeController.themeMode,

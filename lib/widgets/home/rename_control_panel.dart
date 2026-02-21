@@ -120,10 +120,7 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
-                final dropWidth = constraints.maxWidth.clamp(
-                  0.0,
-                  double.infinity,
-                );
+                final dropWidth = constraints.maxWidth;
                 return DropdownMenu<String>(
                   width: dropWidth,
                   controller: _patternController,
@@ -160,7 +157,7 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                   onSelected: (value) {
                     if (value != null && value.isNotEmpty) {
                       _patternController.text = value;
-                      context.read<AudioProvider>().setPattern(value);
+                      // setPattern is invoked by _patternController listener
                     }
                   },
                 );
@@ -257,8 +254,8 @@ class _SortMenu extends StatelessWidget {
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
-              onPressed: () => provider.setSortCriteria('modified'),
-              leadingIcon: provider.sortCriteria == 'modified'
+              onPressed: () => provider.setSortCriteria('date'),
+              leadingIcon: provider.sortCriteria == 'date'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),

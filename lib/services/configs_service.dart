@@ -5,7 +5,7 @@ import 'package:path/path.dart' as p;
 import '../models/app_configs.dart';
 import '../constants.dart';
 
-class AppSettingsStore {
+class AppConfigsStore {
   static const _fileName = AppConstants.settingsFileName;
   AppConfigs? _lastQueued;
   AppConfigs? _lastSaved;
