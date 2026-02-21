@@ -46,13 +46,6 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleSortOrder() {
-    _sortAscending = !_sortAscending;
-    _sortFiles(_sortCriteria);
-    _updateNewFileNames();
-    notifyListeners();
-  }
-
   void setSortAscending(bool ascending) {
     if (_sortAscending == ascending) return;
     _sortAscending = ascending;
@@ -315,13 +308,6 @@ class AudioProvider extends ChangeNotifier {
     return successCount;
   }
 
-  void sortBy(String criteria) {
-    _sortCriteria = criteria;
-    _sortFiles(criteria);
-    _updateNewFileNames();
-    notifyListeners();
-  }
-
   void _sortFiles(String criteria) {
     switch (criteria) {
       case 'name':
@@ -348,7 +334,7 @@ class AudioProvider extends ChangeNotifier {
           return _sortAscending ? cmp : -cmp;
         });
         return;
-      case 'date':
+      case 'modified':
         _files.sort((a, b) {
           final cmp = a.modified.compareTo(b.modified);
           return _sortAscending ? cmp : -cmp;

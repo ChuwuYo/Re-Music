@@ -35,7 +35,6 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
   final MenuController _controller = MenuController();
   final GlobalKey _buttonKey = GlobalKey();
   double? _calculatedMenuWidth;
-  AlignmentGeometry? _currentAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,6 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       controller: _controller,
       menuChildren: widget.menuChildren,
       style: MenuStyle(
-        alignment: _currentAlignment ?? AlignmentDirectional.bottomStart,
         minimumSize: _calculatedMenuWidth != null
             ? WidgetStatePropertyAll(Size(_calculatedMenuWidth!, 0))
             : null,
@@ -93,17 +91,13 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
       return;
     }
 
-    final renderObject = _buttonKey.currentContext?.findRenderObject();
-    if (renderObject is! RenderBox || !renderObject.hasSize) {
+    final renderBox = _buttonKey.currentContext?.findRenderObject();
+    if (renderBox is! RenderBox || !renderBox.hasSize) {
       _controller.open();
       return;
     }
 
     final windowWidth = MediaQuery.sizeOf(context).width;
-    final anchorTopLeft = renderObject.localToGlobal(Offset.zero);
-    final anchorBottomRight = renderObject.localToGlobal(
-      renderObject.size.bottomRight(Offset.zero),
-    );
     final menuWidth =
         _calculatedMenuWidth ??
         (widget.widthEstimationLabels != null
@@ -113,46 +107,22 @@ class _SmartMenuAnchorState extends State<SmartMenuAnchor> {
               )
             : widget.estimatedMenuWidth ?? AppConstants.defaultMenuWidth);
 
-    final leftSpace = anchorTopLeft.dx;
-    final rightSpace = windowWidth - anchorBottomRight.dx;
+    final buttonTopLeft = renderBox.localToGlobal(Offset.zero);
+    final buttonWidth = renderBox.size.width;
+    final buttonHeight = renderBox.size.height;
 
-    AlignmentGeometry targetAlignment;
-    const edgeThreshold = AppConstants.edgeThreshold;
-    if (rightSpace <= edgeThreshold) {
-      // 靠近右边缘：菜单右边缘对齐按钮右边缘
-      targetAlignment = Alignment.bottomRight;
-    } else if (leftSpace <= edgeThreshold) {
-      // 靠近左边缘：菜单左边缘对齐按钮左边缘
-      targetAlignment = Alignment.bottomLeft;
-    } else if (rightSpace < menuWidth && leftSpace >= menuWidth) {
-      // 右侧空间不足：菜单右边缘对齐按钮右边缘
-      targetAlignment = Alignment.bottomRight;
-    } else if (leftSpace < menuWidth && rightSpace >= menuWidth) {
-      // 左侧空间不足：菜单左边缘对齐按钮左边缘
-      targetAlignment = Alignment.bottomLeft;
-    } else if (leftSpace >= menuWidth && rightSpace >= menuWidth) {
-      // 两侧空间充足：菜单居中
-      targetAlignment = Alignment.bottomCenter;
-    } else {
-      // 两侧空间都不足：根据哪边空间大选择对齐方式
-      targetAlignment = leftSpace >= rightSpace
-          ? Alignment.bottomRight
-          : Alignment.bottomLeft;
-    }
+    // 理想位置：菜单中心对齐按钮中心
+    double menuScreenX = buttonTopLeft.dx + (buttonWidth - menuWidth) / 2;
 
-    if (_currentAlignment != targetAlignment) {
-      setState(() {
-        _currentAlignment = targetAlignment;
-      });
+    // 限制在屏幕范围内（留 8px 边距）
+    const margin = 8.0;
+    menuScreenX = menuScreenX.clamp(margin, windowWidth - menuWidth - margin);
 
-      // Open the menu after the rebuild ensures the new alignment is applied
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _controller.open();
-      });
-    } else {
-      // Alignment is already correct, open immediately
-      _controller.open();
-    }
+    // 转换为 MenuAnchor 本地坐标（open(position:) 坐标系以 MenuAnchor 左上角为原点）
+    final relativeX = menuScreenX - buttonTopLeft.dx;
+
+    // 一次性打开菜单
+    _controller.open(position: Offset(relativeX, buttonHeight));
   }
 
   double _estimateMenuWidthFromLabels(

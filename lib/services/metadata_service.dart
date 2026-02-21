@@ -14,11 +14,7 @@ class MetadataService {
   }
 
   static AudioMetadata? _readMetadataIsolate(String filePath) {
-    try {
-      return readMetadata(File(filePath), getImage: false);
-    } catch (e) {
-      return null;
-    }
+    return readMetadata(File(filePath), getImage: false);
   }
 
   static String formatNewFileName({

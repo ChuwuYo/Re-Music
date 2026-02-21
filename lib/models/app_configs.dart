@@ -105,7 +105,7 @@ class AppConfigs {
         case 'artist':
         case 'title':
         case 'size':
-        case 'date':
+        case 'modified':
           return raw;
       }
     }

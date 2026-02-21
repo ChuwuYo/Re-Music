@@ -75,6 +75,7 @@ class _HomeContent extends StatelessWidget {
         Consumer<AudioProvider>(
           builder: (context, provider, child) {
             final hasAnyFiles = provider.totalFilesCount > 0;
+            final files = provider.files;
             return CustomScrollView(
               physics: hasAnyFiles
                   ? null
@@ -86,28 +87,22 @@ class _HomeContent extends StatelessWidget {
                     hasScrollBody: false,
                     child: EmptyState(),
                   )
-                else if (provider.files.isEmpty)
+                else if (files.isEmpty)
                   const SliverFillRemaining(
                     hasScrollBody: false,
                     child: NoMatchState(),
                   )
                 else
-                  Builder(
-                    builder: (context) {
-                      final files = provider.files;
-                      return SliverPadding(
-                        padding: const EdgeInsets.only(
-                          bottom: AppConstants.homeListBottomPadding,
-                        ),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) =>
-                                FileListItem(file: files[index]),
-                            childCount: files.length,
-                          ),
-                        ),
-                      );
-                    },
+                  SliverPadding(
+                    padding: const EdgeInsets.only(
+                      bottom: AppConstants.homeListBottomPadding,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) => FileListItem(file: files[index]),
+                        childCount: files.length,
+                      ),
+                    ),
                   ),
               ],
             );

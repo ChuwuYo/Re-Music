@@ -184,7 +184,11 @@ class _FilterMenu extends StatelessWidget {
                 ? Theme.of(context).colorScheme.primary
                 : null,
           ),
-          estimatedMenuWidth: 200,
+          widthEstimationLabels: [
+            l10n.showAll,
+            l10n.showNoRenameNeeded,
+            l10n.showNeedRename,
+          ],
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.setFilter(FileFilter.all),
@@ -223,7 +227,13 @@ class _SortMenu extends StatelessWidget {
         return SmartMenuAnchor(
           tooltip: l10n.sort,
           icon: const Icon(Icons.sort),
-          estimatedMenuWidth: 220,
+          widthEstimationLabels: [
+            l10n.sortByName,
+            l10n.sortByArtist,
+            l10n.sortByTitle,
+            l10n.sortBySize,
+            l10n.sortByModifiedTime,
+          ],
           menuChildren: [
             MenuItemButton(
               onPressed: () => provider.setSortCriteria('name'),
@@ -254,8 +264,8 @@ class _SortMenu extends StatelessWidget {
               child: Text(l10n.sortBySize),
             ),
             MenuItemButton(
-              onPressed: () => provider.setSortCriteria('date'),
-              leadingIcon: provider.sortCriteria == 'date'
+              onPressed: () => provider.setSortCriteria('modified'),
+              leadingIcon: provider.sortCriteria == 'modified'
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
               child: Text(l10n.sortByModifiedTime),

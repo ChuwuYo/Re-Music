@@ -111,7 +111,8 @@
 flutter build windows --release
 ```
 
-构建产物位于 `build/windows/runner/Release/` 目录下，直接压缩该文件夹即可分发
+构建产物位于 `build/windows/runner/Release/` 目录下
+直接压缩该文件夹即可分发
 
 #### 3. 安装版 (Installer)
 如需生成 `.exe` 等安装包，需使用第三方工具（如 NSIS / Inno Setup）对上述便携版文件进行打包
