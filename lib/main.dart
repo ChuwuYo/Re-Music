@@ -5,6 +5,7 @@ import 'l10n/app_localizations.dart';
 import 'models/app_settings.dart';
 import 'providers/audio_provider.dart';
 import 'providers/locale_provider.dart';
+import 'providers/navigation_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_page.dart';
 import 'services/settings_service.dart';
@@ -18,6 +19,7 @@ void main() async {
   final audioProvider = AudioProvider();
   final localeController = LocaleController();
   final themeController = ThemeController();
+  final navigationController = NavigationController();
 
   final settings = await settingsStore.load();
   if (settings != null) {
@@ -85,6 +87,7 @@ void main() async {
         ChangeNotifierProvider.value(value: audioProvider),
         ChangeNotifierProvider.value(value: localeController),
         ChangeNotifierProvider.value(value: themeController),
+        ChangeNotifierProvider.value(value: navigationController),
       ],
       child: const MyApp(),
     ),

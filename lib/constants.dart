@@ -175,3 +175,6 @@ extension AppSeedColorExtension on AppSeedColor {
 
 /// 处理状态枚举
 enum ProcessingStatus { pending, success, error }
+
+/// 应用页面枚举
+enum AppPage { home, settings }

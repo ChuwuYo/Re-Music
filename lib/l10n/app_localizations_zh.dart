@@ -240,4 +240,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sidebarTooNarrow => '窗口太窄，拖宽窗口后可展开';
+
+  @override
+  String get navHome => '主页';
+
+  @override
+  String get navSettings => '设置';
 }

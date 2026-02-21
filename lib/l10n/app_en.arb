@@ -95,5 +95,7 @@
   "sortDescending": "Descending",
   "sidebarExpand": "Expand sidebar",
   "sidebarCollapse": "Collapse sidebar",
-  "sidebarTooNarrow": "Window too narrow — resize to expand"
+  "sidebarTooNarrow": "Window too narrow — resize to expand",
+  "navHome": "Home",
+  "navSettings": "Settings"
 }

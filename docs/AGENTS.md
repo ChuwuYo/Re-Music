@@ -109,6 +109,31 @@ Build output: `build/windows/runner/Release/`
 - Run specific test: `flutter test test/file_service_test.dart`
 - **All tests must pass before committing.**
 
+## Architecture Guidelines
+
+### Feature Modularity
+
+- **Screen files** (`lib/screens/`) are **UI-only** — they assemble widgets and wire up providers, but contain no business logic.
+- Each feature is self-contained:
+  - UI sections live in `lib/widgets/<feature>/` (one file per logical section).
+  - State and business logic live in `lib/providers/<feature>_provider.dart`.
+  - I/O, persistence, or external calls live in `lib/services/<feature>_service.dart`.
+- No logic (computation, I/O, state mutation) belongs in screen or widget files — dispatch to a provider or service instead.
+
+Standard layout when adding a new feature:
+```
+lib/
+├── providers/
+│   └── <feature>_provider.dart     # State + business logic
+├── services/
+│   └── <feature>_service.dart      # Persistence / I/O (if needed)
+├── screens/
+│   └── <feature>_page.dart         # UI assembly only
+└── widgets/
+    └── <feature>/
+        └── <section>_widget.dart   # Reusable UI sections
+```
+
 ## Code Style Guidelines
 
 - Follow `package:flutter_lints/flutter.yaml` rules.

@@ -5,6 +5,7 @@ import '../constants.dart';
 import '../l10n/app_localizations.dart';
 import '../providers/audio_provider.dart';
 import '../providers/locale_provider.dart';
+import '../providers/navigation_provider.dart';
 import '../providers/theme_provider.dart';
 
 /// 左侧竖向工具栏：支持展开（图标+文字）和收起（仅图标）两种状态。
@@ -51,6 +52,8 @@ class _LeftSidebarState extends State<LeftSidebar> {
     final scheme = Theme.of(context).colorScheme;
     final localeController = context.watch<LocaleController>();
     final themeController = context.watch<ThemeController>();
+    final navController = context.watch<NavigationController>();
+    final currentPage = navController.currentPage;
 
     // 响应式：订阅窗口宽度变化，宽度不足时自动收起
     final windowWidth = MediaQuery.sizeOf(context).width;
@@ -97,9 +100,37 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
                   const Divider(height: 1, indent: 8, endIndent: 8),
 
+                  // ── 主页按钮 ───────────────────────────────────
+                  _SidebarItem(
+                    icon: currentPage == AppPage.home
+                        ? Icons.home
+                        : Icons.home_outlined,
+                    label: l10n.navHome,
+                    tooltip: l10n.navHome,
+                    expanded: expanded,
+                    isActive: currentPage == AppPage.home,
+                    onPressed: () => context
+                        .read<NavigationController>()
+                        .navigateTo(AppPage.home),
+                  ),
+
                   const Spacer(),
 
                   const Divider(height: 1, indent: 8, endIndent: 8),
+
+                  // ── 设置按钮 ───────────────────────────────────
+                  _SidebarItem(
+                    icon: currentPage == AppPage.settings
+                        ? Icons.settings
+                        : Icons.settings_outlined,
+                    label: l10n.navSettings,
+                    tooltip: l10n.navSettings,
+                    expanded: expanded,
+                    isActive: currentPage == AppPage.settings,
+                    onPressed: () => context
+                        .read<NavigationController>()
+                        .navigateTo(AppPage.settings),
+                  ),
 
                   // ── 语言菜单 ───────────────────────────────────────
                   _SidebarMenuAnchor(
@@ -228,6 +259,7 @@ class _SidebarItem extends StatelessWidget {
   final bool expanded;
   final bool showLabel;
   final bool showBadge;
+  final bool isActive;
   final VoidCallback? onPressed;
 
   const _SidebarItem({
@@ -238,16 +270,21 @@ class _SidebarItem extends StatelessWidget {
     this.tooltip,
     this.showLabel = true,
     this.showBadge = false,
+    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final showText = expanded && showLabel;
+    final activeBg = isActive ? scheme.secondaryContainer : null;
+    final activeFg = isActive ? scheme.onSecondaryContainer : null;
+
     Widget iconWidget = Icon(icon);
     if (showBadge) {
       iconWidget = Badge(
         smallSize: 6,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: scheme.primary,
         child: iconWidget,
       );
     }
@@ -261,7 +298,11 @@ class _SidebarItem extends StatelessWidget {
           child: IconButton(
             icon: iconWidget,
             onPressed: onPressed,
-            style: IconButton.styleFrom(shape: const RoundedRectangleBorder()),
+            style: IconButton.styleFrom(
+              shape: const RoundedRectangleBorder(),
+              backgroundColor: activeBg,
+              foregroundColor: activeFg,
+            ),
           ),
         ),
       );
@@ -278,6 +319,8 @@ class _SidebarItem extends StatelessWidget {
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.symmetric(horizontal: 14),
             shape: const RoundedRectangleBorder(),
+            backgroundColor: activeBg,
+            foregroundColor: activeFg,
           ),
           child: Row(
             children: [

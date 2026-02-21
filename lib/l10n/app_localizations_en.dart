@@ -240,4 +240,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sidebarTooNarrow => 'Window too narrow — resize to expand';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navSettings => 'Settings';
 }
