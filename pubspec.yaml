@@ -2,10 +2,11 @@
 description: "A modern audio file management tool with batch renaming, tag editing, and audio resampling"
 publish_to: 'none'
 
-version: 0.0.7+14
+version: 0.0.7+16
 
 environment:
   sdk: ^3.10.8
+  flutter: ">=3.38.6"
 
 dependencies:
   flutter:
