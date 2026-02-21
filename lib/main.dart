@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'l10n/app_localizations.dart';
-import 'models/app_settings.dart';
+import 'models/app_configs.dart';
 import 'providers/audio_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_page.dart';
-import 'services/settings_service.dart';
+import 'services/configs_service.dart';
 import 'constants.dart';
 
 void main() async {
@@ -35,7 +35,7 @@ void main() async {
   }
 
   settingsStore.setBaseline(
-    AppSettings(
+    AppConfigs(
       locale: localeController.locale?.languageCode,
       themeMode: themeController.themeMode,
       seedColor: themeController.seedColor,
@@ -48,7 +48,7 @@ void main() async {
 
   void scheduleSave() {
     settingsStore.scheduleSave(
-      AppSettings(
+      AppConfigs(
         locale: localeController.locale?.languageCode,
         themeMode: themeController.themeMode,
         seedColor: themeController.seedColor,

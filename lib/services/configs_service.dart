@@ -2,21 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
-import '../models/app_settings.dart';
+import '../models/app_configs.dart';
 import '../constants.dart';
 
 class AppSettingsStore {
   static const _fileName = AppConstants.settingsFileName;
-  AppSettings? _lastQueued;
-  AppSettings? _lastSaved;
+  AppConfigs? _lastQueued;
+  AppConfigs? _lastSaved;
   Timer? _debounce;
 
-  void setBaseline(AppSettings settings) {
+  void setBaseline(AppConfigs settings) {
     _lastQueued = settings;
     _lastSaved = settings;
   }
 
-  Future<AppSettings?> load() async {
+  Future<AppConfigs?> load() async {
     final exeFile = File(_exeConfigPath());
     final userFile = File(_userConfigPath());
 
@@ -27,7 +27,7 @@ class AppSettingsStore {
     return userSettings;
   }
 
-  void scheduleSave(AppSettings settings) {
+  void scheduleSave(AppConfigs settings) {
     if (_lastSaved == settings && _lastQueued == settings) return;
     _lastQueued = settings;
     _debounce?.cancel();
@@ -39,19 +39,19 @@ class AppSettingsStore {
     });
   }
 
-  Future<AppSettings?> _tryRead(File file) async {
+  Future<AppConfigs?> _tryRead(File file) async {
     try {
       if (!await file.exists()) return null;
       final text = await file.readAsString();
       final decoded = jsonDecode(text);
       if (decoded is! Map<String, dynamic>) return null;
-      return AppSettings.fromJson(decoded);
+      return AppConfigs.fromJson(decoded);
     } catch (_) {
       return null;
     }
   }
 
-  Future<bool> _save(AppSettings settings) async {
+  Future<bool> _save(AppConfigs settings) async {
     final content = const JsonEncoder.withIndent(
       AppConstants.jsonIndent,
     ).convert(settings.toJson());

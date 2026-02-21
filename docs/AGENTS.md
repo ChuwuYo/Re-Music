@@ -32,7 +32,7 @@ lib/
 ├── constants.dart              # All constants centralized here
 ├── main.dart                   # App entry point
 ├── models/
-│   ├── app_settings.dart       # Settings model
+│   ├── app_configs.dart        # App configuration model
 │   └── audio_file.dart         # Audio file model
 ├── providers/
 │   ├── audio_provider.dart     # Core audio file state management
@@ -45,7 +45,7 @@ lib/
 ├── services/
 │   ├── file_service.dart       # File operations (pick, scan, rename)
 │   ├── metadata_service.dart   # Audio metadata reading/formatting
-│   └── settings_service.dart   # Settings persistence
+│   └── configs_service.dart    # Configs persistence
 ├── widgets/
 │   ├── common/                 # Shared layout widgets
 │   │   ├── left_sidebar.dart

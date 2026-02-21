@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
-class AppSettings {
+class AppConfigs {
   final String? locale;
   final ThemeMode themeMode;
   final AppSeedColor seedColor;
@@ -10,7 +10,7 @@ class AppSettings {
   final String pattern;
   final FileFilter filter;
 
-  const AppSettings({
+  const AppConfigs({
     required this.locale,
     required this.themeMode,
     required this.seedColor,
@@ -20,8 +20,8 @@ class AppSettings {
     required this.filter,
   });
 
-  static AppSettings defaults() {
-    return const AppSettings(
+  static AppConfigs defaults() {
+    return const AppConfigs(
       locale: AppConstants.defaultLocale,
       themeMode: AppConstants.defaultThemeMode,
       seedColor: AppConstants.defaultSeedColor,
@@ -32,7 +32,7 @@ class AppSettings {
     );
   }
 
-  static AppSettings fromJson(Map<String, dynamic> json) {
+  static AppConfigs fromJson(Map<String, dynamic> json) {
     final locale = json['locale'];
     final themeModeRaw = json['themeMode'];
     final seedColorRaw = json['seedColor'];
@@ -41,7 +41,7 @@ class AppSettings {
     final pattern = json['pattern'];
     final filterRaw = json['filter'];
 
-    return AppSettings(
+    return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
       themeMode: _parseThemeMode(themeModeRaw),
       seedColor: _parseSeedColor(seedColorRaw),
@@ -51,7 +51,7 @@ class AppSettings {
           : AppConstants.defaultSortAscending,
       pattern: pattern is String && pattern.isNotEmpty
           ? pattern
-          : AppSettings.defaults().pattern,
+          : AppConfigs.defaults().pattern,
       filter: _parseFilter(filterRaw),
     );
   }
@@ -77,7 +77,7 @@ class AppSettings {
           return ThemeMode.light;
       }
     }
-    return AppSettings.defaults().themeMode;
+    return AppConfigs.defaults().themeMode;
   }
 
   static AppSeedColor _parseSeedColor(Object? raw) {
@@ -86,7 +86,7 @@ class AppSettings {
         if (v.name == raw) return v;
       }
     }
-    return AppSettings.defaults().seedColor;
+    return AppConfigs.defaults().seedColor;
   }
 
   static FileFilter _parseFilter(Object? raw) {
@@ -95,7 +95,7 @@ class AppSettings {
         if (v.name == raw) return v;
       }
     }
-    return AppSettings.defaults().filter;
+    return AppConfigs.defaults().filter;
   }
 
   static String _parseSortCriteria(Object? raw) {
@@ -109,12 +109,12 @@ class AppSettings {
           return raw;
       }
     }
-    return AppSettings.defaults().sortCriteria;
+    return AppConfigs.defaults().sortCriteria;
   }
 
   @override
   bool operator ==(Object other) {
-    return other is AppSettings &&
+    return other is AppConfigs &&
         other.locale == locale &&
         other.themeMode == themeMode &&
         other.seedColor == seedColor &&
