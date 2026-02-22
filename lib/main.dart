@@ -108,8 +108,8 @@ class MyApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       locale: locale,
-      themeAnimationDuration: Duration.zero,
-      themeAnimationCurve: Curves.linear,
+      themeAnimationDuration: AppConstants.defaultAnimationDuration,
+      themeAnimationCurve: Curves.easeInOut,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(

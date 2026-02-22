@@ -50,13 +50,16 @@ lib/
 │   ├── common/                 # Shared layout widgets
 │   │   ├── left_sidebar.dart
 │   │   ├── metadata_edit_dialog.dart
+│   │   ├── selectable_card.dart
 │   │   ├── smart_menu_anchor.dart
 │   │   └── title_bar.dart
-│   └── home/                   # Home page specific widgets
-│       ├── bottom_right_panel.dart
-│       ├── file_list_item.dart
-│       ├── list_states.dart
-│       └── rename_control_panel.dart
+│   ├── home/                   # Home page specific widgets
+│   │   ├── bottom_right_panel.dart
+│   │   ├── file_list_item.dart
+│   │   ├── list_states.dart
+│   │   └── rename_control_panel.dart
+│   └── settings/               # Settings page specific widgets
+│       └── theme_color_selector.dart
 └── l10n/                       # Internationalization (ARB files)
 ```
 
