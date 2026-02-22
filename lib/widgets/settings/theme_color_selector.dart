@@ -43,9 +43,9 @@ class ThemeColorSelector extends StatelessWidget {
       children: [
         Text(
           l10n.themeColor,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: AppConstants.spacingLabelGap),
         Wrap(

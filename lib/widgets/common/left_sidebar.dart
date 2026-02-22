@@ -155,13 +155,13 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     icon: themeController.isLight
                         ? Icons.light_mode
                         : themeController.isDark
-                            ? Icons.dark_mode
-                            : Icons.brightness_auto,
+                        ? Icons.dark_mode
+                        : Icons.brightness_auto,
                     label: themeController.isLight
                         ? l10n.switchToLight
                         : themeController.isDark
-                            ? l10n.switchToDark
-                            : l10n.followSystem,
+                        ? l10n.switchToDark
+                        : l10n.followSystem,
                     tooltip: l10n.themeMode,
                     expanded: expanded,
                     onPressed: () =>

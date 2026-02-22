@@ -25,14 +25,18 @@ class SelectableCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppConstants.spacingSmall + AppConstants.spacingExtraSmall,
-            vertical: AppConstants.spacingSmall + AppConstants.spacingExtraSmall,
+            horizontal:
+                AppConstants.spacingSmall + AppConstants.spacingExtraSmall,
+            vertical:
+                AppConstants.spacingSmall + AppConstants.spacingExtraSmall,
           ),
           decoration: BoxDecoration(
             color: isSelected
                 ? scheme.primary.withValues(alpha: 0.12)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
+            borderRadius: BorderRadius.circular(
+              AppConstants.borderRadiusMedium,
+            ),
             border: Border.all(
               color: isSelected ? scheme.primary : scheme.outlineVariant,
               width: isSelected ? 2 : 1,
