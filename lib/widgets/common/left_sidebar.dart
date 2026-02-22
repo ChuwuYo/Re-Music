@@ -25,27 +25,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
   void _toggle() => setState(() => _userWantsExpanded = !_userWantsExpanded);
 
-  String _seedColorLabel(AppLocalizations l10n, AppSeedColor seed) {
-    switch (seed) {
-      case AppSeedColor.teal:
-        return l10n.themeColorTeal;
-      case AppSeedColor.blue:
-        return l10n.themeColorBlue;
-      case AppSeedColor.indigo:
-        return l10n.themeColorIndigo;
-      case AppSeedColor.purple:
-        return l10n.themeColorPurple;
-      case AppSeedColor.pink:
-        return l10n.themeColorPink;
-      case AppSeedColor.orange:
-        return l10n.themeColorOrange;
-      case AppSeedColor.green:
-        return l10n.themeColorGreen;
-      case AppSeedColor.red:
-        return l10n.themeColorRed;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -171,54 +150,22 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     ],
                   ),
 
-                  // ── 明暗主题切换 ───────────────────────────────────
+                  // ── 主题模式切换 ───────────────────────────────────
                   _SidebarItem(
-                    icon: themeController.isDark
+                    icon: themeController.isLight
                         ? Icons.light_mode
-                        : Icons.dark_mode,
-                    label: themeController.isDark
+                        : themeController.isDark
+                            ? Icons.dark_mode
+                            : Icons.brightness_auto,
+                    label: themeController.isLight
                         ? l10n.switchToLight
-                        : l10n.switchToDark,
-                    tooltip: themeController.isDark
-                        ? l10n.switchToLight
-                        : l10n.switchToDark,
+                        : themeController.isDark
+                            ? l10n.switchToDark
+                            : l10n.followSystem,
+                    tooltip: l10n.themeMode,
                     expanded: expanded,
                     onPressed: () =>
                         context.read<ThemeController>().toggleThemeMode(),
-                  ),
-
-                  // ── 主题颜色菜单 ───────────────────────────────────
-                  _SidebarMenuAnchor(
-                    icon: Icons.palette_outlined,
-                    label: l10n.themeColor,
-                    tooltip: l10n.themeColor,
-                    expanded: expanded,
-                    menuAnchorAlignment: AlignmentDirectional.topEnd,
-                    menuChildren: AppSeedColor.values.map((seed) {
-                      final selected = themeController.seedColor;
-                      return MenuItemButton(
-                        onPressed: () =>
-                            context.read<ThemeController>().setSeedColor(seed),
-                        leadingIcon: seed == selected
-                            ? const Icon(Icons.check)
-                            : const SizedBox(width: 24),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: seed.color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(_seedColorLabel(l10n, seed)),
-                          ],
-                        ),
-                      );
-                    }).toList(),
                   ),
 
                   // ── 清空列表 ───────────────────────────────────────
@@ -323,6 +270,7 @@ class _SidebarItem extends StatelessWidget {
             foregroundColor: activeFg,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               iconWidget,
               const SizedBox(width: 14),
@@ -405,6 +353,7 @@ class _SidebarMenuAnchorState extends State<_SidebarMenuAnchor> {
                 shape: const RoundedRectangleBorder(),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(widget.icon),
                   const SizedBox(width: 14),

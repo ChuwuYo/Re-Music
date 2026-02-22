@@ -97,5 +97,7 @@
   "sidebarCollapse": "Collapse sidebar",
   "sidebarTooNarrow": "Window too narrow — resize to expand",
   "navHome": "Home",
-  "navSettings": "Settings"
+  "navSettings": "Settings",
+  "appearance": "Appearance",
+  "themeMode": "Theme mode"
 }

@@ -246,4 +246,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get navSettings => '设置';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get themeMode => '主题模式';
 }

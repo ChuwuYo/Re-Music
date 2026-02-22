@@ -246,4 +246,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navSettings => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeMode => 'Theme mode';
 }
