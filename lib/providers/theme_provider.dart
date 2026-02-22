@@ -10,6 +10,8 @@ class ThemeController extends ChangeNotifier {
   Color get seedColorValue => _seedColor.color;
 
   bool get isDark => _themeMode == ThemeMode.dark;
+  bool get isLight => _themeMode == ThemeMode.light;
+  bool get isSystem => _themeMode == ThemeMode.system;
 
   void setThemeMode(ThemeMode themeMode) {
     if (_themeMode == themeMode) return;
@@ -18,7 +20,11 @@ class ThemeController extends ChangeNotifier {
   }
 
   void toggleThemeMode() {
-    _themeMode = isDark ? ThemeMode.light : ThemeMode.dark;
+    _themeMode = switch (_themeMode) {
+      ThemeMode.system => ThemeMode.light,
+      ThemeMode.light => ThemeMode.dark,
+      ThemeMode.dark => ThemeMode.system,
+    };
     notifyListeners();
   }
 

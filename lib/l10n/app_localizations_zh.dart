@@ -27,10 +27,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get switchToDark => '切换到深色模式';
+  String get switchToDark => '深色模式';
 
   @override
-  String get switchToLight => '切换到浅色模式';
+  String get switchToLight => '浅色模式';
 
   @override
   String get themeColor => '主题色';
@@ -246,4 +246,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get navSettings => '设置';
+
+  @override
+  String get appearance => '外观';
+
+  @override
+  String get themeMode => '主题模式';
 }

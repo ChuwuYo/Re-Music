@@ -56,7 +56,7 @@ class AppConstants {
   static const String? defaultLocale = null;
 
   /// 默认主题模式
-  static const ThemeMode defaultThemeMode = ThemeMode.light;
+  static const ThemeMode defaultThemeMode = ThemeMode.system;
 
   /// 默认种子颜色
   static const AppSeedColor defaultSeedColor = AppSeedColor.teal;
@@ -82,6 +82,7 @@ class AppConstants {
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;
   static const double spacingSmall = 8.0;
+  static const double spacingMediumSmall = 12.0;
   static const double spacingMedium = 16.0;
   static const double spacingLarge = 24.0;
   static const double spacingExtraLarge = 32.0;

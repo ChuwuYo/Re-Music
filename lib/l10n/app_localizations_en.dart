@@ -27,10 +27,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get english => 'English';
 
   @override
-  String get switchToDark => 'Switch to dark mode';
+  String get switchToDark => 'Dark mode';
 
   @override
-  String get switchToLight => 'Switch to light mode';
+  String get switchToLight => 'Light mode';
 
   @override
   String get themeColor => 'Theme color';
@@ -246,4 +246,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navSettings => 'Settings';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeMode => 'Theme mode';
 }

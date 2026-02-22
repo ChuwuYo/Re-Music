@@ -6,8 +6,8 @@
   "followSystem": "跟随系统",
   "chinese": "简体中文",
   "english": "English",
-  "switchToDark": "切换到深色模式",
-  "switchToLight": "切换到浅色模式",
+  "switchToDark": "深色模式",
+  "switchToLight": "浅色模式",
   "themeColor": "主题色",
   "themeColorTeal": "青绿",
   "themeColorBlue": "蓝色",
@@ -97,5 +97,7 @@
   "sidebarCollapse": "收起侧边栏",
   "sidebarTooNarrow": "窗口太窄，拖宽窗口后可展开",
   "navHome": "主页",
-  "navSettings": "设置"
+  "navSettings": "设置",
+  "appearance": "外观",
+  "themeMode": "主题模式"
 }

@@ -137,13 +137,13 @@ abstract class AppLocalizations {
   /// No description provided for @switchToDark.
   ///
   /// In en, this message translates to:
-  /// **'Switch to dark mode'**
+  /// **'Dark mode'**
   String get switchToDark;
 
   /// No description provided for @switchToLight.
   ///
   /// In en, this message translates to:
-  /// **'Switch to light mode'**
+  /// **'Light mode'**
   String get switchToLight;
 
   /// No description provided for @themeColor.
@@ -559,6 +559,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get navSettings;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @themeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme mode'**
+  String get themeMode;
 }
 
 class _AppLocalizationsDelegate
