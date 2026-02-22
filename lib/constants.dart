@@ -82,7 +82,7 @@ class AppConstants {
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;
   static const double spacingSmall = 8.0;
-  static const double spacingLabelGap = 12.0;
+  static const double spacingMediumSmall = 12.0;
   static const double spacingMedium = 16.0;
   static const double spacingLarge = 24.0;
   static const double spacingExtraLarge = 32.0;

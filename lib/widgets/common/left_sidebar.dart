@@ -152,16 +152,16 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
                   // ── 主题模式切换 ───────────────────────────────────
                   _SidebarItem(
-                    icon: themeController.isLight
-                        ? Icons.light_mode
-                        : themeController.isDark
-                        ? Icons.dark_mode
-                        : Icons.brightness_auto,
-                    label: themeController.isLight
-                        ? l10n.switchToLight
-                        : themeController.isDark
-                        ? l10n.switchToDark
-                        : l10n.followSystem,
+                    icon: switch (themeController.themeMode) {
+                      ThemeMode.light => Icons.light_mode,
+                      ThemeMode.dark => Icons.dark_mode,
+                      ThemeMode.system => Icons.brightness_auto,
+                    },
+                    label: switch (themeController.themeMode) {
+                      ThemeMode.light => l10n.switchToLight,
+                      ThemeMode.dark => l10n.switchToDark,
+                      ThemeMode.system => l10n.followSystem,
+                    },
                     tooltip: l10n.themeMode,
                     expanded: expanded,
                     onPressed: () =>
@@ -270,7 +270,6 @@ class _SidebarItem extends StatelessWidget {
             foregroundColor: activeFg,
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               iconWidget,
               const SizedBox(width: 14),
@@ -353,7 +352,6 @@ class _SidebarMenuAnchorState extends State<_SidebarMenuAnchor> {
                 shape: const RoundedRectangleBorder(),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(widget.icon),
                   const SizedBox(width: 14),

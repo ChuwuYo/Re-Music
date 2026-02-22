@@ -10,25 +10,17 @@ class ThemeColorSelector extends StatelessWidget {
   const ThemeColorSelector({super.key});
 
   /// 根据种子颜色获取本地化标签
-  String _seedColorLabel(AppLocalizations l10n, AppSeedColor seed) {
-    switch (seed) {
-      case AppSeedColor.teal:
-        return l10n.themeColorTeal;
-      case AppSeedColor.blue:
-        return l10n.themeColorBlue;
-      case AppSeedColor.indigo:
-        return l10n.themeColorIndigo;
-      case AppSeedColor.purple:
-        return l10n.themeColorPurple;
-      case AppSeedColor.pink:
-        return l10n.themeColorPink;
-      case AppSeedColor.orange:
-        return l10n.themeColorOrange;
-      case AppSeedColor.green:
-        return l10n.themeColorGreen;
-      case AppSeedColor.red:
-        return l10n.themeColorRed;
-    }
+  static String _seedColorLabel(AppLocalizations l10n, AppSeedColor seed) {
+    return switch (seed) {
+      AppSeedColor.teal => l10n.themeColorTeal,
+      AppSeedColor.blue => l10n.themeColorBlue,
+      AppSeedColor.indigo => l10n.themeColorIndigo,
+      AppSeedColor.purple => l10n.themeColorPurple,
+      AppSeedColor.pink => l10n.themeColorPink,
+      AppSeedColor.orange => l10n.themeColorOrange,
+      AppSeedColor.green => l10n.themeColorGreen,
+      AppSeedColor.red => l10n.themeColorRed,
+    };
   }
 
   @override
@@ -47,7 +39,7 @@ class ThemeColorSelector extends StatelessWidget {
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
-        const SizedBox(height: AppConstants.spacingLabelGap),
+        const SizedBox(height: AppConstants.spacingMediumSmall),
         Wrap(
           spacing: AppConstants.spacingSmall,
           runSpacing: AppConstants.spacingSmall,

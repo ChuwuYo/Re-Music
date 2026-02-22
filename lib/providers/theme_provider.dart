@@ -20,17 +20,11 @@ class ThemeController extends ChangeNotifier {
   }
 
   void toggleThemeMode() {
-    switch (_themeMode) {
-      case ThemeMode.system:
-        _themeMode = ThemeMode.light;
-        break;
-      case ThemeMode.light:
-        _themeMode = ThemeMode.dark;
-        break;
-      case ThemeMode.dark:
-        _themeMode = ThemeMode.system;
-        break;
-    }
+    _themeMode = switch (_themeMode) {
+      ThemeMode.system => ThemeMode.light,
+      ThemeMode.light => ThemeMode.dark,
+      ThemeMode.dark => ThemeMode.system,
+    };
     notifyListeners();
   }
 

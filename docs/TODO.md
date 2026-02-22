@@ -39,10 +39,10 @@
    - 技术实现：
      - 桌面端（Windows / macOS / Linux）使用 ffmpeg_cli + 随应用打包 ffmpeg / ffprobe 二进制
      - 使用 ffprobe 自动检测 codec_name / sample_rate / bits_per_raw_sample
-     - ffprobe 位深检测回退逻辑：优先 bits_per_raw_sample → sample_fmt 推断（s16/s24/s32）→ 默认 16
+     - ffprobe 位深检测回退逻辑：优先 bits_per_raw_sample → sample_fmt 推断（s16/s32，注意：FFmpeg 无 s24 格式，24-bit 音频实际显示为 s32）→ 默认 16
      - 重采样使用 soxr 引擎（-resampler soxr）保证音质
      - 降位深时可选启用 triangular 抖动（实际听感差异极小，可配置）
-     - ALAC 编码优化：-map_metadata 0 保留元数据（封面/歌词），显式标注 sample_rate 解决部分播放器识别异常
+     - ALAC 编码优化：-map_metadata 0 -map 0:v? -c:v copy 保留元数据与封面（封面是独立的视频流，需单独映射），显式标注 sample_rate 解决部分播放器识别异常
      - 技术实现不依赖 ffmpeg_kit_flutter
    - 桌面端适配：
      - 支持单文件与批量文件夹处理

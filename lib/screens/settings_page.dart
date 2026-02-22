@@ -33,7 +33,7 @@ class SettingsPage extends StatelessWidget {
                 _SettingsCard(
                   title: l10n.appearance,
                   children: [
-                    _ThemeModeSelector(),
+                    const _ThemeModeSelector(),
                     const SizedBox(height: AppConstants.spacingLarge),
                     const ThemeColorSelector(),
                   ],
@@ -84,6 +84,8 @@ class _SettingsCard extends StatelessWidget {
 }
 
 class _ThemeModeSelector extends StatelessWidget {
+  const _ThemeModeSelector();
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -98,7 +100,7 @@ class _ThemeModeSelector extends StatelessWidget {
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
-        const SizedBox(height: AppConstants.spacingLabelGap),
+        const SizedBox(height: AppConstants.spacingMediumSmall),
         Row(
           children: [
             Expanded(
