@@ -1,7 +1,15 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
+import 'package:audiotags/audiotags.dart' as at;
 import '../constants.dart';
+
+class TagArtists {
+  final String? trackArtist;
+  final String? albumArtist;
+
+  const TagArtists({this.trackArtist, this.albumArtist});
+}
 
 class MetadataService {
   static Future<AudioMetadata?> getMetadata(String filePath) async {
@@ -17,8 +25,23 @@ class MetadataService {
     return readMetadata(File(filePath), getImage: false);
   }
 
+  static Future<TagArtists?> getTagArtists(String filePath) async {
+    try {
+      final tags = await at.AudioTags.read(filePath);
+      if (tags == null) return null;
+      return TagArtists(
+        trackArtist: tags.trackArtist,
+        albumArtist: tags.albumArtist,
+      );
+    } catch (e) {
+      debugPrint('Error reading tag artists for $filePath: $e');
+      return null;
+    }
+  }
+
   static String formatNewFileName({
     required String artist,
+    String? albumArtist,
     required String title,
     String? album,
     String? track,
@@ -37,6 +60,12 @@ class MetadataService {
         : '';
 
     final cleanArtist = artist
+        .replaceAll(
+          AppConstants.invalidFilenameChars,
+          AppConstants.invalidFilenameReplacement,
+        )
+        .trim();
+    final cleanAlbumArtist = (albumArtist ?? '')
         .replaceAll(
           AppConstants.invalidFilenameChars,
           AppConstants.invalidFilenameReplacement,
@@ -65,22 +94,24 @@ class MetadataService {
         ? artistSeparator
         : AppConstants.defaultArtistSeparator;
 
-    String artistValue;
-    if (cleanArtist.isEmpty) {
-      artistValue = unknownArtist;
-    } else {
-      final artistParts = cleanArtist
+    String normalizeArtistValue(String value, String fallback) {
+      if (value.isEmpty) return fallback;
+      final artistParts = value
           .split(RegExp(r'[,;/、，]'))
           .map((s) => s.trim())
           .where((s) => s.isNotEmpty)
           .toList();
       if (artistParts.length > 1) {
-        artistValue = artistParts.join(safeArtistSeparator);
-      } else {
-        artistValue = cleanArtist;
+        return artistParts.join(safeArtistSeparator);
       }
+      return value;
     }
 
+    final artistValue = normalizeArtistValue(cleanArtist, unknownArtist);
+    final albumArtistValue = normalizeArtistValue(
+      cleanAlbumArtist,
+      unknownArtist,
+    );
     final titleValue = cleanTitle.isEmpty ? unknownTitle : cleanTitle;
     final albumValue = cleanAlbum.isEmpty ? unknownAlbum : cleanAlbum;
     final trackValue = cleanTrack.isEmpty ? indexStr : cleanTrack;
@@ -88,6 +119,7 @@ class MetadataService {
     if (pattern.contains('{')) {
       baseName = pattern
           .replaceAll('{artist}', artistValue)
+          .replaceAll('{albumArtist}', albumArtistValue)
           .replaceAll('{title}', titleValue)
           .replaceAll('{album}', albumValue)
           .replaceAll('{track}', trackValue)
@@ -114,7 +146,11 @@ class MetadataService {
     if (baseName.isEmpty) {
       baseName = cleanTitle.isNotEmpty
           ? cleanTitle
-          : (cleanArtist.isNotEmpty ? cleanArtist : untitledTrack);
+          : (cleanArtist.isNotEmpty
+                ? cleanArtist
+                : (cleanAlbumArtist.isNotEmpty
+                      ? cleanAlbumArtist
+                      : untitledTrack));
     }
 
     final ext = extension.startsWith('.') ? extension : '.$extension';

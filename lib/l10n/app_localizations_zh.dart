@@ -83,6 +83,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get patternTrackTitle => '音轨号 - 标题';
 
   @override
+  String get patternAlbumArtistTrackTitle => '专辑艺术家 - 音轨号 - 标题';
+
+  @override
   String get patternArtistAlbumTitle => '艺术家 - 专辑 - 标题';
 
   @override
@@ -186,6 +189,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get metadataTitle => '标题';
+
+  @override
+  String get metadataTrackArtist => '曲目艺术家';
+
+  @override
+  String get metadataAlbumArtist => '专辑艺术家';
 
   @override
   String get metadataArtist => '艺术家';

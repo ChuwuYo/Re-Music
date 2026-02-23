@@ -83,6 +83,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get patternTrackTitle => 'Track - Title';
 
   @override
+  String get patternAlbumArtistTrackTitle => 'Album Artist - Track - Title';
+
+  @override
   String get patternArtistAlbumTitle => 'Artist - Album - Title';
 
   @override
@@ -186,6 +189,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get metadataTitle => 'Title';
+
+  @override
+  String get metadataTrackArtist => 'Track artist';
+
+  @override
+  String get metadataAlbumArtist => 'Album artist';
 
   @override
   String get metadataArtist => 'Artist';

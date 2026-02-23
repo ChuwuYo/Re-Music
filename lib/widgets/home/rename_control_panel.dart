@@ -58,6 +58,8 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
         return l10n.patternTitleArtist;
       case '{track} - {title}':
         return l10n.patternTrackTitle;
+      case '{albumArtist} - {track} - {title}':
+        return l10n.patternAlbumArtistTrackTitle;
       case '{artist} - {album} - {title}':
         return l10n.patternArtistAlbumTitle;
       default:

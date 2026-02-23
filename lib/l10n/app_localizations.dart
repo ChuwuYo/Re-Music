@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// **'Track - Title'**
   String get patternTrackTitle;
 
+  /// No description provided for @patternAlbumArtistTrackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Album Artist - Track - Title'**
+  String get patternAlbumArtistTrackTitle;
+
   /// No description provided for @patternArtistAlbumTitle.
   ///
   /// In en, this message translates to:
@@ -439,6 +445,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Title'**
   String get metadataTitle;
+
+  /// No description provided for @metadataTrackArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Track artist'**
+  String get metadataTrackArtist;
+
+  /// No description provided for @metadataAlbumArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Album artist'**
+  String get metadataAlbumArtist;
 
   /// No description provided for @metadataArtist.
   ///

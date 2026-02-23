@@ -26,6 +26,10 @@ class AppConstants {
     {'name': 'Title - Artist', 'pattern': '{title} - {artist}'},
     {'name': 'Track - Title', 'pattern': '{track} - {title}'},
     {
+      'name': 'Album Artist - Track - Title',
+      'pattern': '{albumArtist} - {track} - {title}',
+    },
+    {
       'name': 'Artist - Album - Title',
       'pattern': '{artist} - {album} - {title}',
     },
