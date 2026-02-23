@@ -119,7 +119,7 @@ abstract class AppLocalizations {
   /// No description provided for @followSystem.
   ///
   /// In en, this message translates to:
-  /// **'Follow system'**
+  /// **'Auto'**
   String get followSystem;
 
   /// No description provided for @chinese.
@@ -241,6 +241,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track - Title'**
   String get patternTrackTitle;
+
+  /// No description provided for @patternAlbumArtistTrackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Album Artist - Track - Title'**
+  String get patternAlbumArtistTrackTitle;
 
   /// No description provided for @patternArtistAlbumTitle.
   ///
@@ -440,6 +446,18 @@ abstract class AppLocalizations {
   /// **'Title'**
   String get metadataTitle;
 
+  /// No description provided for @metadataTrackArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Track artist'**
+  String get metadataTrackArtist;
+
+  /// No description provided for @metadataAlbumArtist.
+  ///
+  /// In en, this message translates to:
+  /// **'Album artist'**
+  String get metadataAlbumArtist;
+
   /// No description provided for @metadataArtist.
   ///
   /// In en, this message translates to:
@@ -571,6 +589,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Theme mode'**
   String get themeMode;
+
+  /// No description provided for @renameSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename settings'**
+  String get renameSettings;
+
+  /// No description provided for @singleFileAddMode.
+  ///
+  /// In en, this message translates to:
+  /// **'When adding single file'**
+  String get singleFileAddMode;
+
+  /// No description provided for @directoryAddMode.
+  ///
+  /// In en, this message translates to:
+  /// **'When scanning directory'**
+  String get directoryAddMode;
+
+  /// No description provided for @addModeAppend.
+  ///
+  /// In en, this message translates to:
+  /// **'Append to list'**
+  String get addModeAppend;
+
+  /// No description provided for @addModeReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace existing list'**
+  String get addModeReplace;
+
+  /// No description provided for @artistSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist separator'**
+  String get artistSeparator;
+
+  /// No description provided for @artistSeparatorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separator for multiple artists'**
+  String get artistSeparatorHint;
 }
 
 class _AppLocalizationsDelegate

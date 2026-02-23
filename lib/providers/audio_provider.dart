@@ -72,6 +72,9 @@ class AudioProvider extends ChangeNotifier {
   String _unknownTitle = AppConstants.defaultUnknownTitle;
   String _unknownAlbum = AppConstants.defaultUnknownAlbum;
   String _untitledTrack = AppConstants.defaultUntitledTrack;
+  String _artistSeparator = AppConstants.defaultArtistSeparator;
+  FileAddMode _singleFileAddMode = AppConstants.defaultSingleFileAddMode;
+  FileAddMode _directoryAddMode = AppConstants.defaultDirectoryAddMode;
 
   void setNamingPlaceholders({
     required String unknownArtist,
@@ -94,6 +97,33 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String get artistSeparator => _artistSeparator;
+
+  FileAddMode get singleFileAddMode => _singleFileAddMode;
+  FileAddMode get directoryAddMode => _directoryAddMode;
+
+  void setArtistSeparator(String separator) {
+    final nextSeparator = AppConstants.isValidArtistSeparator(separator)
+        ? separator
+        : AppConstants.defaultArtistSeparator;
+    if (_artistSeparator == nextSeparator) return;
+    _artistSeparator = nextSeparator;
+    _updateNewFileNames();
+    notifyListeners();
+  }
+
+  void setSingleFileAddMode(FileAddMode mode) {
+    if (_singleFileAddMode == mode) return;
+    _singleFileAddMode = mode;
+    notifyListeners();
+  }
+
+  void setDirectoryAddMode(FileAddMode mode) {
+    if (_directoryAddMode == mode) return;
+    _directoryAddMode = mode;
+    notifyListeners();
+  }
+
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
 
@@ -107,12 +137,29 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> addFilesWithMode(List<String> paths, FileAddMode mode) async {
+    if (mode == FileAddMode.replace) {
+      await clearFiles();
+    }
+    if (paths.isEmpty) return;
+    await addFiles(paths);
+  }
+
+  Future<void> addSingleFiles(List<String> paths) async {
+    await addFilesWithMode(paths, _singleFileAddMode);
+  }
+
+  Future<void> addDirectoryFiles(List<String> paths) async {
+    await addFilesWithMode(paths, _directoryAddMode);
+  }
+
   void _updateNewFileNames() {
     for (int i = 0; i < _files.length; i++) {
       final file = _files[i];
       if (file.status == ProcessingStatus.success && file.metadata != null) {
         file.newFileName = MetadataService.formatNewFileName(
-          artist: file.artist,
+          artist: file.namingArtist,
+          albumArtist: file.albumArtist,
           title: file.title,
           album: file.album,
           track: file.track,
@@ -122,6 +169,7 @@ class AudioProvider extends ChangeNotifier {
           unknownTitle: _unknownTitle,
           unknownAlbum: _unknownAlbum,
           untitledTrack: _untitledTrack,
+          artistSeparator: _artistSeparator,
           index: i + 1,
         );
       }
@@ -131,7 +179,8 @@ class AudioProvider extends ChangeNotifier {
   Future<void> updateMetadata(
     AudioFile file, {
     required String title,
-    required String artist,
+    required String trackArtist,
+    required String albumArtist,
     required String album,
     required String trackNumber,
     required String trackTotal,
@@ -141,10 +190,13 @@ class AudioProvider extends ChangeNotifier {
     required String comment,
   }) async {
     try {
+      final normalizedTrackArtist = _normalizeText(trackArtist);
+      final normalizedAlbumArtist = _normalizeText(albumArtist);
       final tags = at.Tag(
         title: _normalizeText(title),
-        trackArtist: _normalizeText(artist),
+        trackArtist: normalizedTrackArtist,
         album: _normalizeText(album),
+        albumArtist: normalizedAlbumArtist,
         trackNumber: _parseInt(trackNumber),
         trackTotal: _parseInt(trackTotal),
         year: _parseInt(year),
@@ -156,6 +208,7 @@ class AudioProvider extends ChangeNotifier {
 
       // Re-read metadata to ensure consistency
       final metadata = await MetadataService.getMetadata(file.path);
+      final tagArtists = await MetadataService.getTagArtists(file.path);
       if (metadata != null) {
         file.metadata = metadata;
       } else {
@@ -163,7 +216,7 @@ class AudioProvider extends ChangeNotifier {
         final currentMetadata =
             file.metadata ?? AudioMetadata(file: File(file.path));
         currentMetadata.title = _normalizeText(title);
-        currentMetadata.artist = _normalizeText(artist);
+        currentMetadata.artist = normalizedTrackArtist ?? normalizedAlbumArtist;
         currentMetadata.album = _normalizeText(album);
         currentMetadata.trackNumber = _parseInt(trackNumber);
         currentMetadata.trackTotal = _parseInt(trackTotal);
@@ -172,6 +225,12 @@ class AudioProvider extends ChangeNotifier {
         currentMetadata.genres = _parseGenres(genre);
         file.metadata = currentMetadata;
       }
+      _applyTagArtists(
+        file,
+        tagArtists,
+        fallbackTrackArtist: normalizedTrackArtist,
+        fallbackAlbumArtist: normalizedAlbumArtist,
+      );
 
       file.comment = _normalizeText(comment);
 
@@ -234,7 +293,9 @@ class AudioProvider extends ChangeNotifier {
           try {
             final metadata = await MetadataService.getMetadata(file.path);
             if (metadata != null) {
+              final tagArtists = await MetadataService.getTagArtists(file.path);
               file.metadata = metadata;
+              _applyTagArtists(file, tagArtists);
               file.status = ProcessingStatus.success;
             } else {
               file.status = ProcessingStatus.error;
@@ -318,7 +379,7 @@ class AudioProvider extends ChangeNotifier {
         return;
       case 'artist':
         _files.sort((a, b) {
-          final cmp = a.artist.compareTo(b.artist);
+          final cmp = a.trackArtist.compareTo(b.trackArtist);
           return _sortAscending ? cmp : -cmp;
         });
         return;
@@ -346,6 +407,25 @@ class AudioProvider extends ChangeNotifier {
   String? _normalizeText(String value) {
     final trimmed = value.trim();
     return trimmed.isEmpty ? null : trimmed;
+  }
+
+  String? _normalizeNullableText(String? value) {
+    if (value == null) return null;
+    return _normalizeText(value);
+  }
+
+  void _applyTagArtists(
+    AudioFile file,
+    TagArtists? artists, {
+    String? fallbackTrackArtist,
+    String? fallbackAlbumArtist,
+  }) {
+    file.tagTrackArtist = _normalizeNullableText(
+      artists?.trackArtist ?? fallbackTrackArtist,
+    );
+    file.tagAlbumArtist = _normalizeNullableText(
+      artists?.albumArtist ?? fallbackAlbumArtist,
+    );
   }
 
   int? _parseInt(String value) {

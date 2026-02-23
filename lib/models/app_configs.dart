@@ -9,6 +9,9 @@ class AppConfigs {
   final bool sortAscending;
   final String pattern;
   final FileFilter filter;
+  final String artistSeparator;
+  final FileAddMode singleFileAddMode;
+  final FileAddMode directoryAddMode;
 
   const AppConfigs({
     required this.locale,
@@ -18,6 +21,9 @@ class AppConfigs {
     required this.sortAscending,
     required this.pattern,
     required this.filter,
+    required this.artistSeparator,
+    required this.singleFileAddMode,
+    required this.directoryAddMode,
   });
 
   static AppConfigs defaults() {
@@ -29,6 +35,9 @@ class AppConfigs {
       sortAscending: AppConstants.defaultSortAscending,
       pattern: AppConstants.defaultNamingPattern,
       filter: AppConstants.defaultFileFilter,
+      artistSeparator: AppConstants.defaultArtistSeparator,
+      singleFileAddMode: AppConstants.defaultSingleFileAddMode,
+      directoryAddMode: AppConstants.defaultDirectoryAddMode,
     );
   }
 
@@ -40,6 +49,9 @@ class AppConfigs {
     final sortAscendingRaw = json['sortAscending'];
     final pattern = json['pattern'];
     final filterRaw = json['filter'];
+    final artistSeparator = json['artistSeparator'];
+    final singleFileAddModeRaw = json['singleFileAddMode'];
+    final directoryAddModeRaw = json['directoryAddMode'];
 
     return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
@@ -53,6 +65,15 @@ class AppConfigs {
           ? pattern
           : AppConfigs.defaults().pattern,
       filter: _parseFilter(filterRaw),
+      artistSeparator: _parseArtistSeparator(artistSeparator),
+      singleFileAddMode: _parseFileAddMode(
+        singleFileAddModeRaw,
+        AppConfigs.defaults().singleFileAddMode,
+      ),
+      directoryAddMode: _parseFileAddMode(
+        directoryAddModeRaw,
+        AppConfigs.defaults().directoryAddMode,
+      ),
     );
   }
 
@@ -65,6 +86,9 @@ class AppConfigs {
       'sortAscending': sortAscending,
       'pattern': pattern,
       'filter': filter.name,
+      'artistSeparator': artistSeparator,
+      'singleFileAddMode': singleFileAddMode.name,
+      'directoryAddMode': directoryAddMode.name,
     };
   }
 
@@ -112,6 +136,22 @@ class AppConfigs {
     return AppConfigs.defaults().sortCriteria;
   }
 
+  static FileAddMode _parseFileAddMode(Object? raw, FileAddMode fallback) {
+    if (raw is String) {
+      for (final v in FileAddMode.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return fallback;
+  }
+
+  static String _parseArtistSeparator(Object? raw) {
+    if (raw is String && AppConstants.isValidArtistSeparator(raw)) {
+      return raw;
+    }
+    return AppConfigs.defaults().artistSeparator;
+  }
+
   @override
   bool operator ==(Object other) {
     return other is AppConfigs &&
@@ -121,7 +161,10 @@ class AppConfigs {
         other.sortCriteria == sortCriteria &&
         other.sortAscending == sortAscending &&
         other.pattern == pattern &&
-        other.filter == filter;
+        other.filter == filter &&
+        other.artistSeparator == artistSeparator &&
+        other.singleFileAddMode == singleFileAddMode &&
+        other.directoryAddMode == directoryAddMode;
   }
 
   @override
@@ -133,5 +176,8 @@ class AppConfigs {
     sortAscending,
     pattern,
     filter,
+    artistSeparator,
+    singleFileAddMode,
+    directoryAddMode,
   );
 }

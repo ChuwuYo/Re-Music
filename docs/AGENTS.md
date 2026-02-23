@@ -2,12 +2,12 @@
 
 ## Project Overview
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and music tag editing (WIP).
+**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and music tag editing.
 
 ## Key Features
 
 *   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration.
-*   **Music Tag Editing (WIP)**: Allows editing of audio metadata, with batch modification and saving capabilities.
+*   **Music Tag Editing**: Supports separate editing of track artist and album artist, with batch modification and saving capabilities.
 *   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting.
 *   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English.
 
@@ -17,8 +17,8 @@
 *   **Language**: Dart
 *   **State Management**: `provider`
 *   **Core Dependencies**:
-    *   `audio_metadata_reader`: Audio metadata reading.
-    *   `audiotags`: Audio metadata writing.
+    *   `audio_metadata_reader`: Fast cross-format metadata parsing.
+    *   `audiotags`: Detailed tag reading and writing (e.g., track artist and album artist).
     *   `window_manager`: Desktop window management.
     *   `file_picker`: File picker.
     *   `intl`: Internationalization.
@@ -59,6 +59,7 @@ lib/
 │   │   ├── list_states.dart
 │   │   └── rename_control_panel.dart
 │   └── settings/               # Settings page specific widgets
+│       ├── rename_settings.dart
 │       └── theme_color_selector.dart
 └── l10n/                       # Internationalization (ARB files)
 ```
@@ -119,6 +120,7 @@ Build output: `build/windows/runner/Release/`
 - Test files are in `test/` directory.
 - Run all tests: `flutter test`
 - Run specific test: `flutter test test/file_service_test.dart`
+- Artist semantics test: `flutter test test/metadata_service_test.dart`
 - **All tests must pass before committing.**
 
 ## Architecture Guidelines
@@ -175,7 +177,8 @@ MP3 (`.mp3`), FLAC (`.flac`), M4A/AAC (`.m4a`, `.aac`), OGG/Opus (`.ogg`, `.opus
 
 ### Naming Patterns
 The app uses pattern-based file renaming with placeholders:
-- `{artist}` - Artist name
+- `{artist}` - Track artist (fallback: performers -> album artist -> unknown artist)
+- `{albumArtist}` - Album artist
 - `{title}` - Track title
 - `{album}` - Album name
 - `{track}` - Track number
@@ -191,5 +194,6 @@ Example: `{artist} - {title}` produces "Artist Name - Track Title.mp3"
 - Access translations via `AppLocalizations.of(context)!.keyName`
 
 ### Known Issues / WIP
-- Music tag editing feature is work-in-progress.
+- Online metadata retrieval is work-in-progress.
+- Audio resampling and format conversion are work-in-progress.
 - Installer generation requires third-party tools (NSIS / Inno Setup).

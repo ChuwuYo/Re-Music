@@ -18,7 +18,8 @@ class MetadataEditDialog extends StatefulWidget {
 class _MetadataEditDialogState extends State<MetadataEditDialog> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
-  late final TextEditingController _artistController;
+  late final TextEditingController _trackArtistController;
+  late final TextEditingController _albumArtistController;
   late final TextEditingController _albumController;
   late final TextEditingController _trackNumberController;
   late final TextEditingController _trackTotalController;
@@ -32,7 +33,12 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     super.initState();
     final metadata = widget.file.metadata;
     _titleController = TextEditingController(text: metadata?.title ?? '');
-    _artistController = TextEditingController(text: metadata?.artist ?? '');
+    _trackArtistController = TextEditingController(
+      text: widget.file.trackArtist,
+    );
+    _albumArtistController = TextEditingController(
+      text: widget.file.albumArtist,
+    );
     _albumController = TextEditingController(text: metadata?.album ?? '');
     _trackNumberController = TextEditingController(
       text: metadata?.trackNumber?.toString() ?? '',
@@ -53,7 +59,8 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
   @override
   void dispose() {
     _titleController.dispose();
-    _artistController.dispose();
+    _trackArtistController.dispose();
+    _albumArtistController.dispose();
     _albumController.dispose();
     _trackNumberController.dispose();
     _trackTotalController.dispose();
@@ -69,7 +76,8 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
       context.read<AudioProvider>().updateMetadata(
         widget.file,
         title: _titleController.text,
-        artist: _artistController.text,
+        trackArtist: _trackArtistController.text,
+        albumArtist: _albumArtistController.text,
         album: _albumController.text,
         trackNumber: _trackNumberController.text,
         trackTotal: _trackTotalController.text,
@@ -139,7 +147,15 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                       children: [
                         _buildTextField(_titleController, l10n.metadataTitle),
                         const SizedBox(height: 12),
-                        _buildTextField(_artistController, l10n.metadataArtist),
+                        _buildTextField(
+                          _trackArtistController,
+                          l10n.metadataTrackArtist,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTextField(
+                          _albumArtistController,
+                          l10n.metadataAlbumArtist,
+                        ),
                         const SizedBox(height: 12),
                         _buildTextField(_albumController, l10n.metadataAlbum),
                         const SizedBox(height: 12),

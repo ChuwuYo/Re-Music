@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/common/selectable_card.dart';
 import '../widgets/settings/theme_color_selector.dart';
+import '../widgets/settings/rename_settings.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -37,6 +38,11 @@ class SettingsPage extends StatelessWidget {
                     const SizedBox(height: AppConstants.spacingLarge),
                     const ThemeColorSelector(),
                   ],
+                ),
+                const SizedBox(height: AppConstants.spacingLarge),
+                _SettingsCard(
+                  title: l10n.renameSettings,
+                  children: const [RenameSettings()],
                 ),
               ],
             ),

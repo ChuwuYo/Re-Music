@@ -26,6 +26,10 @@ class AppConstants {
     {'name': 'Title - Artist', 'pattern': '{title} - {artist}'},
     {'name': 'Track - Title', 'pattern': '{track} - {title}'},
     {
+      'name': 'Album Artist - Track - Title',
+      'pattern': '{albumArtist} - {track} - {title}',
+    },
+    {
       'name': 'Artist - Album - Title',
       'pattern': '{artist} - {album} - {title}',
     },
@@ -70,11 +74,28 @@ class AppConstants {
   static const String defaultUnknownAlbum = 'Unknown album';
   static const String defaultUntitledTrack = 'Untitled track';
 
+  /// 默认艺术家分隔符（多个艺术家时使用什么符号分割）
+  static const String defaultArtistSeparator = '_';
+
+  /// 可选的艺术家分隔符列表
+  static const List<String> artistSeparatorOptions = ['_', ';', ',', '·', '、'];
+
+  /// 校验艺术家分隔符是否可用于文件名
+  static bool isValidArtistSeparator(String separator) {
+    return separator.isNotEmpty &&
+        artistSeparatorOptions.contains(separator) &&
+        !invalidFilenameChars.hasMatch(separator);
+  }
+
+  /// 默认文件添加模式
+  static const FileAddMode defaultSingleFileAddMode = FileAddMode.append;
+  static const FileAddMode defaultDirectoryAddMode = FileAddMode.append;
+
   /// 窗口配置
   static const double defaultWindowWidth = 1440;
   static const double defaultWindowHeight = 900;
-  static const double minimumWindowWidth = 860;
-  static const double minimumWindowHeight = 600;
+  static const double minimumWindowWidth = 900;
+  static const double minimumWindowHeight = 760;
 
   /// 左侧栏响应式：窗口宽度低于此值时自动收起
   static const double sidebarAutoCollapseWidth = 1000.0;
@@ -113,6 +134,8 @@ class AppConstants {
   static const double menuMinWidth = 140.0;
   static const double menuMaxWidth = 320.0;
   static const double menuPaddingAndIconSpace = 56.0;
+  static const double renameSettingsNarrowWidth = 480.0;
+  static const double artistSeparatorOptionWidth = 40.0;
 
   /// 阴影相关常量
   static const double shadowBlurRadius = 18.0;
@@ -156,6 +179,9 @@ class AppConstants {
 
 /// 文件过滤器枚举
 enum FileFilter { all, valid, invalid }
+
+/// 文件添加模式枚举（点击添加文件/扫描目录时的行为）
+enum FileAddMode { append, replace }
 
 /// 主题种子颜色枚举
 enum AppSeedColor { teal, blue, indigo, purple, pink, orange, green, red }

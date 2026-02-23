@@ -16,7 +16,7 @@
 
 ## Introduction
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata, music tag editing, online metadata retrieval (WIP), and audio resampling with format conversion (WIP)
+**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata, music tag editing, online metadata retrieval (WIP), and audio resampling with format conversion (WIP).
 
 ## Preview
 
@@ -29,8 +29,8 @@
 
 ## Key Features
 
-*   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration
-*   **Music Tag Editing**: Allows editing of audio metadata, with batch modification and saving capabilities
+*   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration, including `{artist}` and `{albumArtist}` placeholders
+*   **Music Tag Editing**: Supports separate editing of track artist and album artist, with batch modification and saving capabilities
 *   **Online Metadata Retrieval (WIP)**: Fetch song tags and cover art from online sources
 *   **Audio Resampling (WIP)**: Lossless audio downsampling for improved compatibility.
 *   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting
@@ -53,6 +53,19 @@ All constants used in the application are centrally managed in `lib/constants.da
 *   **WavPack** (`.wv`)
 *   **DSD** (`.dsf`, `.dff`)
 
+## Naming Patterns
+
+The app uses pattern-based file renaming with placeholders:
+
+*   `{artist}`: Track artist (fallback: performers -> album artist -> unknown artist)
+*   `{albumArtist}`: Album artist
+*   `{title}`: Track title
+*   `{album}`: Album name
+*   `{track}`: Track number
+*   `{index}`: Sequential index
+
+Example: `{albumArtist} - {track} - {title}` -> `Album Artist - 01 - Track Title.mp3`
+
 ## Tech Stack
 
 This project is built with **Flutter** and primarily uses the following technologies and libraries:
@@ -61,8 +74,8 @@ This project is built with **Flutter** and primarily uses the following technolo
 *   **Language**: Dart
 *   **State Management**: `provider`
 *   **Core Dependencies**:
-    *   `audio_metadata_reader`: Audio metadata reading.
-    *   `audiotags`: Audio metadata writing.
+    *   `audio_metadata_reader`: Fast cross-format metadata parsing.
+    *   `audiotags`: Detailed metadata reading and writing (e.g., track artist and album artist).
     *   `window_manager`: Desktop window management.
     *   `file_picker`: File picker.
     *   `intl`: Internationalization.
