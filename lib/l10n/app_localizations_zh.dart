@@ -18,7 +18,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get language => '语言';
 
   @override
-  String get followSystem => '跟随系统';
+  String get followSystem => '自动';
 
   @override
   String get chinese => '简体中文';
@@ -252,4 +252,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeMode => '主题模式';
+
+  @override
+  String get renameSettings => '重命名设置';
+
+  @override
+  String get singleFileAddMode => '添加单文件时';
+
+  @override
+  String get directoryAddMode => '扫描目录时';
+
+  @override
+  String get addModeAppend => '叠加到列表';
+
+  @override
+  String get addModeReplace => '替换现有列表';
+
+  @override
+  String get artistSeparator => '艺术家分隔符';
+
+  @override
+  String get artistSeparatorHint => '多个艺术家时使用的分隔符';
 }

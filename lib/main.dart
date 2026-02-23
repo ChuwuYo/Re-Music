@@ -32,6 +32,9 @@ void main() async {
     audioProvider.setSortAscending(settings.sortAscending);
     audioProvider.setPattern(settings.pattern);
     audioProvider.setFilter(settings.filter);
+    audioProvider.setArtistSeparator(settings.artistSeparator);
+    audioProvider.setSingleFileAddMode(settings.singleFileAddMode);
+    audioProvider.setDirectoryAddMode(settings.directoryAddMode);
   }
 
   configsStore.setBaseline(
@@ -43,6 +46,9 @@ void main() async {
       sortAscending: audioProvider.sortAscending,
       pattern: audioProvider.pattern,
       filter: audioProvider.filter,
+      artistSeparator: audioProvider.artistSeparator,
+      singleFileAddMode: audioProvider.singleFileAddMode,
+      directoryAddMode: audioProvider.directoryAddMode,
     ),
   );
 
@@ -56,6 +62,9 @@ void main() async {
         sortAscending: audioProvider.sortAscending,
         pattern: audioProvider.pattern,
         filter: audioProvider.filter,
+        artistSeparator: audioProvider.artistSeparator,
+        singleFileAddMode: audioProvider.singleFileAddMode,
+        directoryAddMode: audioProvider.directoryAddMode,
       ),
     );
   }

@@ -3,7 +3,7 @@
   "appTitle": "Re:Music",
   "clearList": "清空列表",
   "language": "语言",
-  "followSystem": "跟随系统",
+  "followSystem": "自动",
   "chinese": "简体中文",
   "english": "English",
   "switchToDark": "深色模式",
@@ -99,5 +99,12 @@
   "navHome": "主页",
   "navSettings": "设置",
   "appearance": "外观",
-  "themeMode": "主题模式"
+  "themeMode": "主题模式",
+  "renameSettings": "重命名设置",
+  "singleFileAddMode": "添加单文件时",
+  "directoryAddMode": "扫描目录时",
+  "addModeAppend": "叠加到列表",
+  "addModeReplace": "替换现有列表",
+  "artistSeparator": "艺术家分隔符",
+  "artistSeparatorHint": "多个艺术家时使用的分隔符"
 }

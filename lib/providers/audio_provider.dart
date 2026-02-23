@@ -72,6 +72,9 @@ class AudioProvider extends ChangeNotifier {
   String _unknownTitle = AppConstants.defaultUnknownTitle;
   String _unknownAlbum = AppConstants.defaultUnknownAlbum;
   String _untitledTrack = AppConstants.defaultUntitledTrack;
+  String _artistSeparator = AppConstants.defaultArtistSeparator;
+  FileAddMode _singleFileAddMode = AppConstants.defaultSingleFileAddMode;
+  FileAddMode _directoryAddMode = AppConstants.defaultDirectoryAddMode;
 
   void setNamingPlaceholders({
     required String unknownArtist,
@@ -94,6 +97,33 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  String get artistSeparator => _artistSeparator;
+
+  FileAddMode get singleFileAddMode => _singleFileAddMode;
+  FileAddMode get directoryAddMode => _directoryAddMode;
+
+  void setArtistSeparator(String separator) {
+    final nextSeparator = AppConstants.isValidArtistSeparator(separator)
+        ? separator
+        : AppConstants.defaultArtistSeparator;
+    if (_artistSeparator == nextSeparator) return;
+    _artistSeparator = nextSeparator;
+    _updateNewFileNames();
+    notifyListeners();
+  }
+
+  void setSingleFileAddMode(FileAddMode mode) {
+    if (_singleFileAddMode == mode) return;
+    _singleFileAddMode = mode;
+    notifyListeners();
+  }
+
+  void setDirectoryAddMode(FileAddMode mode) {
+    if (_directoryAddMode == mode) return;
+    _directoryAddMode = mode;
+    notifyListeners();
+  }
+
   bool _isProcessing = false;
   bool get isProcessing => _isProcessing;
 
@@ -105,6 +135,22 @@ class AudioProvider extends ChangeNotifier {
     _pattern = newPattern;
     _updateNewFileNames();
     notifyListeners();
+  }
+
+  Future<void> addFilesWithMode(List<String> paths, FileAddMode mode) async {
+    if (mode == FileAddMode.replace) {
+      await clearFiles();
+    }
+    if (paths.isEmpty) return;
+    await addFiles(paths);
+  }
+
+  Future<void> addSingleFiles(List<String> paths) async {
+    await addFilesWithMode(paths, _singleFileAddMode);
+  }
+
+  Future<void> addDirectoryFiles(List<String> paths) async {
+    await addFilesWithMode(paths, _directoryAddMode);
   }
 
   void _updateNewFileNames() {
@@ -122,6 +168,7 @@ class AudioProvider extends ChangeNotifier {
           unknownTitle: _unknownTitle,
           unknownAlbum: _unknownAlbum,
           untitledTrack: _untitledTrack,
+          artistSeparator: _artistSeparator,
           index: i + 1,
         );
       }

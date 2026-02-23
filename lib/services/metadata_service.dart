@@ -28,6 +28,7 @@ class MetadataService {
     required String unknownTitle,
     required String unknownAlbum,
     required String untitledTrack,
+    String artistSeparator = AppConstants.defaultArtistSeparator,
     int? index,
   }) {
     String baseName;
@@ -59,8 +60,27 @@ class MetadataService {
           AppConstants.invalidFilenameReplacement,
         )
         .trim();
+    final safeArtistSeparator =
+        AppConstants.isValidArtistSeparator(artistSeparator)
+        ? artistSeparator
+        : AppConstants.defaultArtistSeparator;
 
-    final artistValue = cleanArtist.isEmpty ? unknownArtist : cleanArtist;
+    String artistValue;
+    if (cleanArtist.isEmpty) {
+      artistValue = unknownArtist;
+    } else {
+      final artistParts = cleanArtist
+          .split(RegExp(r'[,;/、，]'))
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+      if (artistParts.length > 1) {
+        artistValue = artistParts.join(safeArtistSeparator);
+      } else {
+        artistValue = cleanArtist;
+      }
+    }
+
     final titleValue = cleanTitle.isEmpty ? unknownTitle : cleanTitle;
     final albumValue = cleanAlbum.isEmpty ? unknownAlbum : cleanAlbum;
     final trackValue = cleanTrack.isEmpty ? indexStr : cleanTrack;

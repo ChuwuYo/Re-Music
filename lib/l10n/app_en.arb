@@ -3,7 +3,7 @@
   "appTitle": "Re:Music",
   "clearList": "Clear list",
   "language": "Language",
-  "followSystem": "Follow system",
+  "followSystem": "Auto",
   "chinese": "简体中文",
   "english": "English",
   "switchToDark": "Dark mode",
@@ -99,5 +99,12 @@
   "navHome": "Home",
   "navSettings": "Settings",
   "appearance": "Appearance",
-  "themeMode": "Theme mode"
+  "themeMode": "Theme mode",
+  "renameSettings": "Rename Settings",
+  "singleFileAddMode": "When adding single file",
+  "directoryAddMode": "When scanning directory",
+  "addModeAppend": "Append to list",
+  "addModeReplace": "Replace existing list",
+  "artistSeparator": "Artist separator",
+  "artistSeparatorHint": "Separator for multiple artists"
 }

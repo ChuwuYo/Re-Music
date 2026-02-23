@@ -18,7 +18,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get followSystem => 'Follow system';
+  String get followSystem => 'Auto';
 
   @override
   String get chinese => '简体中文';
@@ -252,4 +252,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeMode => 'Theme mode';
+
+  @override
+  String get renameSettings => 'Rename Settings';
+
+  @override
+  String get singleFileAddMode => 'When adding single file';
+
+  @override
+  String get directoryAddMode => 'When scanning directory';
+
+  @override
+  String get addModeAppend => 'Append to list';
+
+  @override
+  String get addModeReplace => 'Replace existing list';
+
+  @override
+  String get artistSeparator => 'Artist separator';
+
+  @override
+  String get artistSeparatorHint => 'Separator for multiple artists';
 }

@@ -119,7 +119,7 @@ abstract class AppLocalizations {
   /// No description provided for @followSystem.
   ///
   /// In en, this message translates to:
-  /// **'Follow system'**
+  /// **'Auto'**
   String get followSystem;
 
   /// No description provided for @chinese.
@@ -571,6 +571,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Theme mode'**
   String get themeMode;
+
+  /// No description provided for @renameSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename Settings'**
+  String get renameSettings;
+
+  /// No description provided for @singleFileAddMode.
+  ///
+  /// In en, this message translates to:
+  /// **'When adding single file'**
+  String get singleFileAddMode;
+
+  /// No description provided for @directoryAddMode.
+  ///
+  /// In en, this message translates to:
+  /// **'When scanning directory'**
+  String get directoryAddMode;
+
+  /// No description provided for @addModeAppend.
+  ///
+  /// In en, this message translates to:
+  /// **'Append to list'**
+  String get addModeAppend;
+
+  /// No description provided for @addModeReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace existing list'**
+  String get addModeReplace;
+
+  /// No description provided for @artistSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **'Artist separator'**
+  String get artistSeparator;
+
+  /// No description provided for @artistSeparatorHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Separator for multiple artists'**
+  String get artistSeparatorHint;
 }
 
 class _AppLocalizationsDelegate

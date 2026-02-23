@@ -88,9 +88,8 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                           final provider = context.read<AudioProvider>();
                           final paths = await FileService.pickFiles();
                           if (!mounted) return;
-                          if (paths.isNotEmpty) {
-                            provider.addFiles(paths);
-                          }
+                          if (paths.isEmpty) return;
+                          await provider.addSingleFiles(paths);
                         },
                         icon: const Icon(Icons.audio_file),
                         label: Text(l10n.addFiles),
@@ -102,7 +101,7 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
                           if (path == null) return;
                           final files = await FileService.scanDirectory(path);
                           if (!mounted) return;
-                          provider.addFiles(files);
+                          await provider.addDirectoryFiles(files);
                         },
                         icon: const Icon(Icons.create_new_folder),
                         label: Text(l10n.scanDirectory),
