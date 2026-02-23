@@ -66,4 +66,41 @@ void main() {
 
     expect(newName, 'Album Artist - Song.mp3');
   });
+
+  test(
+    'formatNewFileName splits artist by slash before sanitizing separators',
+    () {
+      final newName = MetadataService.formatNewFileName(
+        artist: 'Artist A/Artist B',
+        title: 'Song',
+        extension: '.mp3',
+        pattern: '{artist} - {title}',
+        unknownArtist: 'Unknown artist',
+        unknownTitle: 'Unknown title',
+        unknownAlbum: 'Unknown album',
+        untitledTrack: 'Untitled track',
+        artistSeparator: ';',
+      );
+
+      expect(newName, 'Artist A;Artist B - Song.mp3');
+    },
+  );
+
+  test(
+    'formatNewFileName trims trailing artist delimiter after normalization',
+    () {
+      final newName = MetadataService.formatNewFileName(
+        artist: 'Artist;',
+        title: '',
+        extension: '.mp3',
+        pattern: '{artist}',
+        unknownArtist: 'Unknown artist',
+        unknownTitle: 'Unknown title',
+        unknownAlbum: 'Unknown album',
+        untitledTrack: 'Untitled track',
+      );
+
+      expect(newName, 'Artist.mp3');
+    },
+  );
 }

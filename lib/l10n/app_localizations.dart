@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// No description provided for @renameSettings.
   ///
   /// In en, this message translates to:
-  /// **'Rename Settings'**
+  /// **'Rename settings'**
   String get renameSettings;
 
   /// No description provided for @singleFileAddMode.

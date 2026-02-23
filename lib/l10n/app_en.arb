@@ -103,7 +103,7 @@
   "navSettings": "Settings",
   "appearance": "Appearance",
   "themeMode": "Theme mode",
-  "renameSettings": "Rename Settings",
+  "renameSettings": "Rename settings",
   "singleFileAddMode": "When adding single file",
   "directoryAddMode": "When scanning directory",
   "addModeAppend": "Append to list",

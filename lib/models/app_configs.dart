@@ -66,8 +66,14 @@ class AppConfigs {
           : AppConfigs.defaults().pattern,
       filter: _parseFilter(filterRaw),
       artistSeparator: _parseArtistSeparator(artistSeparator),
-      singleFileAddMode: _parseFileAddMode(singleFileAddModeRaw),
-      directoryAddMode: _parseFileAddMode(directoryAddModeRaw),
+      singleFileAddMode: _parseFileAddMode(
+        singleFileAddModeRaw,
+        AppConfigs.defaults().singleFileAddMode,
+      ),
+      directoryAddMode: _parseFileAddMode(
+        directoryAddModeRaw,
+        AppConfigs.defaults().directoryAddMode,
+      ),
     );
   }
 
@@ -130,13 +136,13 @@ class AppConfigs {
     return AppConfigs.defaults().sortCriteria;
   }
 
-  static FileAddMode _parseFileAddMode(Object? raw) {
+  static FileAddMode _parseFileAddMode(Object? raw, FileAddMode fallback) {
     if (raw is String) {
       for (final v in FileAddMode.values) {
         if (v.name == raw) return v;
       }
     }
-    return AppConfigs.defaults().singleFileAddMode;
+    return fallback;
   }
 
   static String _parseArtistSeparator(Object? raw) {

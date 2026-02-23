@@ -58,58 +58,42 @@ class MetadataService {
     final indexStr = index != null
         ? index.toString().padLeft(AppConstants.numberPaddingLength, '0')
         : '';
+    String cleanValue(String value) {
+      return value
+          .replaceAll(
+            AppConstants.invalidFilenameChars,
+            AppConstants.invalidFilenameReplacement,
+          )
+          .trim();
+    }
 
-    final cleanArtist = artist
-        .replaceAll(
-          AppConstants.invalidFilenameChars,
-          AppConstants.invalidFilenameReplacement,
-        )
-        .trim();
-    final cleanAlbumArtist = (albumArtist ?? '')
-        .replaceAll(
-          AppConstants.invalidFilenameChars,
-          AppConstants.invalidFilenameReplacement,
-        )
-        .trim();
-    final cleanTitle = title
-        .replaceAll(
-          AppConstants.invalidFilenameChars,
-          AppConstants.invalidFilenameReplacement,
-        )
-        .trim();
-    final cleanAlbum = (album ?? '')
-        .replaceAll(
-          AppConstants.invalidFilenameChars,
-          AppConstants.invalidFilenameReplacement,
-        )
-        .trim();
-    final cleanTrack = (track ?? '')
-        .replaceAll(
-          AppConstants.invalidFilenameChars,
-          AppConstants.invalidFilenameReplacement,
-        )
-        .trim();
+    final cleanArtist = cleanValue(artist);
+    final cleanAlbumArtist = cleanValue(albumArtist ?? '');
+    final cleanTitle = cleanValue(title);
+    final cleanAlbum = cleanValue(album ?? '');
+    final cleanTrack = cleanValue(track ?? '');
     final safeArtistSeparator =
         AppConstants.isValidArtistSeparator(artistSeparator)
         ? artistSeparator
         : AppConstants.defaultArtistSeparator;
 
-    String normalizeArtistValue(String value, String fallback) {
-      if (value.isEmpty) return fallback;
-      final artistParts = value
+    String normalizeArtistValue(String rawValue, String fallback) {
+      if (rawValue.trim().isEmpty) return fallback;
+      final artistParts = rawValue
           .split(RegExp(r'[,;/、，]'))
-          .map((s) => s.trim())
+          .map(cleanValue)
           .where((s) => s.isNotEmpty)
           .toList();
+      if (artistParts.isEmpty) return fallback;
       if (artistParts.length > 1) {
         return artistParts.join(safeArtistSeparator);
       }
-      return value;
+      return artistParts.first;
     }
 
-    final artistValue = normalizeArtistValue(cleanArtist, unknownArtist);
+    final artistValue = normalizeArtistValue(artist, unknownArtist);
     final albumArtistValue = normalizeArtistValue(
-      cleanAlbumArtist,
+      albumArtist ?? '',
       unknownArtist,
     );
     final titleValue = cleanTitle.isEmpty ? unknownTitle : cleanTitle;

@@ -263,7 +263,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeMode => 'Theme mode';
 
   @override
-  String get renameSettings => 'Rename Settings';
+  String get renameSettings => 'Rename settings';
 
   @override
   String get singleFileAddMode => 'When adding single file';

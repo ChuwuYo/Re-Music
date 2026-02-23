@@ -96,6 +96,10 @@ class _AddModeColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final options = <MapEntry<FileAddMode, String>>[
+      MapEntry(FileAddMode.append, l10n.addModeAppend),
+      MapEntry(FileAddMode.replace, l10n.addModeReplace),
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,38 +115,23 @@ class _AddModeColumn extends StatelessWidget {
         Wrap(
           spacing: AppConstants.spacingSmall,
           runSpacing: AppConstants.spacingSmall,
-          children: [
-            SelectableCard(
-              isSelected: currentMode == FileAddMode.append,
-              onTap: () => onModeChanged(FileAddMode.append),
+          children: options.map((option) {
+            final mode = option.key;
+            final label = option.value;
+            final isSelected = currentMode == mode;
+
+            return SelectableCard(
+              isSelected: isSelected,
+              onTap: () => onModeChanged(mode),
               child: Text(
-                l10n.addModeAppend,
+                label,
                 style: TextStyle(
-                  color: currentMode == FileAddMode.append
-                      ? scheme.primary
-                      : scheme.onSurface,
-                  fontWeight: currentMode == FileAddMode.append
-                      ? FontWeight.w500
-                      : FontWeight.normal,
+                  color: isSelected ? scheme.primary : scheme.onSurface,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
                 ),
               ),
-            ),
-            SelectableCard(
-              isSelected: currentMode == FileAddMode.replace,
-              onTap: () => onModeChanged(FileAddMode.replace),
-              child: Text(
-                l10n.addModeReplace,
-                style: TextStyle(
-                  color: currentMode == FileAddMode.replace
-                      ? scheme.primary
-                      : scheme.onSurface,
-                  fontWeight: currentMode == FileAddMode.replace
-                      ? FontWeight.w500
-                      : FontWeight.normal,
-                ),
-              ),
-            ),
-          ],
+            );
+          }).toList(),
         ),
       ],
     );
