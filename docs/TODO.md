@@ -56,4 +56,3 @@
      - 优先使用可复用的 UI 组件与模块、常量，避免重复实现
      - 按层拆分：ProbeService（探测）/ RuleEngine（决策）/
        CommandBuilder（构建命令）/ TaskQueue（队列与进度）
-4. 重构主题色系统
