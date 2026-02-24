@@ -36,28 +36,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get themeColor => '主题色';
 
   @override
-  String get themeColorTeal => '青绿';
-
-  @override
-  String get themeColorBlue => '蓝色';
-
-  @override
-  String get themeColorIndigo => '靛蓝';
-
-  @override
-  String get themeColorPurple => '紫色';
-
-  @override
-  String get themeColorPink => '粉色';
-
-  @override
-  String get themeColorOrange => '橙色';
-
-  @override
-  String get themeColorGreen => '绿色';
-
-  @override
-  String get themeColorRed => '红色';
+  String get themeHueLabel => '色相 (Hue)';
 
   @override
   String get addFiles => '添加文件';

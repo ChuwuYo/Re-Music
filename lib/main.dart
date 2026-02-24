@@ -27,7 +27,7 @@ void main() async {
       settings.locale == null ? null : Locale(settings.locale!),
     );
     themeController.setThemeMode(settings.themeMode);
-    themeController.setSeedColor(settings.seedColor);
+    themeController.setThemeHue(settings.themeHue);
     audioProvider.setSortCriteria(settings.sortCriteria);
     audioProvider.setSortAscending(settings.sortAscending);
     audioProvider.setPattern(settings.pattern);
@@ -37,11 +37,11 @@ void main() async {
     audioProvider.setDirectoryAddMode(settings.directoryAddMode);
   }
 
-  configsStore.setBaseline(
-    AppConfigs(
+  AppConfigs currentConfigsSnapshot() {
+    return AppConfigs(
       locale: localeController.locale?.languageCode,
       themeMode: themeController.themeMode,
-      seedColor: themeController.seedColor,
+      themeHue: themeController.themeHue,
       sortCriteria: audioProvider.sortCriteria,
       sortAscending: audioProvider.sortAscending,
       pattern: audioProvider.pattern,
@@ -49,28 +49,23 @@ void main() async {
       artistSeparator: audioProvider.artistSeparator,
       singleFileAddMode: audioProvider.singleFileAddMode,
       directoryAddMode: audioProvider.directoryAddMode,
-    ),
-  );
-
-  void scheduleSave() {
-    configsStore.scheduleSave(
-      AppConfigs(
-        locale: localeController.locale?.languageCode,
-        themeMode: themeController.themeMode,
-        seedColor: themeController.seedColor,
-        sortCriteria: audioProvider.sortCriteria,
-        sortAscending: audioProvider.sortAscending,
-        pattern: audioProvider.pattern,
-        filter: audioProvider.filter,
-        artistSeparator: audioProvider.artistSeparator,
-        singleFileAddMode: audioProvider.singleFileAddMode,
-        directoryAddMode: audioProvider.directoryAddMode,
-      ),
     );
   }
 
+  configsStore.setBaseline(currentConfigsSnapshot());
+
+  void scheduleSave() {
+    configsStore.scheduleSave(currentConfigsSnapshot());
+  }
+
+  void handleThemeChanged() {
+    // Skip persistence churn while dragging hue slider preview.
+    if (themeController.isHuePreviewing) return;
+    scheduleSave();
+  }
+
   localeController.addListener(scheduleSave);
-  themeController.addListener(scheduleSave);
+  themeController.addListener(handleThemeChanged);
   audioProvider.addListener(scheduleSave);
 
   const windowOptions = WindowOptions(
@@ -108,22 +103,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<LocaleController>().locale;
-    final theme = context.watch<ThemeController>();
-    final seed = theme.seedColorValue;
+    final locale = context.select<LocaleController, Locale?>(
+      (controller) => controller.locale,
+    );
+    final seed = context.select<ThemeController, Color>(
+      (controller) => controller.seedColorValue,
+    );
+    final themeMode = context.select<ThemeController, ThemeMode>(
+      (controller) => controller.themeMode,
+    );
+    final isHuePreviewing = context.select<ThemeController, bool>(
+      (controller) => controller.isHuePreviewing,
+    );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       locale: locale,
-      themeAnimationDuration: AppConstants.defaultAnimationDuration,
+      themeAnimationDuration: isHuePreviewing
+          ? Duration.zero
+          : AppConstants.defaultAnimationDuration,
       themeAnimationCurve: Curves.easeInOut,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: seed,
           brightness: Brightness.light,
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
         ),
         fontFamily: 'HanYiJiaShuJian',
       ),
@@ -132,25 +139,60 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: seed,
           brightness: Brightness.dark,
+          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
         ),
         fontFamily: 'HanYiJiaShuJian',
       ),
-      themeMode: theme.themeMode,
-      builder: (context, child) {
-        final l10n = AppLocalizations.of(context)!;
-        // 延迟到帧末执行，避免在 build 阶段调用 notifyListeners 导致竞争
-        final audioProvider = context.read<AudioProvider>();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          audioProvider.setNamingPlaceholders(
-            unknownArtist: l10n.unknownArtist,
-            unknownTitle: l10n.unknownTitle,
-            unknownAlbum: l10n.unknownAlbum,
-            untitledTrack: l10n.untitledTrack,
-          );
-        });
-        return child ?? const SizedBox.shrink();
-      },
+      themeMode: themeMode,
+      builder: (context, child) =>
+          _LocalizationBridge(child: child ?? const SizedBox.shrink()),
       home: const HomePage(),
     );
   }
+}
+
+class _LocalizationBridge extends StatefulWidget {
+  final Widget child;
+
+  const _LocalizationBridge({required this.child});
+
+  @override
+  State<_LocalizationBridge> createState() => _LocalizationBridgeState();
+}
+
+class _LocalizationBridgeState extends State<_LocalizationBridge> {
+  String? _unknownArtist;
+  String? _unknownTitle;
+  String? _unknownAlbum;
+  String? _untitledTrack;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    if (_unknownArtist == l10n.unknownArtist &&
+        _unknownTitle == l10n.unknownTitle &&
+        _unknownAlbum == l10n.unknownAlbum &&
+        _untitledTrack == l10n.untitledTrack) {
+      return;
+    }
+
+    _unknownArtist = l10n.unknownArtist;
+    _unknownTitle = l10n.unknownTitle;
+    _unknownAlbum = l10n.unknownAlbum;
+    _untitledTrack = l10n.untitledTrack;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AudioProvider>().setNamingPlaceholders(
+        unknownArtist: _unknownArtist!,
+        unknownTitle: _unknownTitle!,
+        unknownAlbum: _unknownAlbum!,
+        untitledTrack: _untitledTrack!,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
