@@ -69,6 +69,7 @@
   "untitledTrack": "Untitled track",
   "metadataReadFailed": "Failed to read metadata",
   "unknownError": "Unknown error",
+  "editTags": "Edit tags",
   "metadataEditorTitle": "Edit metadata",
   "metadataTitle": "Title",
   "metadataTrackArtist": "Track artist",

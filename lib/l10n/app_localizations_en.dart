@@ -161,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownError => 'Unknown error';
 
   @override
+  String get editTags => 'Edit tags';
+
+  @override
   String get metadataEditorTitle => 'Edit metadata';
 
   @override

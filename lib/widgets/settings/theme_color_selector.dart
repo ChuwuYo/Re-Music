@@ -22,12 +22,12 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
   late double _sliderHue;
 
   bool _isDragging = false;
-  bool _externalSyncScheduled = false;
 
   @override
   void initState() {
     super.initState();
     _themeController = context.read<ThemeController>();
+    _themeController.addListener(_onControllerHueChanged);
     final initialHue = _themeController.themeHue;
     _sliderHue = initialHue.toDouble();
     _hueController = TextEditingController(text: initialHue.toString());
@@ -36,10 +36,23 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
 
   @override
   void dispose() {
+    _themeController.removeListener(_onControllerHueChanged);
     _themeController.disposeHuePreview();
     _hueController.dispose();
     _hueFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onControllerHueChanged() {
+    if (!mounted || _isDragging || _hueFocusNode.hasFocus) return;
+    final hue = ThemeColorService.normalizeHue(_themeController.themeHue);
+    if (_sliderHue.round() == hue && _hueController.text == hue.toString()) {
+      return;
+    }
+    setState(() {
+      _sliderHue = hue.toDouble();
+    });
+    _syncHueText(hue);
   }
 
   void _syncHueText(int hue, {bool force = false}) {
@@ -53,14 +66,12 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
   }
 
   void _showHueSnackBar(String message) {
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
     ReMusicSnackBar.showFloating(
       context,
       message: message,
       duration: AppConstants.snackBarDefaultDuration,
       showCloseIcon: true,
-      clearPrevious: false,
+      clearPrevious: true,
       adaptiveHorizontalMargin: true,
     );
   }
@@ -94,40 +105,16 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     _hueFocusNode.unfocus();
   }
 
-  void _scheduleExternalHueSync(int hue) {
-    if (_externalSyncScheduled || !mounted) return;
-    _externalSyncScheduled = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _externalSyncScheduled = false;
-      if (!mounted || _isDragging || _hueFocusNode.hasFocus) return;
-      setState(() {
-        _sliderHue = hue.toDouble();
-      });
-      _syncHueText(hue);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final appliedHue = context.select<ThemeController, int>(
-      (controller) => controller.themeHue,
-    );
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    final clampedAppliedHue = ThemeColorService.normalizeHue(appliedHue);
     final clampedSliderHue = _sliderHue.clamp(
       AppConstants.themeHueMin.toDouble(),
       AppConstants.themeHueMax.toDouble(),
     );
-
-    if (!_isDragging &&
-        !_hueFocusNode.hasFocus &&
-        (_sliderHue.round() != clampedAppliedHue ||
-            _hueController.text != clampedAppliedHue.toString())) {
-      _scheduleExternalHueSync(clampedAppliedHue);
-    }
 
     final rainbowColors = ThemeColorService.rainbowGradient(theme.brightness);
 
@@ -144,11 +131,14 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              l10n.themeHueLabel,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-                color: scheme.onSurfaceVariant,
+            Transform.translate(
+              offset: const Offset(0, -1),
+              child: Text(
+                l10n.themeHueLabel,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(width: AppConstants.spacingMedium),
