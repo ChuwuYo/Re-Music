@@ -48,6 +48,13 @@ class ThemeColorService {
         ),
       );
     }
+    colors.add(
+      _oklchToSrgb(
+        lightness: lightness,
+        chroma: AppConstants.themeHueGradientChroma,
+        hue: AppConstants.themeHueMax.toDouble(),
+      ),
+    );
     return colors;
   }
 

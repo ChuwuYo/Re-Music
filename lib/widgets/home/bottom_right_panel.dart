@@ -17,17 +17,10 @@ class BottomRightPanel extends StatelessWidget {
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context)!;
 
-    // 动态计算水平外边距，使 SnackBar 在大屏幕上保持固定宽度 (约 400px)，在小屏幕上保持 16px 边距
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final horizontalMargin =
-        screenWidth > AppConstants.homeRenameSnackBarCenteringBreakpoint
-        ? (screenWidth - AppConstants.homeRenameSnackBarTargetWidth) / 2
-        : AppConstants.snackBarDefaultHorizontalMargin;
-
     ReMusicSnackBar.showFloating(
       context,
       message: l10n.renameCompleted(count),
-      horizontalMargin: horizontalMargin,
+      adaptiveHorizontalMargin: true,
     );
   }
 

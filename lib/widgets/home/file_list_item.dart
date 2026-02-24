@@ -84,7 +84,9 @@ class FileListItem extends StatelessWidget {
       return colorScheme.errorContainer.withValues(alpha: 0.1);
     }
     if (file.originalFileName == file.newFileName) {
-      return colorScheme.primaryContainer.withValues(alpha: 0.14);
+      return colorScheme.primaryContainer.withValues(
+        alpha: AppConstants.matchedNameCardAlpha,
+      );
     }
     return colorScheme.surface;
   }
@@ -92,7 +94,9 @@ class FileListItem extends StatelessWidget {
   Color _getBorderColor(ColorScheme colorScheme) {
     if (file.status == ProcessingStatus.error) return colorScheme.error;
     if (file.originalFileName == file.newFileName) {
-      return colorScheme.primary.withValues(alpha: 0.7);
+      return colorScheme.primary.withValues(
+        alpha: AppConstants.matchedNameBorderAlpha,
+      );
     }
     return colorScheme.outlineVariant;
   }

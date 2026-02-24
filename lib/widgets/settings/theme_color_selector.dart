@@ -6,6 +6,7 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/theme_color_service.dart';
+import '../common/remusic_snack_bar.dart';
 
 class ThemeColorSelector extends StatefulWidget {
   const ThemeColorSelector({super.key});
@@ -53,24 +54,14 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
 
   void _showHueSnackBar(String message) {
     final messenger = ScaffoldMessenger.of(context);
-    final theme = Theme.of(context);
     messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        duration: AppConstants.snackBarDefaultDuration,
-        content: Row(
-          children: [
-            Expanded(child: Text(message)),
-            IconButton(
-              tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-              visualDensity: VisualDensity.compact,
-              color: theme.colorScheme.onInverseSurface,
-              onPressed: messenger.hideCurrentSnackBar,
-              icon: const Icon(Icons.close),
-            ),
-          ],
-        ),
-      ),
+    ReMusicSnackBar.showFloating(
+      context,
+      message: message,
+      duration: AppConstants.snackBarDefaultDuration,
+      showCloseIcon: true,
+      clearPrevious: false,
+      adaptiveHorizontalMargin: true,
     );
   }
 
@@ -105,7 +96,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     _externalSyncScheduled = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _externalSyncScheduled = false;
-      if (!mounted || _isDragging) return;
+      if (!mounted || _isDragging || _hueFocusNode.hasFocus) return;
       setState(() {
         _sliderHue = hue.toDouble();
       });
@@ -129,6 +120,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     );
 
     if (!_isDragging &&
+        !_hueFocusNode.hasFocus &&
         (_sliderHue.round() != clampedAppliedHue ||
             _hueController.text != clampedAppliedHue.toString())) {
       _scheduleExternalHueSync(clampedAppliedHue);
@@ -217,7 +209,9 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: scheme.outlineVariant.withValues(alpha: 0.6),
+                  color: scheme.outlineVariant.withValues(
+                    alpha: AppConstants.themeHueSliderBorderAlpha,
+                  ),
                 ),
                 gradient: LinearGradient(colors: rainbowColors),
               ),
@@ -311,12 +305,14 @@ class _RectSliderThumbShape extends SliderComponentShape {
 
     final fillPaint = Paint()
       ..color = (sliderTheme.thumbColor ?? Colors.white).withValues(
-        alpha: 0.78,
+        alpha: AppConstants.themeHueThumbFillAlpha,
       );
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.black.withValues(alpha: 0.18);
+      ..color = Colors.black.withValues(
+        alpha: AppConstants.themeHueThumbStrokeAlpha,
+      );
 
     canvas.drawRRect(rRect, fillPaint);
     canvas.drawRRect(rRect, strokePaint);

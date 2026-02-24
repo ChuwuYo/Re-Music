@@ -196,6 +196,17 @@ class AppConstants {
   static const double homeRenameSnackBarTargetWidth = 400.0;
   static const double homeRenameSnackBarCenteringBreakpoint =
       homeRenameSnackBarTargetWidth + snackBarDefaultHorizontalMargin * 2;
+  static const double snackBarAdaptiveMinWidth = 180.0;
+  static const double snackBarAdaptiveMaxWidth = homeRenameSnackBarTargetWidth;
+  static const double snackBarContentHorizontalPadding = 32.0;
+  static const double snackBarCloseIconReserveWidth = 40.0;
+
+  /// 主题与高亮透明度常量
+  static const double matchedNameCardAlpha = 0.14;
+  static const double matchedNameBorderAlpha = 0.7;
+  static const double themeHueSliderBorderAlpha = 0.6;
+  static const double themeHueThumbFillAlpha = 0.78;
+  static const double themeHueThumbStrokeAlpha = 0.18;
 
   /// 图标相关常量
   static const double iconSizeSmall = 16.0;
