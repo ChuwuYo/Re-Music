@@ -18,12 +18,8 @@ class LeftSidebar extends StatefulWidget {
 }
 
 class _LeftSidebarState extends State<LeftSidebar> {
-  bool _userWantsExpanded = false;
-
   static const double _collapsedWidth = 56.0;
   static const double _expandedWidth = 220.0;
-
-  void _toggle() => setState(() => _userWantsExpanded = !_userWantsExpanded);
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +29,21 @@ class _LeftSidebarState extends State<LeftSidebar> {
     final themeController = context.watch<ThemeController>();
     final navController = context.watch<NavigationController>();
     final currentPage = navController.currentPage;
+    final userWantsExpanded = navController.sidebarExpanded;
 
     // 响应式：订阅窗口宽度变化，宽度不足时自动收起
     final windowWidth = MediaQuery.sizeOf(context).width;
     final expanded =
-        _userWantsExpanded &&
+        userWantsExpanded &&
         windowWidth >= AppConstants.sidebarAutoCollapseWidth;
     // 用户想展开但窗口太窄：需要给出视觉提示
-    final forcedCollapsed = _userWantsExpanded && !expanded;
+    final forcedCollapsed = userWantsExpanded && !expanded;
+
+    void toggleSidebar() {
+      context.read<NavigationController>().setSidebarExpanded(
+        !userWantsExpanded,
+      );
+    }
 
     return ClipRect(
       child: AnimatedContainer(
@@ -63,19 +66,30 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── 折叠/展开按钮 ──────────────────────────────────
-                  _SidebarItem(
-                    icon: expanded ? Icons.menu_open : Icons.menu,
-                    label: expanded ? l10n.sidebarCollapse : l10n.sidebarExpand,
-                    tooltip: forcedCollapsed
-                        ? l10n.sidebarTooNarrow
-                        : (expanded
+                  forcedCollapsed
+                      ? Tooltip(
+                          message: l10n.sidebarTooNarrow,
+                          child: _SidebarItem(
+                            icon: expanded ? Icons.menu_open : Icons.menu,
+                            label: expanded
+                                ? l10n.sidebarCollapse
+                                : l10n.sidebarExpand,
+                            expanded: expanded,
+                            showLabel: false,
+                            showBadge: forcedCollapsed,
+                            onPressed: toggleSidebar,
+                          ),
+                        )
+                      : _SidebarItem(
+                          icon: expanded ? Icons.menu_open : Icons.menu,
+                          label: expanded
                               ? l10n.sidebarCollapse
-                              : l10n.sidebarExpand),
-                    expanded: expanded,
-                    showLabel: false,
-                    showBadge: forcedCollapsed,
-                    onPressed: _toggle,
-                  ),
+                              : l10n.sidebarExpand,
+                          expanded: expanded,
+                          showLabel: false,
+                          showBadge: forcedCollapsed,
+                          onPressed: toggleSidebar,
+                        ),
 
                   const Divider(height: 1, indent: 8, endIndent: 8),
 
@@ -85,7 +99,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                         ? Icons.home
                         : Icons.home_outlined,
                     label: l10n.navHome,
-                    tooltip: l10n.navHome,
                     expanded: expanded,
                     isActive: currentPage == AppPage.home,
                     onPressed: () => context
@@ -103,7 +116,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                         ? Icons.settings
                         : Icons.settings_outlined,
                     label: l10n.navSettings,
-                    tooltip: l10n.navSettings,
                     expanded: expanded,
                     isActive: currentPage == AppPage.settings,
                     onPressed: () => context
@@ -115,7 +127,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   _SidebarMenuAnchor(
                     icon: Icons.language,
                     label: l10n.language,
-                    tooltip: l10n.language,
                     expanded: expanded,
                     menuAnchorAlignment: AlignmentDirectional.topEnd,
                     menuChildren: [
@@ -162,7 +173,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       ThemeMode.dark => l10n.switchToDark,
                       ThemeMode.system => l10n.followSystem,
                     },
-                    tooltip: l10n.themeMode,
                     expanded: expanded,
                     onPressed: () =>
                         context.read<ThemeController>().toggleThemeMode(),
@@ -174,7 +184,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       return _SidebarItem(
                         icon: Icons.delete_sweep_outlined,
                         label: l10n.clearList,
-                        tooltip: l10n.clearList,
                         expanded: expanded,
                         onPressed: provider.totalFilesCount == 0
                             ? null
@@ -202,7 +211,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
 class _SidebarItem extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String? tooltip;
   final bool expanded;
   final bool showLabel;
   final bool showBadge;
@@ -214,7 +222,6 @@ class _SidebarItem extends StatelessWidget {
     required this.label,
     required this.expanded,
     required this.onPressed,
-    this.tooltip,
     this.showLabel = true,
     this.showBadge = false,
     this.isActive = false,
@@ -237,45 +244,39 @@ class _SidebarItem extends StatelessWidget {
     }
 
     if (!showText) {
-      return Tooltip(
-        message: tooltip ?? label,
-        child: SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: IconButton(
-            icon: iconWidget,
-            onPressed: onPressed,
-            style: IconButton.styleFrom(
-              shape: const RoundedRectangleBorder(),
-              backgroundColor: activeBg,
-              foregroundColor: activeFg,
-            ),
+      return SizedBox(
+        height: 48,
+        width: double.infinity,
+        child: IconButton(
+          icon: iconWidget,
+          onPressed: onPressed,
+          style: IconButton.styleFrom(
+            shape: const RoundedRectangleBorder(),
+            backgroundColor: activeBg,
+            foregroundColor: activeFg,
           ),
         ),
       );
     }
 
-    return Tooltip(
-      message: tooltip ?? label,
-      child: SizedBox(
-        height: 48,
-        width: double.infinity,
-        child: TextButton(
-          onPressed: onPressed,
-          style: TextButton.styleFrom(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            shape: const RoundedRectangleBorder(),
-            backgroundColor: activeBg,
-            foregroundColor: activeFg,
-          ),
-          child: Row(
-            children: [
-              iconWidget,
-              const SizedBox(width: 14),
-              Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
-            ],
-          ),
+    return SizedBox(
+      height: 48,
+      width: double.infinity,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          shape: const RoundedRectangleBorder(),
+          backgroundColor: activeBg,
+          foregroundColor: activeFg,
+        ),
+        child: Row(
+          children: [
+            iconWidget,
+            const SizedBox(width: 14),
+            Expanded(child: Text(label, overflow: TextOverflow.ellipsis)),
+          ],
         ),
       ),
     );
@@ -286,7 +287,6 @@ class _SidebarItem extends StatelessWidget {
 class _SidebarMenuAnchor extends StatefulWidget {
   final IconData icon;
   final String label;
-  final String tooltip;
   final bool expanded;
   final AlignmentGeometry menuAnchorAlignment;
   final List<Widget> menuChildren;
@@ -294,7 +294,6 @@ class _SidebarMenuAnchor extends StatefulWidget {
   const _SidebarMenuAnchor({
     required this.icon,
     required this.label,
-    required this.tooltip,
     required this.expanded,
     required this.menuChildren,
     this.menuAnchorAlignment = AlignmentDirectional.topEnd,
@@ -323,44 +322,38 @@ class _SidebarMenuAnchorState extends State<_SidebarMenuAnchor> {
       style: MenuStyle(alignment: widget.menuAnchorAlignment),
       builder: (context, controller, child) {
         if (!widget.expanded) {
-          return Tooltip(
-            message: widget.tooltip,
-            child: SizedBox(
-              height: 48,
-              width: double.infinity,
-              child: IconButton(
-                icon: Icon(widget.icon),
-                onPressed: onTap,
-                style: IconButton.styleFrom(
-                  shape: const RoundedRectangleBorder(),
-                ),
+          return SizedBox(
+            height: 48,
+            width: double.infinity,
+            child: IconButton(
+              icon: Icon(widget.icon),
+              onPressed: onTap,
+              style: IconButton.styleFrom(
+                shape: const RoundedRectangleBorder(),
               ),
             ),
           );
         }
 
-        return Tooltip(
-          message: widget.tooltip,
-          child: SizedBox(
-            height: 48,
-            width: double.infinity,
-            child: TextButton(
-              onPressed: onTap,
-              style: TextButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: const RoundedRectangleBorder(),
-              ),
-              child: Row(
-                children: [
-                  Icon(widget.icon),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(widget.label, overflow: TextOverflow.ellipsis),
-                  ),
-                  const Icon(Icons.chevron_right, size: 18),
-                ],
-              ),
+        return SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: TextButton(
+            onPressed: onTap,
+            style: TextButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              shape: const RoundedRectangleBorder(),
+            ),
+            child: Row(
+              children: [
+                Icon(widget.icon),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(widget.label, overflow: TextOverflow.ellipsis),
+                ),
+                const Icon(Icons.chevron_right, size: 18),
+              ],
             ),
           ),
         );

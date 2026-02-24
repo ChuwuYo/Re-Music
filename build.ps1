@@ -82,6 +82,14 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "总耗时: $($duration.Minutes)分 $($duration.Seconds)秒"
     Write-Host "产物位置: build\windows\runner\Release\" -ForegroundColor Gray
 } else {
-    Write-Host "`n❌ 构建失败，请检查上方输出错误。" -ForegroundColor Red
+    Write-Host "`n❌ 构建失败，正在回退版本号..." -ForegroundColor Red
+    
+    # 回退版本号到原始值
+    $oldFullVersion = "$oldVersionName+$oldBuildNumber"
+    $rollbackContent = Get-Content $pubspecPath -Raw
+    $rollbackContent = $rollbackContent -replace "version:\s*[\d\.]+\+\d+", "version: $oldFullVersion"
+    [System.IO.File]::WriteAllText((Resolve-Path $pubspecPath), $rollbackContent, [System.Text.Encoding]::UTF8)
+    
+    Write-Host "✓ 版本号已回退: $oldFullVersion" -ForegroundColor Yellow
     exit $LASTEXITCODE
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../constants.dart';
+import '../common/remusic_snack_bar.dart';
 
 class BottomRightPanel extends StatelessWidget {
   const BottomRightPanel({super.key});
@@ -16,25 +17,10 @@ class BottomRightPanel extends StatelessWidget {
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context)!;
 
-    // 动态计算水平外边距，使 SnackBar 在大屏幕上保持固定宽度 (约 400px)，在小屏幕上保持 16px 边距
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final horizontalMargin = screenWidth > 432 ? (screenWidth - 400) / 2 : 16.0;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.renameCompleted(count)),
-        behavior: SnackBarBehavior.floating,
-        showCloseIcon: true,
-        duration: const Duration(seconds: 3),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
-        ),
-        margin: EdgeInsets.only(
-          left: horizontalMargin,
-          right: horizontalMargin,
-          bottom: 16,
-        ),
-      ),
+    ReMusicSnackBar.showFloating(
+      context,
+      message: l10n.renameCompleted(count),
+      adaptiveHorizontalMargin: true,
     );
   }
 
@@ -87,7 +73,10 @@ class BottomRightPanel extends StatelessWidget {
           return _panelSurface(
             context,
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.spacingMedium,
+                vertical: AppConstants.spacingMediumSmall,
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
                   maxWidth: AppConstants.progressPanelMaxWidth,
@@ -102,7 +91,7 @@ class BottomRightPanel extends StatelessWidget {
                       ),
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppConstants.spacingSmall),
                     LinearProgressIndicator(
                       value: provider.progress,
                       borderRadius: BorderRadius.circular(
@@ -119,7 +108,10 @@ class BottomRightPanel extends StatelessWidget {
         return _panelSurface(
           context,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.spacingMedium,
+              vertical: AppConstants.spacingMediumSmall,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -127,7 +119,7 @@ class BottomRightPanel extends StatelessWidget {
                   l10n.totalFiles(provider.totalFilesCount),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AppConstants.spacingMedium),
                 FilledButton.icon(
                   onPressed:
                       provider.totalFilesCount == 0 ||

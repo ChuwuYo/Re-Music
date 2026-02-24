@@ -4,7 +4,7 @@ import '../constants.dart';
 class AppConfigs {
   final String? locale;
   final ThemeMode themeMode;
-  final AppSeedColor seedColor;
+  final int themeHue;
   final String sortCriteria;
   final bool sortAscending;
   final String pattern;
@@ -12,11 +12,12 @@ class AppConfigs {
   final String artistSeparator;
   final FileAddMode singleFileAddMode;
   final FileAddMode directoryAddMode;
+  final bool sidebarExpanded;
 
   const AppConfigs({
     required this.locale,
     required this.themeMode,
-    required this.seedColor,
+    required this.themeHue,
     required this.sortCriteria,
     required this.sortAscending,
     required this.pattern,
@@ -24,13 +25,14 @@ class AppConfigs {
     required this.artistSeparator,
     required this.singleFileAddMode,
     required this.directoryAddMode,
+    required this.sidebarExpanded,
   });
 
   static AppConfigs defaults() {
     return const AppConfigs(
       locale: AppConstants.defaultLocale,
       themeMode: AppConstants.defaultThemeMode,
-      seedColor: AppConstants.defaultSeedColor,
+      themeHue: AppConstants.defaultThemeHue,
       sortCriteria: AppConstants.defaultSortCriteria,
       sortAscending: AppConstants.defaultSortAscending,
       pattern: AppConstants.defaultNamingPattern,
@@ -38,13 +40,15 @@ class AppConfigs {
       artistSeparator: AppConstants.defaultArtistSeparator,
       singleFileAddMode: AppConstants.defaultSingleFileAddMode,
       directoryAddMode: AppConstants.defaultDirectoryAddMode,
+      sidebarExpanded: AppConstants.defaultSidebarExpanded,
     );
   }
 
   static AppConfigs fromJson(Map<String, dynamic> json) {
     final locale = json['locale'];
     final themeModeRaw = json['themeMode'];
-    final seedColorRaw = json['seedColor'];
+    final themeHueRaw = json['themeHue'];
+    final seedColorRaw = json['seedColor']; // legacy field
     final sortCriteriaRaw = json['sortCriteria'];
     final sortAscendingRaw = json['sortAscending'];
     final pattern = json['pattern'];
@@ -52,28 +56,32 @@ class AppConfigs {
     final artistSeparator = json['artistSeparator'];
     final singleFileAddModeRaw = json['singleFileAddMode'];
     final directoryAddModeRaw = json['directoryAddMode'];
+    final sidebarExpandedRaw = json['sidebarExpanded'];
 
     return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
       themeMode: _parseThemeMode(themeModeRaw),
-      seedColor: _parseSeedColor(seedColorRaw),
+      themeHue: _parseThemeHue(themeHueRaw, legacySeedColor: seedColorRaw),
       sortCriteria: _parseSortCriteria(sortCriteriaRaw),
       sortAscending: sortAscendingRaw is bool
           ? sortAscendingRaw
           : AppConstants.defaultSortAscending,
       pattern: pattern is String && pattern.isNotEmpty
           ? pattern
-          : AppConfigs.defaults().pattern,
+          : AppConstants.defaultNamingPattern,
       filter: _parseFilter(filterRaw),
       artistSeparator: _parseArtistSeparator(artistSeparator),
       singleFileAddMode: _parseFileAddMode(
         singleFileAddModeRaw,
-        AppConfigs.defaults().singleFileAddMode,
+        AppConstants.defaultSingleFileAddMode,
       ),
       directoryAddMode: _parseFileAddMode(
         directoryAddModeRaw,
-        AppConfigs.defaults().directoryAddMode,
+        AppConstants.defaultDirectoryAddMode,
       ),
+      sidebarExpanded: sidebarExpandedRaw is bool
+          ? sidebarExpandedRaw
+          : AppConstants.defaultSidebarExpanded,
     );
   }
 
@@ -81,7 +89,7 @@ class AppConfigs {
     return {
       'locale': locale,
       'themeMode': themeMode.name,
-      'seedColor': seedColor.name,
+      'themeHue': themeHue,
       'sortCriteria': sortCriteria,
       'sortAscending': sortAscending,
       'pattern': pattern,
@@ -89,6 +97,7 @@ class AppConfigs {
       'artistSeparator': artistSeparator,
       'singleFileAddMode': singleFileAddMode.name,
       'directoryAddMode': directoryAddMode.name,
+      'sidebarExpanded': sidebarExpanded,
     };
   }
 
@@ -101,16 +110,48 @@ class AppConfigs {
           return ThemeMode.light;
       }
     }
-    return AppConfigs.defaults().themeMode;
+    return AppConstants.defaultThemeMode;
   }
 
-  static AppSeedColor _parseSeedColor(Object? raw) {
+  static int _parseThemeHue(Object? raw, {Object? legacySeedColor}) {
+    if (raw is int) {
+      return _clampThemeHue(raw);
+    }
+    if (raw is num) {
+      return _clampThemeHue(raw.round());
+    }
     if (raw is String) {
-      for (final v in AppSeedColor.values) {
-        if (v.name == raw) return v;
+      final parsed = int.tryParse(raw);
+      if (parsed != null) {
+        return _clampThemeHue(parsed);
       }
     }
-    return AppConfigs.defaults().seedColor;
+
+    final legacyHue = _legacySeedColorToHue(legacySeedColor);
+    if (legacyHue != null) {
+      return legacyHue;
+    }
+
+    return AppConstants.defaultThemeHue;
+  }
+
+  static int _clampThemeHue(int hue) {
+    return hue.clamp(AppConstants.themeHueMin, AppConstants.themeHueMax);
+  }
+
+  static int? _legacySeedColorToHue(Object? raw) {
+    if (raw is! String) return null;
+    return switch (raw) {
+      'teal' => 180,
+      'blue' => 220,
+      'indigo' => 255,
+      'purple' => 285,
+      'pink' => 330,
+      'orange' => 35,
+      'green' => 140,
+      'red' => 0,
+      _ => null,
+    };
   }
 
   static FileFilter _parseFilter(Object? raw) {
@@ -119,7 +160,7 @@ class AppConfigs {
         if (v.name == raw) return v;
       }
     }
-    return AppConfigs.defaults().filter;
+    return AppConstants.defaultFileFilter;
   }
 
   static String _parseSortCriteria(Object? raw) {
@@ -133,7 +174,7 @@ class AppConfigs {
           return raw;
       }
     }
-    return AppConfigs.defaults().sortCriteria;
+    return AppConstants.defaultSortCriteria;
   }
 
   static FileAddMode _parseFileAddMode(Object? raw, FileAddMode fallback) {
@@ -149,7 +190,7 @@ class AppConfigs {
     if (raw is String && AppConstants.isValidArtistSeparator(raw)) {
       return raw;
     }
-    return AppConfigs.defaults().artistSeparator;
+    return AppConstants.defaultArtistSeparator;
   }
 
   @override
@@ -157,21 +198,22 @@ class AppConfigs {
     return other is AppConfigs &&
         other.locale == locale &&
         other.themeMode == themeMode &&
-        other.seedColor == seedColor &&
+        other.themeHue == themeHue &&
         other.sortCriteria == sortCriteria &&
         other.sortAscending == sortAscending &&
         other.pattern == pattern &&
         other.filter == filter &&
         other.artistSeparator == artistSeparator &&
         other.singleFileAddMode == singleFileAddMode &&
-        other.directoryAddMode == directoryAddMode;
+        other.directoryAddMode == directoryAddMode &&
+        other.sidebarExpanded == sidebarExpanded;
   }
 
   @override
   int get hashCode => Object.hash(
     locale,
     themeMode,
-    seedColor,
+    themeHue,
     sortCriteria,
     sortAscending,
     pattern,
@@ -179,5 +221,6 @@ class AppConfigs {
     artistSeparator,
     singleFileAddMode,
     directoryAddMode,
+    sidebarExpanded,
   );
 }

@@ -33,7 +33,6 @@ class HomePage extends StatelessWidget {
                   child: AnimatedSwitcher(
                     duration: AppConstants.defaultAnimationDuration,
                     transitionBuilder: (child, animation) {
-                      // 进入页面从右侧滑入，离场页面向左滑出
                       final isIncoming = child.key == ValueKey(currentPage);
                       final curved = CurvedAnimation(
                         parent: animation,
@@ -41,10 +40,10 @@ class HomePage extends StatelessWidget {
                       );
                       final offsetAnimation = Tween<Offset>(
                         begin: Offset(
+                          0,
                           isIncoming
                               ? AppConstants.pageTransitionSlideOffset
                               : -AppConstants.pageTransitionSlideOffset,
-                          0,
                         ),
                         end: Offset.zero,
                       ).animate(curved);

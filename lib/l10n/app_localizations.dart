@@ -152,53 +152,11 @@ abstract class AppLocalizations {
   /// **'Theme color'**
   String get themeColor;
 
-  /// No description provided for @themeColorTeal.
+  /// No description provided for @themeHueLabel.
   ///
   /// In en, this message translates to:
-  /// **'Teal'**
-  String get themeColorTeal;
-
-  /// No description provided for @themeColorBlue.
-  ///
-  /// In en, this message translates to:
-  /// **'Blue'**
-  String get themeColorBlue;
-
-  /// No description provided for @themeColorIndigo.
-  ///
-  /// In en, this message translates to:
-  /// **'Indigo'**
-  String get themeColorIndigo;
-
-  /// No description provided for @themeColorPurple.
-  ///
-  /// In en, this message translates to:
-  /// **'Purple'**
-  String get themeColorPurple;
-
-  /// No description provided for @themeColorPink.
-  ///
-  /// In en, this message translates to:
-  /// **'Pink'**
-  String get themeColorPink;
-
-  /// No description provided for @themeColorOrange.
-  ///
-  /// In en, this message translates to:
-  /// **'Orange'**
-  String get themeColorOrange;
-
-  /// No description provided for @themeColorGreen.
-  ///
-  /// In en, this message translates to:
-  /// **'Green'**
-  String get themeColorGreen;
-
-  /// No description provided for @themeColorRed.
-  ///
-  /// In en, this message translates to:
-  /// **'Red'**
-  String get themeColorRed;
+  /// **'Hue'**
+  String get themeHueLabel;
 
   /// No description provided for @addFiles.
   ///

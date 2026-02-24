@@ -1,199 +1,92 @@
 # AGENTS.md
 
-## Project Overview
+## Scope & Usage (Read-Only)
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata and music tag editing.
+- This file defines mandatory rules for this repository.
+- It is the single source of truth for architecture, code style, and safety constraints.
+- AI agents and automation tools must treat `AGENTS.md` as read-only.
+- Do not modify, rewrite, or delete this file unless explicitly instructed by a human.
 
-## Key Features
+## Non-Negotiables
 
-*   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration.
-*   **Music Tag Editing**: Supports separate editing of track artist and album artist, with batch modification and saving capabilities.
-*   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting.
-*   **Personalization**: Built-in light and dark modes, multiple MD3 color modes, and support for Chinese and English.
+- Never delete or skip tests, and never weaken assertions to make them pass.
+- Never move business logic into `lib/screens/` or `lib/widgets/`.
+- Never add a new dependency without a documented reason in the PR.
+- Never do broad drive-by refactors of formatting or file structure unless explicitly requested.
 
-## Tech Stack
-
-*   **Framework**: [Flutter](https://flutter.dev/) (Windows Desktop)
-*   **Language**: Dart
-*   **State Management**: `provider`
-*   **Core Dependencies**:
-    *   `audio_metadata_reader`: Fast cross-format metadata parsing.
-    *   `audiotags`: Detailed tag reading and writing (e.g., track artist and album artist).
-    *   `window_manager`: Desktop window management.
-    *   `file_picker`: File picker.
-    *   `intl`: Internationalization.
-    *   `provider`: State management.
-    *   `path`: Path handling.
-
-## Project Structure
-
-```
-lib/
-├── constants.dart              # All constants centralized here
-├── main.dart                   # App entry point
-├── models/
-│   ├── app_configs.dart        # App configuration model
-│   └── audio_file.dart         # Audio file model
-├── providers/
-│   ├── audio_provider.dart     # Core audio file state management
-│   ├── locale_provider.dart
-│   ├── navigation_provider.dart # Page navigation state (home / settings)
-│   └── theme_provider.dart
-├── screens/
-│   ├── home_page.dart          # Main page shell (UI assembly only)
-│   └── settings_page.dart      # Settings page shell (UI assembly only)
-├── services/
-│   ├── file_service.dart       # File operations (pick, scan, rename)
-│   ├── metadata_service.dart   # Audio metadata reading/formatting
-│   └── configs_service.dart    # Configs persistence
-├── widgets/
-│   ├── common/                 # Shared layout widgets
-│   │   ├── left_sidebar.dart
-│   │   ├── metadata_edit_dialog.dart
-│   │   ├── selectable_card.dart
-│   │   ├── smart_menu_anchor.dart
-│   │   └── title_bar.dart
-│   ├── home/                   # Home page specific widgets
-│   │   ├── bottom_right_panel.dart
-│   │   ├── file_list_item.dart
-│   │   ├── list_states.dart
-│   │   └── rename_control_panel.dart
-│   └── settings/               # Settings page specific widgets
-│       ├── rename_settings.dart
-│       └── theme_color_selector.dart
-└── l10n/                       # Internationalization (ARB files)
-```
-
-## Dev Environment Setup
-
-### Prerequisites
-
-*   Flutter SDK (>= 3.38.6)
-*   Visual Studio C++ Tools
-
-### Getting Started
+## Mandatory Commands (Every Change)
 
 ```bash
-# Clone the project
-git clone https://github.com/ChuwuYo/Re-Music.git
-cd Re-Music
-
-# Install dependencies
-flutter pub get
-
-# Run in development mode
-flutter run -d windows
+flutter pub get      # Required when pubspec.yaml or pubspec.lock changes
+dart format .
+flutter analyze      # Must be clean (0 issues)
+flutter test         # All pass
 ```
 
-## Build and Test Commands
+- All mandatory commands must pass before commit/PR.
 
-### Development
+## Testing
 
-```bash
-flutter pub get              # Install dependencies
-flutter pub upgrade          # Update dependencies
-flutter run -d windows       # Run in development mode
-```
-
-### Code Quality
-
-```bash
-dart format .                # Format code
-flutter analyze              # Static analysis
-flutter test                 # Run all tests
-```
-
-### Build Release
-
-```bash
-# Manual build
-flutter build windows --release
-
-# Automated build (recommended)
-.\build.ps1 -Version "x.y.z"
-```
-
-Build output: `build/windows/runner/Release/`
-
-## Testing Instructions
-
-- Test files are in `test/` directory.
+- Test files are in `test/`.
 - Run all tests: `flutter test`
-- Run specific test: `flutter test test/file_service_test.dart`
-- Artist semantics test: `flutter test test/metadata_service_test.dart`
-- **All tests must pass before committing.**
+- File service tests: `flutter test test/file_service_test.dart`
+- Metadata semantics tests: `flutter test test/metadata_service_test.dart`
+- If changes touch file rename logic or `file_service`, also run `flutter test test/file_service_test.dart`.
+- If changes touch metadata parsing or artist semantics, also run `flutter test test/metadata_service_test.dart`.
+- All tests must pass before commit.
 
 ## Architecture Guidelines
 
-### Feature Modularity
+- `lib/screens/` and `lib/widgets/` are UI-only (no business logic, computation, I/O, or state mutation).
+- Business logic and state changes must be dispatched to `providers/` or `services/`.
+- Feature layering is mandatory.
+- UI: `lib/widgets/<feature>/`
+- State and business logic: `lib/providers/<feature>_provider.dart`
+- I/O and persistence: `lib/services/<feature>_service.dart`
 
-- **Screen files** (`lib/screens/`) are **UI-only** — they assemble widgets and wire up providers, but contain no business logic.
-- Each feature is self-contained:
-  - UI sections live in `lib/widgets/<feature>/` (one file per logical section).
-  - State and business logic live in `lib/providers/<feature>_provider.dart`.
-  - I/O, persistence, or external calls live in `lib/services/<feature>_service.dart`.
-- No logic (computation, I/O, state mutation) belongs in screen or widget files — dispatch to a provider or service instead.
+### Standard Feature Layout (Mandatory)
 
-Standard layout when adding a new feature:
-```
+```text
 lib/
 ├── providers/
-│   └── <feature>_provider.dart     # State + business logic
+│   └── <feature>_provider.dart
 ├── services/
-│   └── <feature>_service.dart      # Persistence / I/O (if needed)
+│   └── <feature>_service.dart
 ├── screens/
-│   └── <feature>_page.dart         # UI assembly only
+│   └── <feature>_page.dart
 └── widgets/
     └── <feature>/
-        └── <section>_widget.dart   # Reusable UI sections
+        └── <section>_widget.dart
 ```
 
 ## Code Style Guidelines
 
-- Follow `package:flutter_lints/flutter.yaml` rules.
-- Use `// ignore: rule_name` for single-line suppression.
-- Use `// ignore_for_file: rule_name` for file-level suppression.
-- Keep all constants in `lib/constants.dart` - do not scatter magic values.
-- Prefer `const` constructors where possible.
-
-## PR Instructions
-
-- Title format: `[<scope>] <description>` (e.g., `[fix] Fix file rename bug`)
-- Run `dart format .` before committing.
-- Run `flutter analyze` and fix all issues.
-- Run `flutter test` and ensure all tests pass.
-- Update version in `pubspec.yaml` if releasing.
+- Strictly follow `package:flutter_lints/flutter.yaml`.
+- Keep all constants in `lib/constants.dart`.
+- Prefer `const` constructors whenever possible.
+- Use ignore directives only when necessary and narrowly scoped (`// ignore:` / `// ignore_for_file:`).
 
 ## Security Considerations
 
-- File rename operations sanitize filenames using `AppConstants.invalidFilenameChars` regex.
-- Paths with directory traversal attempts (e.g., `..\`) are stripped to basename only.
-- Empty or invalid filenames (`.`, `..`, whitespace-only) are rejected.
+- Filename sanitization must use `AppConstants.invalidFilenameChars`.
+- Reject directory traversal input (for example `..\`) and keep basename only.
+- Reject invalid filenames: `.`, `..`, and whitespace-only values.
 
-## Additional Information
+## PR Instructions
 
-### Supported Audio Formats
-MP3 (`.mp3`), FLAC (`.flac`), M4A/AAC (`.m4a`, `.aac`), OGG/Opus (`.ogg`, `.opus`), WMA (`.wma`), WavPack (`.wv`), DSD (`.dsf`, `.dff`)
+- Title format: `[<scope>] <description>` (example: `[fix] Fix file rename bug`).
+- Mandatory pre-PR checks: `dart format .`, `flutter analyze`, and `flutter test`.
+- `flutter analyze` must report 0 issues.
+- `flutter test` must fully pass.
+- Update version in `pubspec.yaml` for release PRs.
 
-### Naming Patterns
-The app uses pattern-based file renaming with placeholders:
-- `{artist}` - Track artist (fallback: performers -> album artist -> unknown artist)
-- `{albumArtist}` - Album artist
-- `{title}` - Track title
-- `{album}` - Album name
-- `{track}` - Track number
-- `{index}` - Sequential index
+## Internationalization (i18n)
 
-Example: `{artist} - {title}` produces "Artist Name - Track Title.mp3"
-
-### Internationalization (i18n)
-- ARB files located in `lib/l10n/`
+- ARB files: `lib/l10n/`
 - Template: `app_en.arb`
-- Supported locales: English (`en`), Chinese (`zh`)
-- Configuration in `l10n.yaml`
-- Access translations via `AppLocalizations.of(context)!.keyName`
+- Supported locales: `en`, `zh`
+- Config: `l10n.yaml`
+- Access translations via `AppLocalizations.of(context)!.keyName`.
 
-### Known Issues / WIP
-- Online metadata retrieval is work-in-progress.
-- Audio resampling and format conversion are work-in-progress.
-- Installer generation requires third-party tools (NSIS / Inno Setup).
+This file contains only mandatory rules. For descriptive information, see README.md.
+When creating or modifying code, run the mandatory commands above before commit/PR and final handoff.

@@ -62,8 +62,29 @@ class AppConstants {
   /// 默认主题模式
   static const ThemeMode defaultThemeMode = ThemeMode.system;
 
-  /// 默认种子颜色
-  static const AppSeedColor defaultSeedColor = AppSeedColor.teal;
+  /// 默认主题色相（范围 0-360）
+  static const int defaultThemeHue = 180;
+
+  /// 主题色相范围
+  static const int themeHueMin = 0;
+  static const int themeHueMax = 360;
+
+  /// 主题色实时预览节流间隔（避免拖动时高频重建）
+  static const Duration themeHuePreviewInterval = Duration(milliseconds: 50);
+
+  /// 主题色实时预览最小变化步进（拖动中小于该值不触发主题重建）
+  static const int themeHuePreviewMinDelta = 2;
+
+  /// 主题色彩虹条（OKLCH）参数
+  static const int themeHueGradientStep = 30;
+  static const double themeHueGradientChroma = 0.10;
+  static const double themeHueGradientLightnessLight = 0.80;
+  static const double themeHueGradientLightnessDark = 0.70;
+
+  /// 主题种子色（OKLCH）参数
+  /// 与 Charlotte 的主色参数保持一致，提升滑块和实际主题的对应性。
+  static const double themeHueSeedLightness = 0.70;
+  static const double themeHueSeedChroma = 0.14;
 
   /// 默认文件过滤器
   static const FileFilter defaultFileFilter = FileFilter.all;
@@ -99,6 +120,9 @@ class AppConstants {
 
   /// 左侧栏响应式：窗口宽度低于此值时自动收起
   static const double sidebarAutoCollapseWidth = 1000.0;
+
+  /// 侧边栏默认是否展开
+  static const bool defaultSidebarExpanded = true;
 
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;
@@ -137,6 +161,14 @@ class AppConstants {
   static const double renameSettingsNarrowWidth = 480.0;
   static const double artistSeparatorOptionWidth = 40.0;
 
+  /// 主题色选择器尺寸常量
+  static const double themeHueSliderTrackHeight = 24.0;
+  static const double themeHueSliderThumbHeight = 16.0;
+  static const double themeHueInputWidth = 64.0;
+  static const double themeHueControlHeight = 32.0;
+  static const double themeHueSliderEdgeInset =
+      (themeHueSliderTrackHeight - themeHueSliderThumbHeight) / 2;
+
   /// 阴影相关常量
   static const double shadowBlurRadius = 18.0;
   static const double shadowOffsetY = 8.0;
@@ -160,6 +192,25 @@ class AppConstants {
   static const double progressPanelMaxWidth = 320.0;
   static const double progressBorderRadius = 4.0;
 
+  /// 提示通知（SnackBar）相关常量
+  static const Duration snackBarDefaultDuration = Duration(seconds: 2);
+  static const double snackBarDefaultHorizontalMargin = spacingMedium;
+  static const double snackBarDefaultBottomMargin = spacingMedium;
+  static const double homeRenameSnackBarTargetWidth = 400.0;
+  static const double homeRenameSnackBarCenteringBreakpoint =
+      homeRenameSnackBarTargetWidth + snackBarDefaultHorizontalMargin * 2;
+  static const double snackBarAdaptiveMinWidth = 180.0;
+  static const double snackBarAdaptiveMaxWidth = homeRenameSnackBarTargetWidth;
+  static const double snackBarContentHorizontalPadding = 32.0;
+  static const double snackBarCloseIconReserveWidth = 40.0;
+
+  /// 主题与高亮透明度常量
+  static const double matchedNameCardAlpha = 0.14;
+  static const double matchedNameBorderAlpha = 0.7;
+  static const double themeHueSliderBorderAlpha = 0.6;
+  static const double themeHueThumbFillAlpha = 0.78;
+  static const double themeHueThumbStrokeAlpha = 0.18;
+
   /// 图标相关常量
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 18.0;
@@ -182,32 +233,6 @@ enum FileFilter { all, valid, invalid }
 
 /// 文件添加模式枚举（点击添加文件/扫描目录时的行为）
 enum FileAddMode { append, replace }
-
-/// 主题种子颜色枚举
-enum AppSeedColor { teal, blue, indigo, purple, pink, orange, green, red }
-
-extension AppSeedColorExtension on AppSeedColor {
-  Color get color {
-    switch (this) {
-      case AppSeedColor.teal:
-        return Colors.teal;
-      case AppSeedColor.blue:
-        return Colors.blue;
-      case AppSeedColor.indigo:
-        return Colors.indigo;
-      case AppSeedColor.purple:
-        return Colors.purple;
-      case AppSeedColor.pink:
-        return Colors.pink;
-      case AppSeedColor.orange:
-        return Colors.orange;
-      case AppSeedColor.green:
-        return Colors.green;
-      case AppSeedColor.red:
-        return Colors.red;
-    }
-  }
-}
 
 /// 处理状态枚举
 enum ProcessingStatus { pending, success, error }
