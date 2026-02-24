@@ -18,12 +18,8 @@ class LeftSidebar extends StatefulWidget {
 }
 
 class _LeftSidebarState extends State<LeftSidebar> {
-  bool _userWantsExpanded = false;
-
   static const double _collapsedWidth = 56.0;
   static const double _expandedWidth = 220.0;
-
-  void _toggle() => setState(() => _userWantsExpanded = !_userWantsExpanded);
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +29,21 @@ class _LeftSidebarState extends State<LeftSidebar> {
     final themeController = context.watch<ThemeController>();
     final navController = context.watch<NavigationController>();
     final currentPage = navController.currentPage;
+    final userWantsExpanded = navController.sidebarExpanded;
 
     // 响应式：订阅窗口宽度变化，宽度不足时自动收起
     final windowWidth = MediaQuery.sizeOf(context).width;
     final expanded =
-        _userWantsExpanded &&
+        userWantsExpanded &&
         windowWidth >= AppConstants.sidebarAutoCollapseWidth;
     // 用户想展开但窗口太窄：需要给出视觉提示
-    final forcedCollapsed = _userWantsExpanded && !expanded;
+    final forcedCollapsed = userWantsExpanded && !expanded;
+
+    void toggleSidebar() {
+      context.read<NavigationController>().setSidebarExpanded(
+        !userWantsExpanded,
+      );
+    }
 
     return ClipRect(
       child: AnimatedContainer(
@@ -74,7 +77,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                             expanded: expanded,
                             showLabel: false,
                             showBadge: forcedCollapsed,
-                            onPressed: _toggle,
+                            onPressed: toggleSidebar,
                           ),
                         )
                       : _SidebarItem(
@@ -85,7 +88,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                           expanded: expanded,
                           showLabel: false,
                           showBadge: forcedCollapsed,
-                          onPressed: _toggle,
+                          onPressed: toggleSidebar,
                         ),
 
                   const Divider(height: 1, indent: 8, endIndent: 8),

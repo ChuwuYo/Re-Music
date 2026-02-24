@@ -121,6 +121,9 @@ class AppConstants {
   /// 左侧栏响应式：窗口宽度低于此值时自动收起
   static const double sidebarAutoCollapseWidth = 1000.0;
 
+  /// 侧边栏默认是否展开
+  static const bool defaultSidebarExpanded = true;
+
   /// UI 间距常量
   static const double spacingExtraSmall = 4.0;
   static const double spacingSmall = 8.0;

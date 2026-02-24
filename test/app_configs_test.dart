@@ -34,4 +34,22 @@ void main() {
       expect(json.containsKey('seedColor'), isFalse);
     });
   });
+
+  group('AppConfigs sidebar expanded', () {
+    test('falls back to default when sidebarExpanded is missing', () {
+      final config = AppConfigs.fromJson({});
+      expect(config.sidebarExpanded, AppConstants.defaultSidebarExpanded);
+    });
+
+    test('reads sidebarExpanded from json', () {
+      final config = AppConfigs.fromJson({'sidebarExpanded': false});
+      expect(config.sidebarExpanded, isFalse);
+    });
+
+    test('serializes sidebarExpanded field', () {
+      final config = AppConfigs.fromJson({'sidebarExpanded': false});
+      final json = config.toJson();
+      expect(json['sidebarExpanded'], isFalse);
+    });
+  });
 }

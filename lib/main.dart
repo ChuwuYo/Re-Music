@@ -35,6 +35,7 @@ void main() async {
     audioProvider.setArtistSeparator(settings.artistSeparator);
     audioProvider.setSingleFileAddMode(settings.singleFileAddMode);
     audioProvider.setDirectoryAddMode(settings.directoryAddMode);
+    navigationController.setSidebarExpanded(settings.sidebarExpanded);
   }
 
   AppConfigs currentConfigsSnapshot() {
@@ -49,6 +50,7 @@ void main() async {
       artistSeparator: audioProvider.artistSeparator,
       singleFileAddMode: audioProvider.singleFileAddMode,
       directoryAddMode: audioProvider.directoryAddMode,
+      sidebarExpanded: navigationController.sidebarExpanded,
     );
   }
 
@@ -67,6 +69,7 @@ void main() async {
   localeController.addListener(scheduleSave);
   themeController.addListener(handleThemeChanged);
   audioProvider.addListener(scheduleSave);
+  navigationController.addListener(scheduleSave);
 
   const windowOptions = WindowOptions(
     size: Size(

@@ -12,6 +12,7 @@ class AppConfigs {
   final String artistSeparator;
   final FileAddMode singleFileAddMode;
   final FileAddMode directoryAddMode;
+  final bool sidebarExpanded;
 
   const AppConfigs({
     required this.locale,
@@ -24,6 +25,7 @@ class AppConfigs {
     required this.artistSeparator,
     required this.singleFileAddMode,
     required this.directoryAddMode,
+    required this.sidebarExpanded,
   });
 
   static AppConfigs defaults() {
@@ -38,6 +40,7 @@ class AppConfigs {
       artistSeparator: AppConstants.defaultArtistSeparator,
       singleFileAddMode: AppConstants.defaultSingleFileAddMode,
       directoryAddMode: AppConstants.defaultDirectoryAddMode,
+      sidebarExpanded: AppConstants.defaultSidebarExpanded,
     );
   }
 
@@ -53,6 +56,7 @@ class AppConfigs {
     final artistSeparator = json['artistSeparator'];
     final singleFileAddModeRaw = json['singleFileAddMode'];
     final directoryAddModeRaw = json['directoryAddMode'];
+    final sidebarExpandedRaw = json['sidebarExpanded'];
 
     return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
@@ -75,6 +79,9 @@ class AppConfigs {
         directoryAddModeRaw,
         AppConstants.defaultDirectoryAddMode,
       ),
+      sidebarExpanded: sidebarExpandedRaw is bool
+          ? sidebarExpandedRaw
+          : AppConstants.defaultSidebarExpanded,
     );
   }
 
@@ -90,6 +97,7 @@ class AppConfigs {
       'artistSeparator': artistSeparator,
       'singleFileAddMode': singleFileAddMode.name,
       'directoryAddMode': directoryAddMode.name,
+      'sidebarExpanded': sidebarExpanded,
     };
   }
 
@@ -197,7 +205,8 @@ class AppConfigs {
         other.filter == filter &&
         other.artistSeparator == artistSeparator &&
         other.singleFileAddMode == singleFileAddMode &&
-        other.directoryAddMode == directoryAddMode;
+        other.directoryAddMode == directoryAddMode &&
+        other.sidebarExpanded == sidebarExpanded;
   }
 
   @override
@@ -212,5 +221,6 @@ class AppConfigs {
     artistSeparator,
     singleFileAddMode,
     directoryAddMode,
+    sidebarExpanded,
   );
 }
