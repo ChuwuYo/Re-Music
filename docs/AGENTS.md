@@ -44,6 +44,21 @@ flutter test         # All pass
 - State and business logic: `lib/providers/<feature>_provider.dart`
 - I/O and persistence: `lib/services/<feature>_service.dart`
 
+### Standard Feature Layout (Mandatory)
+
+```text
+lib/
+├── providers/
+│   └── <feature>_provider.dart
+├── services/
+│   └── <feature>_service.dart
+├── screens/
+│   └── <feature>_page.dart
+└── widgets/
+    └── <feature>/
+        └── <section>_widget.dart
+```
+
 ## Code Style Guidelines
 
 - Strictly follow `package:flutter_lints/flutter.yaml`.
