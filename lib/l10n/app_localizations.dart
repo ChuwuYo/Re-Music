@@ -386,12 +386,6 @@ abstract class AppLocalizations {
   /// **'Unknown error'**
   String get unknownError;
 
-  /// No description provided for @editTags.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit tags'**
-  String get editTags;
-
   /// No description provided for @metadataEditorTitle.
   ///
   /// In en, this message translates to:

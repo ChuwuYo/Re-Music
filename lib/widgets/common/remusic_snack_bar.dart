@@ -54,15 +54,22 @@ class ReMusicSnackBar {
     required double fallbackMargin,
   }) {
     final mediaWidth = MediaQuery.sizeOf(context).width;
-    final maxWidth = mediaWidth - fallbackMargin * 2;
+    final safeFallbackMargin = fallbackMargin.clamp(0.0, mediaWidth / 2);
+    final maxWidth = mediaWidth - safeFallbackMargin * 2;
+
+    if (maxWidth <= 0) {
+      return safeFallbackMargin;
+    }
 
     final textStyle =
         Theme.of(context).snackBarTheme.contentTextStyle ??
         Theme.of(context).textTheme.bodyMedium;
+    final textScaler = MediaQuery.textScalerOf(context);
     final textPainter = TextPainter(
       text: TextSpan(text: message, style: textStyle),
       maxLines: 1,
       textDirection: Directionality.of(context),
+      textScaler: textScaler,
     )..layout();
 
     final estimatedWidth =
@@ -78,6 +85,8 @@ class ReMusicSnackBar {
         .clamp(0.0, maxWidth);
 
     final adaptiveMargin = (mediaWidth - targetWidth) / 2;
-    return adaptiveMargin < fallbackMargin ? fallbackMargin : adaptiveMargin;
+    return adaptiveMargin < safeFallbackMargin
+        ? safeFallbackMargin
+        : adaptiveMargin;
   }
 }

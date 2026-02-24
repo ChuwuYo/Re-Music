@@ -43,7 +43,6 @@ class FileListItem extends StatelessWidget {
   ) {
     final canEdit = file.status == ProcessingStatus.success;
     final editButton = IconButton(
-      tooltip: l10n.editTags,
       onPressed: canEdit
           ? () {
               showDialog<void>(

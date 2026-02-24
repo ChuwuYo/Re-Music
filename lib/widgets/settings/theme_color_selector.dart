@@ -76,7 +76,10 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
 
     if (parsed < AppConstants.themeHueMin ||
         parsed > AppConstants.themeHueMax) {
-      _showHueSnackBar('${l10n.invalidNumber} (0-360)');
+      _showHueSnackBar(
+        '${l10n.invalidNumber} '
+        '(${AppConstants.themeHueMin}-${AppConstants.themeHueMax})',
+      );
       _syncHueText(_themeController.themeHue, force: true);
       return;
     }

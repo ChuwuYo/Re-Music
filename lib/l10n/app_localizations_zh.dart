@@ -161,9 +161,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get unknownError => '未知错误';
 
   @override
-  String get editTags => '编辑标签';
-
-  @override
   String get metadataEditorTitle => '编辑元数据';
 
   @override
