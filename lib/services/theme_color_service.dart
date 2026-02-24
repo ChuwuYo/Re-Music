@@ -37,7 +37,7 @@ class ThemeColorService {
     final colors = <Color>[];
     for (
       var hue = AppConstants.themeHueMin;
-      hue <= AppConstants.themeHueMax;
+      hue < AppConstants.themeHueMax;
       hue += AppConstants.themeHueGradientStep
     ) {
       colors.add(

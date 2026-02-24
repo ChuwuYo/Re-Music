@@ -189,6 +189,14 @@ class AppConstants {
   static const double progressPanelMaxWidth = 320.0;
   static const double progressBorderRadius = 4.0;
 
+  /// 提示通知（SnackBar）相关常量
+  static const Duration snackBarDefaultDuration = Duration(seconds: 2);
+  static const double snackBarDefaultHorizontalMargin = spacingMedium;
+  static const double snackBarDefaultBottomMargin = spacingMedium;
+  static const double homeRenameSnackBarTargetWidth = 400.0;
+  static const double homeRenameSnackBarCenteringBreakpoint =
+      homeRenameSnackBarTargetWidth + snackBarDefaultHorizontalMargin * 2;
+
   /// 图标相关常量
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 18.0;

@@ -21,6 +21,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
   late double _sliderHue;
 
   bool _isDragging = false;
+  bool _externalSyncScheduled = false;
 
   @override
   void initState() {
@@ -50,16 +51,46 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     );
   }
 
+  void _showHueSnackBar(String message) {
+    final messenger = ScaffoldMessenger.of(context);
+    final theme = Theme.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        duration: AppConstants.snackBarDefaultDuration,
+        content: Row(
+          children: [
+            Expanded(child: Text(message)),
+            IconButton(
+              tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+              visualDensity: VisualDensity.compact,
+              color: theme.colorScheme.onInverseSurface,
+              onPressed: messenger.hideCurrentSnackBar,
+              icon: const Icon(Icons.close),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _applyHueInput(AppLocalizations l10n) {
-    final normalizedHue = _themeController.parseHueInput(_hueController.text);
-    if (normalizedHue == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.invalidNumber)));
+    final rawText = _hueController.text.trim();
+    final parsed = int.tryParse(rawText);
+    if (parsed == null) {
+      _showHueSnackBar(l10n.invalidNumber);
       _syncHueText(_themeController.themeHue, force: true);
       return;
     }
 
+    if (parsed < AppConstants.themeHueMin ||
+        parsed > AppConstants.themeHueMax) {
+      _showHueSnackBar('${l10n.invalidNumber} (0-360)');
+      _syncHueText(_themeController.themeHue, force: true);
+      return;
+    }
+
+    final normalizedHue = ThemeColorService.normalizeHue(parsed);
     setState(() {
       _isDragging = false;
       _sliderHue = normalizedHue.toDouble();
@@ -67,6 +98,19 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     _themeController.commitHuePreview(normalizedHue);
     _syncHueText(normalizedHue, force: true);
     _hueFocusNode.unfocus();
+  }
+
+  void _scheduleExternalHueSync(int hue) {
+    if (_externalSyncScheduled || !mounted) return;
+    _externalSyncScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _externalSyncScheduled = false;
+      if (!mounted || _isDragging) return;
+      setState(() {
+        _sliderHue = hue.toDouble();
+      });
+      _syncHueText(hue);
+    });
   }
 
   @override
@@ -78,12 +122,17 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    if (!_isDragging) {
-      _sliderHue = appliedHue.toDouble();
-    }
+    final clampedAppliedHue = ThemeColorService.normalizeHue(appliedHue);
+    final clampedSliderHue = _sliderHue.clamp(
+      AppConstants.themeHueMin.toDouble(),
+      AppConstants.themeHueMax.toDouble(),
+    );
 
-    final displayHue = ThemeColorService.normalizeHue(_sliderHue.round());
-    _syncHueText(displayHue);
+    if (!_isDragging &&
+        (_sliderHue.round() != clampedAppliedHue ||
+            _hueController.text != clampedAppliedHue.toString())) {
+      _scheduleExternalHueSync(clampedAppliedHue);
+    }
 
     final rainbowColors = ThemeColorService.rainbowGradient(theme.brightness);
 
@@ -102,8 +151,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
           children: [
             Text(
               l10n.themeHueLabel,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) + 1,
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurfaceVariant,
               ),
@@ -191,7 +239,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
                   child: Slider(
                     min: AppConstants.themeHueMin.toDouble(),
                     max: AppConstants.themeHueMax.toDouble(),
-                    value: _sliderHue,
+                    value: clampedSliderHue,
                     onChangeStart: (_) {
                       setState(() {
                         _isDragging = true;

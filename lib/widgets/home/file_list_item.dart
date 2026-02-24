@@ -84,14 +84,16 @@ class FileListItem extends StatelessWidget {
       return colorScheme.errorContainer.withValues(alpha: 0.1);
     }
     if (file.originalFileName == file.newFileName) {
-      return colorScheme.tertiaryContainer.withValues(alpha: 0.1);
+      return colorScheme.primaryContainer.withValues(alpha: 0.14);
     }
     return colorScheme.surface;
   }
 
   Color _getBorderColor(ColorScheme colorScheme) {
     if (file.status == ProcessingStatus.error) return colorScheme.error;
-    if (file.originalFileName == file.newFileName) return colorScheme.tertiary;
+    if (file.originalFileName == file.newFileName) {
+      return colorScheme.primary.withValues(alpha: 0.7);
+    }
     return colorScheme.outlineVariant;
   }
 
@@ -127,10 +129,10 @@ class FileListItem extends StatelessWidget {
           Icon(
             Icons.check_circle_outline,
             size: 14,
-            color: colorScheme.tertiary,
+            color: colorScheme.primary,
           ),
           const SizedBox(width: 4),
-          Text(l10n.nameMatches, style: TextStyle(color: colorScheme.tertiary)),
+          Text(l10n.nameMatches, style: TextStyle(color: colorScheme.primary)),
         ],
       );
     }
