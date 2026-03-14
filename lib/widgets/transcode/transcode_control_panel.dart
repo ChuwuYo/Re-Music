@@ -302,56 +302,107 @@ class TranscodeControlPanel extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppConstants.spacingMediumSmall),
-            SegmentedButton<TranscodeOutputMode>(
-              segments: [
-                ButtonSegment(
-                  value: TranscodeOutputMode.keepOriginal,
-                  label: Text(l10n.transcodeKeepOriginal),
-                  icon: const Icon(Icons.copy_all_outlined),
-                ),
-                ButtonSegment(
-                  value: TranscodeOutputMode.replaceOriginal,
-                  label: Text(l10n.transcodeReplaceOriginal),
-                  icon: const Icon(Icons.swap_horiz),
-                ),
-                ButtonSegment(
-                  value: TranscodeOutputMode.outputDirectory,
-                  label: Text(l10n.transcodeOutputDirectory),
-                  icon: const Icon(Icons.folder_copy_outlined),
-                ),
-              ],
-              selected: {provider.outputMode},
-              onSelectionChanged: controlsLocked
-                  ? null
-                  : (selection) {
-                      context.read<TranscodeProvider>().setOutputMode(
-                        selection.first,
-                      );
-                    },
+            _buildOutputModeSelector(
+              context: context,
+              l10n: l10n,
+              provider: provider,
+              controlsLocked: controlsLocked,
             ),
-            SwitchListTile.adaptive(
+            ListTile(
               contentPadding: EdgeInsets.zero,
-              value: provider.allowFormatOnlyConversion,
-              onChanged: controlsLocked
-                  ? null
-                  : context
-                        .read<TranscodeProvider>()
-                        .setAllowFormatOnlyConversion,
               title: Text(l10n.transcodeAllowFormatOnly),
+              trailing: Switch.adaptive(
+                value: provider.allowFormatOnlyConversion,
+                onChanged: controlsLocked
+                    ? null
+                    : context
+                          .read<TranscodeProvider>()
+                          .setAllowFormatOnlyConversion,
+              ),
             ),
-            SwitchListTile.adaptive(
+            ListTile(
               contentPadding: EdgeInsets.zero,
-              value: provider.enableDither,
-              onChanged:
-                  controlsLocked ||
-                      provider.outputFormat == TranscodeOutputFormat.mp3
-                  ? null
-                  : context.read<TranscodeProvider>().setEnableDither,
               title: Text(l10n.transcodeEnableDither),
+              trailing: Switch.adaptive(
+                value: provider.enableDither,
+                onChanged:
+                    controlsLocked ||
+                        provider.outputFormat == TranscodeOutputFormat.mp3
+                    ? null
+                    : context.read<TranscodeProvider>().setEnableDither,
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildOutputModeSelector({
+    required BuildContext context,
+    required AppLocalizations l10n,
+    required TranscodeProvider provider,
+    required bool controlsLocked,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final useDropdown = constraints.maxWidth < 640;
+        if (useDropdown) {
+          return DropdownButtonFormField<TranscodeOutputMode>(
+            initialValue: provider.outputMode,
+            decoration: InputDecoration(labelText: l10n.transcodeTaskOutput),
+            items: [
+              DropdownMenuItem(
+                value: TranscodeOutputMode.keepOriginal,
+                child: Text(l10n.transcodeKeepOriginal),
+              ),
+              DropdownMenuItem(
+                value: TranscodeOutputMode.replaceOriginal,
+                child: Text(l10n.transcodeReplaceOriginal),
+              ),
+              DropdownMenuItem(
+                value: TranscodeOutputMode.outputDirectory,
+                child: Text(l10n.transcodeOutputDirectory),
+              ),
+            ],
+            onChanged: controlsLocked
+                ? null
+                : (value) {
+                    if (value != null) {
+                      context.read<TranscodeProvider>().setOutputMode(value);
+                    }
+                  },
+          );
+        }
+
+        return SegmentedButton<TranscodeOutputMode>(
+          segments: [
+            ButtonSegment(
+              value: TranscodeOutputMode.keepOriginal,
+              label: Text(l10n.transcodeKeepOriginal),
+              icon: const Icon(Icons.copy_all_outlined),
+            ),
+            ButtonSegment(
+              value: TranscodeOutputMode.replaceOriginal,
+              label: Text(l10n.transcodeReplaceOriginal),
+              icon: const Icon(Icons.swap_horiz),
+            ),
+            ButtonSegment(
+              value: TranscodeOutputMode.outputDirectory,
+              label: Text(l10n.transcodeOutputDirectory),
+              icon: const Icon(Icons.folder_copy_outlined),
+            ),
+          ],
+          selected: {provider.outputMode},
+          onSelectionChanged: controlsLocked
+              ? null
+              : (selection) {
+                  context.read<TranscodeProvider>().setOutputMode(
+                    selection.first,
+                  );
+                },
+        );
+      },
     );
   }
 
