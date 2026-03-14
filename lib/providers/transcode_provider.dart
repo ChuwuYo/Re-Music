@@ -1,0 +1,311 @@
+import 'package:flutter/material.dart';
+
+import '../constants.dart';
+import '../models/transcode_item.dart';
+import '../models/transcode_request.dart';
+import '../services/ffmpeg_binary_service.dart';
+import '../services/probe_service.dart';
+import '../services/transcode_command_builder.dart';
+import '../services/transcode_rule_engine.dart';
+import '../services/transcode_task_queue.dart';
+
+class TranscodeProvider extends ChangeNotifier {
+  final FfmpegBinaryService _binaryService;
+  final TranscodeRuleEngine _ruleEngine;
+  final TranscodeCommandBuilder _commandBuilder;
+
+  FfmpegBinaryPaths? _binaryPaths;
+  ProbeService? _probeService;
+  String? _binaryError;
+
+  final List<TranscodeItem> _items = [];
+  bool _isBusy = false;
+  double _progress = 0.0;
+  String? _outputDirectory;
+  TranscodeOutputFormat _outputFormat =
+      AppConstants.defaultTranscodeOutputFormat;
+  TranscodeLosslessPreset _losslessPreset =
+      AppConstants.defaultTranscodeLosslessPreset;
+  int _mp3BitRateKbps = AppConstants.defaultTranscodeMp3BitRateKbps;
+  bool _allowFormatOnlyConversion =
+      AppConstants.defaultAllowFormatOnlyConversion;
+  bool _enableDither = AppConstants.defaultEnableTranscodeDither;
+  TranscodeOutputMode _outputMode = AppConstants.defaultTranscodeOutputMode;
+  int _concurrency = AppConstants.defaultTranscodeConcurrency;
+
+  TranscodeProvider({
+    FfmpegBinaryService? binaryService,
+    TranscodeRuleEngine? ruleEngine,
+    TranscodeCommandBuilder? commandBuilder,
+  }) : _binaryService = binaryService ?? const FfmpegBinaryService(),
+       _ruleEngine = ruleEngine ?? const TranscodeRuleEngine(),
+       _commandBuilder = commandBuilder ?? const TranscodeCommandBuilder() {
+    refreshBinaryStatus();
+  }
+
+  List<TranscodeItem> get items => List.unmodifiable(_items);
+  bool get isBusy => _isBusy;
+  double get progress => _progress;
+  String? get binaryError => _binaryError;
+  String? get outputDirectory => _outputDirectory;
+  TranscodeOutputFormat get outputFormat => _outputFormat;
+  TranscodeLosslessPreset get losslessPreset => _losslessPreset;
+  int get mp3BitRateKbps => _mp3BitRateKbps;
+  bool get allowFormatOnlyConversion => _allowFormatOnlyConversion;
+  bool get enableDither => _enableDither;
+  TranscodeOutputMode get outputMode => _outputMode;
+  int get concurrency => _concurrency;
+  int get totalFilesCount => _items.length;
+  int get runnableCount => _items.where((item) => item.canRun).length;
+
+  bool get canStart => !_isBusy && runnableCount > 0 && _binaryPaths != null;
+
+  TranscodeRequest get currentRequest => TranscodeRequest(
+    outputFormat: _outputFormat,
+    losslessPreset: _losslessPreset,
+    mp3BitRateKbps: _mp3BitRateKbps,
+    allowFormatOnlyConversion: _allowFormatOnlyConversion,
+    enableDither: _enableDither,
+    outputMode: _outputMode,
+    outputDirectory: _outputDirectory,
+    concurrency: _concurrency,
+  );
+
+  void refreshBinaryStatus() {
+    _binaryPaths = _binaryService.resolve();
+    _probeService = _binaryPaths == null
+        ? null
+        : ProbeService(ffprobeExecutablePath: _binaryPaths!.ffprobePath);
+    _binaryError = _binaryPaths == null
+        ? AppConstants.transcodeSkipBinaryMissing
+        : null;
+  }
+
+  Future<bool> openBinaryDownloadPage() async {
+    return _binaryService.openWindowsDownloadPage();
+  }
+
+  Future<bool> openBinaryFolder() async {
+    return _binaryService.openWindowsBinaryFolder();
+  }
+
+  void setOutputFormat(TranscodeOutputFormat format) {
+    if (_outputFormat == format) return;
+    _outputFormat = format;
+    _refreshDecisions();
+  }
+
+  void setLosslessPreset(TranscodeLosslessPreset preset) {
+    if (_losslessPreset == preset) return;
+    _losslessPreset = preset;
+    _refreshDecisions();
+  }
+
+  void setMp3BitRateKbps(int value) {
+    if (_mp3BitRateKbps == value) return;
+    _mp3BitRateKbps = value;
+    _refreshDecisions();
+  }
+
+  void setAllowFormatOnlyConversion(bool value) {
+    if (_allowFormatOnlyConversion == value) return;
+    _allowFormatOnlyConversion = value;
+    _refreshDecisions();
+  }
+
+  void setEnableDither(bool value) {
+    if (_enableDither == value) return;
+    _enableDither = value;
+    notifyListeners();
+  }
+
+  void setOutputMode(TranscodeOutputMode mode) {
+    if (_outputMode == mode) return;
+    _outputMode = mode;
+    _refreshDecisions();
+  }
+
+  void setOutputDirectory(String? path) {
+    final normalized = path?.trim();
+    if (_outputDirectory == normalized) return;
+    _outputDirectory = normalized?.isEmpty == true ? null : normalized;
+    _refreshDecisions();
+  }
+
+  void setConcurrency(int value) {
+    final normalized = value
+        .clamp(
+          AppConstants.transcodeConcurrencyMin,
+          AppConstants.transcodeConcurrencyMax,
+        )
+        .toInt();
+    if (_concurrency == normalized) return;
+    _concurrency = normalized;
+    notifyListeners();
+  }
+
+  Future<void> clearItems() async {
+    if (_isBusy) return;
+    _items.clear();
+    _progress = 0.0;
+    notifyListeners();
+  }
+
+  Future<void> addFiles(List<String> paths) async {
+    refreshBinaryStatus();
+    if (_probeService == null) {
+      notifyListeners();
+      return;
+    }
+
+    final existingPaths = _items
+        .map((item) => item.inputPath.toLowerCase())
+        .toSet();
+    final newItems = <TranscodeItem>[];
+    for (final path in paths) {
+      if (existingPaths.add(path.toLowerCase())) {
+        newItems.add(
+          TranscodeItem(inputPath: path, status: TranscodeItemStatus.probing),
+        );
+      }
+    }
+    if (newItems.isEmpty) return;
+
+    ProbeService.resetProbeErrorLog();
+
+    _items.addAll(newItems);
+    _isBusy = true;
+    _progress = 0.0;
+    notifyListeners();
+
+    var completed = 0;
+    for (
+      int index = 0;
+      index < newItems.length;
+      index += AppConstants.transcodeProbeConcurrency
+    ) {
+      final chunk = newItems
+          .skip(index)
+          .take(AppConstants.transcodeProbeConcurrency)
+          .toList(growable: false);
+      await Future.wait(chunk.map(_probeAndDecide));
+      completed += chunk.length;
+      _progress = completed / newItems.length;
+      notifyListeners();
+    }
+
+    _isBusy = false;
+    _progress = 0.0;
+    notifyListeners();
+  }
+
+  Future<int> startTranscoding() async {
+    refreshBinaryStatus();
+    if (_binaryPaths == null || _probeService == null) {
+      notifyListeners();
+      return 0;
+    }
+
+    final runnable = _items
+        .where((item) => item.canRun)
+        .toList(growable: false);
+    if (runnable.isEmpty) return 0;
+
+    TranscodeTaskQueue.resetTranscodeErrorLog();
+
+    _isBusy = true;
+    _progress = 0.0;
+    notifyListeners();
+
+    final queue = TranscodeTaskQueue(
+      ffmpegExecutablePath: _binaryPaths!.ffmpegPath,
+      probeService: _probeService!,
+      commandBuilder: _commandBuilder,
+    );
+    final results = await queue.run(
+      items: _items,
+      request: currentRequest,
+      onItemUpdated: (item) {
+        _progress = _calculateExecutionProgress(runnable);
+        notifyListeners();
+      },
+    );
+
+    _isBusy = false;
+    _progress = 1.0;
+    notifyListeners();
+    return results.where((result) => result.isSuccess).length;
+  }
+
+  Future<void> _probeAndDecide(TranscodeItem item) async {
+    try {
+      final probeInfo = await _probeService!.probeFile(item.inputPath);
+      item.probeInfo = probeInfo;
+      _applyDecision(item);
+    } catch (error) {
+      item.status = TranscodeItemStatus.error;
+      item.message = '$error';
+    }
+  }
+
+  void _refreshDecisions() {
+    for (final item in _items) {
+      if (item.probeInfo == null) continue;
+      if (item.status == TranscodeItemStatus.running ||
+          item.status == TranscodeItemStatus.queued ||
+          item.status == TranscodeItemStatus.success) {
+        continue;
+      }
+      _applyDecision(item);
+    }
+    notifyListeners();
+  }
+
+  void _applyDecision(TranscodeItem item) {
+    final probeInfo = item.probeInfo;
+    if (probeInfo == null) return;
+
+    final decision = _ruleEngine.evaluate(
+      probeInfo: probeInfo,
+      request: currentRequest,
+    );
+    item.decision = decision;
+    if (decision.shouldTranscode && _binaryPaths != null) {
+      final plan = _commandBuilder.build(
+        probeInfo: probeInfo,
+        decision: decision,
+        request: currentRequest,
+      );
+      item.plannedOutputPath = plan.finalOutputPath;
+      item.tempOutputPath = plan.commandOutputPath;
+      item.status = TranscodeItemStatus.ready;
+      item.message = null;
+      item.progress = 0.0;
+      return;
+    }
+
+    item.plannedOutputPath = null;
+    item.tempOutputPath = null;
+    item.progress = 0.0;
+    item.status = decision.shouldTranscode
+        ? TranscodeItemStatus.ready
+        : TranscodeItemStatus.skipped;
+    item.message = decision.skipReasonKey ?? binaryError;
+  }
+
+  double _calculateExecutionProgress(List<TranscodeItem> runnable) {
+    if (runnable.isEmpty) return 0.0;
+    var total = 0.0;
+    for (final item in runnable) {
+      if (item.status == TranscodeItemStatus.success ||
+          item.status == TranscodeItemStatus.error) {
+        total += 1.0;
+        continue;
+      }
+      if (item.status == TranscodeItemStatus.running) {
+        total += item.progress ?? 0.0;
+      }
+    }
+    return total / runnable.length;
+  }
+}

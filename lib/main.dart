@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+
+import 'constants.dart';
 import 'l10n/app_localizations.dart';
 import 'models/app_configs.dart';
 import 'providers/audio_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/transcode_provider.dart';
 import 'screens/home_page.dart';
 import 'services/configs_service.dart';
-import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,7 @@ void main() async {
 
   final configsStore = AppConfigsStore();
   final audioProvider = AudioProvider();
+  final transcodeProvider = TranscodeProvider();
   final localeController = LocaleController();
   final themeController = ThemeController();
   final navigationController = NavigationController();
@@ -36,6 +39,15 @@ void main() async {
     audioProvider.setSingleFileAddMode(settings.singleFileAddMode);
     audioProvider.setDirectoryAddMode(settings.directoryAddMode);
     navigationController.setSidebarExpanded(settings.sidebarExpanded);
+    transcodeProvider.setOutputFormat(settings.transcodeOutputFormat);
+    transcodeProvider.setLosslessPreset(settings.transcodeLosslessPreset);
+    transcodeProvider.setMp3BitRateKbps(settings.transcodeMp3BitRateKbps);
+    transcodeProvider.setAllowFormatOnlyConversion(
+      settings.allowFormatOnlyConversion,
+    );
+    transcodeProvider.setEnableDither(settings.enableTranscodeDither);
+    transcodeProvider.setOutputMode(settings.transcodeOutputMode);
+    transcodeProvider.setConcurrency(settings.transcodeConcurrency);
   }
 
   AppConfigs currentConfigsSnapshot() {
@@ -51,6 +63,13 @@ void main() async {
       singleFileAddMode: audioProvider.singleFileAddMode,
       directoryAddMode: audioProvider.directoryAddMode,
       sidebarExpanded: navigationController.sidebarExpanded,
+      transcodeOutputFormat: transcodeProvider.outputFormat,
+      transcodeLosslessPreset: transcodeProvider.losslessPreset,
+      transcodeMp3BitRateKbps: transcodeProvider.mp3BitRateKbps,
+      allowFormatOnlyConversion: transcodeProvider.allowFormatOnlyConversion,
+      enableTranscodeDither: transcodeProvider.enableDither,
+      transcodeOutputMode: transcodeProvider.outputMode,
+      transcodeConcurrency: transcodeProvider.concurrency,
     );
   }
 
@@ -61,7 +80,6 @@ void main() async {
   }
 
   void handleThemeChanged() {
-    // Skip persistence churn while dragging hue slider preview.
     if (themeController.isHuePreviewing) return;
     scheduleSave();
   }
@@ -69,6 +87,7 @@ void main() async {
   localeController.addListener(scheduleSave);
   themeController.addListener(handleThemeChanged);
   audioProvider.addListener(scheduleSave);
+  transcodeProvider.addListener(scheduleSave);
   navigationController.addListener(scheduleSave);
 
   const windowOptions = WindowOptions(
@@ -92,6 +111,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: audioProvider),
+        ChangeNotifierProvider.value(value: transcodeProvider),
         ChangeNotifierProvider.value(value: localeController),
         ChangeNotifierProvider.value(value: themeController),
         ChangeNotifierProvider.value(value: navigationController),

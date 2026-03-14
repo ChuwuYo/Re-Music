@@ -12,6 +12,7 @@ import '../widgets/home/file_list_item.dart';
 import '../widgets/home/list_states.dart';
 import '../widgets/home/rename_control_panel.dart';
 import 'settings_page.dart';
+import 'transcode_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -55,9 +56,17 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     },
-                    child: currentPage == AppPage.home
-                        ? const _HomeContent(key: ValueKey(AppPage.home))
-                        : const SettingsPage(key: ValueKey(AppPage.settings)),
+                    child: switch (currentPage) {
+                      AppPage.home => const _HomeContent(
+                        key: ValueKey(AppPage.home),
+                      ),
+                      AppPage.transcode => const TranscodePage(
+                        key: ValueKey(AppPage.transcode),
+                      ),
+                      AppPage.settings => const SettingsPage(
+                        key: ValueKey(AppPage.settings),
+                      ),
+                    },
                   ),
                 ),
               ],
@@ -69,7 +78,6 @@ class HomePage extends StatelessWidget {
   }
 }
 
-/// 主页内容区（文件列表 + 重命名控制面板）
 class _HomeContent extends StatelessWidget {
   const _HomeContent({super.key});
 

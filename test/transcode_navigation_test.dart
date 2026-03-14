@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
+import 'package:remusic/constants.dart';
 import 'package:remusic/main.dart';
 import 'package:remusic/providers/audio_provider.dart';
 import 'package:remusic/providers/locale_provider.dart';
 import 'package:remusic/providers/navigation_provider.dart';
 import 'package:remusic/providers/theme_provider.dart';
 import 'package:remusic/providers/transcode_provider.dart';
+import 'package:remusic/services/ffmpeg_binary_service.dart';
 
 void main() {
-  testWidgets('App builds and shows title', (WidgetTester tester) async {
+  testWidgets('navigates to transcode page and shows binary error', (
+    WidgetTester tester,
+  ) async {
     final audioProvider = AudioProvider();
-    final localeController = LocaleController();
+    final localeController = LocaleController()..setLocale(const Locale('en'));
     final themeController = ThemeController();
-    final navigationController = NavigationController();
-    final transcodeProvider = TranscodeProvider();
+    final navigationController = NavigationController()
+      ..navigateTo(AppPage.transcode);
+    final transcodeProvider = TranscodeProvider(
+      binaryService: const _MissingBinaryService(),
+    );
 
     await tester.pumpWidget(
       MultiProvider(
@@ -31,7 +38,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Re:Music'), findsWidgets);
-    expect(find.byIcon(Icons.language), findsOneWidget);
+    expect(find.text('Resample'), findsOneWidget);
+    expect(find.text('FFmpeg binaries are missing'), findsOneWidget);
   });
+}
+
+class _MissingBinaryService extends FfmpegBinaryService {
+  const _MissingBinaryService();
+
+  @override
+  FfmpegBinaryPaths? resolve() => null;
 }

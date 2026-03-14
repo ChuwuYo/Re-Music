@@ -261,4 +261,157 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get artistSeparatorHint => '多个艺术家时使用的分隔符';
+
+  @override
+  String get navTranscode => '降采样';
+
+  @override
+  String get transcodeTitle => '降采样';
+
+  @override
+  String get transcodeStart => '开始降采样';
+
+  @override
+  String transcodeCompleted(int count) {
+    return '完成！成功处理 $count 个文件';
+  }
+
+  @override
+  String transcodeProgress(int percent) {
+    return '处理中... $percent%';
+  }
+
+  @override
+  String transcodeTotalFiles(int count) {
+    return '共 $count 个任务';
+  }
+
+  @override
+  String get transcodeEmptyTitle => '添加音频文件后即可开始降采样';
+
+  @override
+  String get transcodeEmptySubtitle => '这里会显示探测结果、跳过原因和输出路径';
+
+  @override
+  String get transcodeOutputFormat => '输出格式';
+
+  @override
+  String get transcodePreset => '无损规格';
+
+  @override
+  String get transcodeMp3Bitrate => 'MP3 比特率';
+
+  @override
+  String get transcodeAllowFormatOnly => '允许仅换格式';
+
+  @override
+  String get transcodeEnableDither => '启用 triangular 抖动';
+
+  @override
+  String get transcodeConcurrency => '并发数';
+
+  @override
+  String get transcodeKeepOriginal => '保留原文件';
+
+  @override
+  String get transcodeReplaceOriginal => '替换原文件';
+
+  @override
+  String get transcodeOutputDirectory => '输出到目录';
+
+  @override
+  String get transcodeChooseOutputDirectory => '选择输出目录';
+
+  @override
+  String get transcodeOutputDirectoryRequired => '请先选择输出目录';
+
+  @override
+  String get transcodeFormatFlac => 'FLAC';
+
+  @override
+  String get transcodeFormatWav => 'WAV';
+
+  @override
+  String get transcodeFormatAlac => 'ALAC (.m4a)';
+
+  @override
+  String get transcodeFormatMp3 => 'MP3';
+
+  @override
+  String get transcodePresetStudio24 => '48kHz / 24bit';
+
+  @override
+  String get transcodePresetCd24 => '44.1kHz / 24bit';
+
+  @override
+  String get transcodePresetCd16 => '44.1kHz / 16bit';
+
+  @override
+  String get transcodeTaskTarget => '目标';
+
+  @override
+  String get transcodeTaskOutput => '输出';
+
+  @override
+  String get transcodeTaskUnknownOutput => '输出路径待确定';
+
+  @override
+  String get transcodeTaskUnknownProbe => '等待探测';
+
+  @override
+  String get transcodeStatusProbing => '探测中';
+
+  @override
+  String get transcodeStatusReady => '就绪';
+
+  @override
+  String get transcodeStatusSkipped => '已跳过';
+
+  @override
+  String get transcodeStatusQueued => '排队中';
+
+  @override
+  String get transcodeStatusRunning => '处理中';
+
+  @override
+  String get transcodeStatusSuccess => '成功';
+
+  @override
+  String get transcodeStatusError => '失败';
+
+  @override
+  String get transcodeSkipLossyToLossless => '有损输入不能转为无损目标';
+
+  @override
+  String get transcodeSkipAlreadyCompliantLossless => '已符合目标无损规格';
+
+  @override
+  String get transcodeSkipAlreadyCompliantMp3 => '已符合目标 MP3 采样率和比特率';
+
+  @override
+  String get transcodeSkipUnsupportedSourceFormat => '该源格式暂不支持转码';
+
+  @override
+  String get transcodeSkipNoOutputDirectory => '当前输出模式必须先选择输出目录';
+
+  @override
+  String get transcodeSkipBinaryMissing => '缺少 FFmpeg 二进制文件';
+
+  @override
+  String get transcodeOpenDownloadPage => '打开 FFmpeg 下载页面';
+
+  @override
+  String get transcodeOpenDownloadPageSuccess => '已打开 FFmpeg 下载页面';
+
+  @override
+  String get transcodeOpenDownloadPageFailed => '打开 FFmpeg 下载页面失败';
+
+  @override
+  String get transcodeOpenBinaryFolder => '打开 FFmpeg 文件夹';
+
+  @override
+  String get transcodeOpenBinaryFolderSuccess => '已打开 FFmpeg 文件夹';
+
+  @override
+  String get transcodeOpenBinaryFolderFailed => '打开 FFmpeg 文件夹失败';
 }

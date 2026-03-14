@@ -1,46 +1,52 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
+
 import '../constants.dart';
 
 class FileService {
   static const supportedExtensions = AppConstants.supportedAudioExtensions;
 
-  static Future<List<String>> pickFiles() async {
+  static Future<List<String>> pickFiles({
+    List<String>? allowedExtensions,
+  }) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: supportedExtensions,
+      allowedExtensions: allowedExtensions ?? supportedExtensions,
       allowMultiple: true,
     );
     return result?.paths.whereType<String>().toList() ?? [];
   }
 
   static Future<String?> pickDirectory() async {
-    return await FilePicker.platform.getDirectoryPath();
+    return FilePicker.platform.getDirectoryPath();
   }
 
   static Future<bool> isDirectory(String path) async {
-    return await FileSystemEntity.isDirectory(path);
+    return FileSystemEntity.isDirectory(path);
   }
 
-  static Future<List<String>> scanDirectory(String dirPath) async {
+  static Future<List<String>> scanDirectory(
+    String dirPath, {
+    List<String>? allowedExtensions,
+  }) async {
     final dir = Directory(dirPath);
     final files = <String>[];
+    final whitelist = (allowedExtensions ?? supportedExtensions)
+        .map((extension) => extension.toLowerCase())
+        .toSet();
 
     if (await dir.exists()) {
       await for (final entity in dir.list(
         recursive: true,
         followLinks: false,
       )) {
-        if (entity is File) {
-          final ext = p
-              .extension(entity.path)
-              .toLowerCase()
-              .replaceAll('.', '');
-          if (supportedExtensions.contains(ext)) {
-            files.add(entity.path);
-          }
+        if (entity is! File) continue;
+        final ext = p.extension(entity.path).toLowerCase().replaceAll('.', '');
+        if (whitelist.contains(ext)) {
+          files.add(entity.path);
         }
       }
     }
@@ -55,7 +61,6 @@ class FileService {
       if (safeName.isEmpty || safeName == '.' || safeName == '..') return false;
 
       final newPath = p.join(dir, safeName);
-
       if (oldPath == newPath) return true;
 
       await file.rename(newPath);
@@ -63,6 +68,43 @@ class FileService {
     } catch (e) {
       debugPrint('Error renaming file $oldPath: $e');
       return false;
+    }
+  }
+
+  static Future<void> replaceFileAtomically(
+    String tempPath,
+    String targetPath,
+  ) async {
+    final tempFile = File(tempPath);
+    final targetFile = File(targetPath);
+    final backupPath = '$targetPath.bak';
+    final backupFile = File(backupPath);
+
+    if (!await tempFile.exists()) {
+      throw FileSystemException('Temporary file not found', tempPath);
+    }
+
+    if (await backupFile.exists()) {
+      await backupFile.delete();
+    }
+
+    if (await targetFile.exists()) {
+      await targetFile.rename(backupPath);
+    }
+
+    try {
+      await tempFile.rename(targetPath);
+      if (await backupFile.exists()) {
+        await backupFile.delete();
+      }
+    } catch (error) {
+      if (await backupFile.exists()) {
+        if (await targetFile.exists()) {
+          await targetFile.delete();
+        }
+        await backupFile.rename(targetPath);
+      }
+      rethrow;
     }
   }
 }
