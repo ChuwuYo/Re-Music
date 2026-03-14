@@ -27,9 +27,9 @@ class FfmpegBinaryService {
   }
 
   String windowsBinaryFolderPath() {
-    final currentDir = Directory.current.path;
+    final exeDir = File(Platform.resolvedExecutable).parent.path;
     return p.join(
-      currentDir,
+      exeDir,
       AppConstants.bundledToolsDirectory,
       AppConstants.bundledFfmpegDirectory,
       AppConstants.bundledWindowsDirectory,

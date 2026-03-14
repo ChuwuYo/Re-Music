@@ -398,6 +398,224 @@ void main() {
         }
       },
     );
+
+    test(
+      'does not fail when output bit depth is unknown but target is set',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('remusic_queue_');
+        try {
+          final inputPath = p.join(dir.path, 'source.flac');
+          await File(inputPath).writeAsString('input');
+
+          final queue = TranscodeTaskQueue(
+            ffmpegExecutablePath: 'ffmpeg',
+            probeService: ProbeService(
+              ffprobeExecutablePath: 'ffprobe',
+              runner: (executable, arguments) async {
+                return '''
+{
+  "streams": [
+    {
+      "codec_type": "audio",
+      "codec_name": "flac",
+      "sample_rate": "44100",
+      "sample_fmt": "s32"
+    }
+  ],
+  "format": {
+    "duration": "10.0"
+  }
+}
+''';
+              },
+            ),
+            commandBuilder: const TranscodeCommandBuilder(),
+            processStarter: (executable, arguments) async {
+              await File(arguments.last).writeAsString('output');
+              return _FakeProcessHandle(
+                stderr: Stream<List<int>>.fromIterable([
+                  utf8.encode('time=00:00:09.00 bitrate=1000.0kbits/s\n'),
+                ]),
+                exitCode: 0,
+              );
+            },
+          );
+
+          final item = TranscodeItem(
+            inputPath: inputPath,
+            probeInfo: _inputProbe(
+              path: inputPath,
+              kind: AudioEncodingKind.flac,
+              sampleRate: 96000,
+              bitDepth: 24,
+              durationSeconds: 10,
+            ),
+            decision: const TranscodeDecision(
+              shouldTranscode: true,
+              outputFormat: TranscodeOutputFormat.flac,
+              targetSampleRate: 44100,
+              targetBitDepth: 24,
+              targetBitRateKbps: null,
+              requiresFormatChange: false,
+              requiresSampleRateChange: true,
+              requiresBitDepthChange: true,
+            ),
+            status: TranscodeItemStatus.ready,
+          );
+
+          final results = await queue.run(
+            items: [item],
+            request: _request(outputFormat: TranscodeOutputFormat.flac),
+            onItemUpdated: (_) {},
+          );
+
+          expect(results.single.isSuccess, isTrue);
+          expect(item.status, TranscodeItemStatus.success);
+          expect(item.actualOutputPath, isNotNull);
+          expect(await File(item.actualOutputPath!).exists(), isTrue);
+        } finally {
+          await dir.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'handles process startup failures as item errors without throwing',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('remusic_queue_');
+        try {
+          final inputPath = p.join(dir.path, 'source.flac');
+          await File(inputPath).writeAsString('input');
+
+          final queue = TranscodeTaskQueue(
+            ffmpegExecutablePath: 'ffmpeg',
+            probeService: ProbeService(
+              ffprobeExecutablePath: 'ffprobe',
+              runner: (executable, arguments) async => _probeJson(
+                codecName: 'mp3',
+                sampleRate: 44100,
+                bitRate: 320000,
+                durationSeconds: 10,
+              ),
+            ),
+            commandBuilder: const TranscodeCommandBuilder(),
+            processStarter: (executable, arguments) {
+              throw ProcessException(
+                executable,
+                arguments,
+                'mock startup failure',
+                575,
+              );
+            },
+          );
+
+          final item = TranscodeItem(
+            inputPath: inputPath,
+            probeInfo: _inputProbe(
+              path: inputPath,
+              kind: AudioEncodingKind.flac,
+              sampleRate: 96000,
+              bitDepth: 24,
+              durationSeconds: 10,
+            ),
+            decision: const TranscodeDecision(
+              shouldTranscode: true,
+              outputFormat: TranscodeOutputFormat.mp3,
+              targetSampleRate: 44100,
+              targetBitDepth: null,
+              targetBitRateKbps: 320,
+              requiresFormatChange: true,
+              requiresSampleRateChange: true,
+              requiresBitDepthChange: false,
+            ),
+            status: TranscodeItemStatus.ready,
+          );
+
+          final results = await queue.run(
+            items: [item],
+            request: _request(outputFormat: TranscodeOutputFormat.mp3),
+            onItemUpdated: (_) {},
+          );
+
+          expect(results, hasLength(1));
+          expect(results.single.isSuccess, isFalse);
+          expect(item.status, TranscodeItemStatus.error);
+          expect(item.message, contains('mock startup failure'));
+        } finally {
+          await dir.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'tolerates malformed stderr bytes and reports ffmpeg error message',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('remusic_queue_');
+        try {
+          final inputPath = p.join(dir.path, 'source.flac');
+          await File(inputPath).writeAsString('input');
+
+          final queue = TranscodeTaskQueue(
+            ffmpegExecutablePath: 'ffmpeg',
+            probeService: ProbeService(
+              ffprobeExecutablePath: 'ffprobe',
+              runner: (executable, arguments) async => _probeJson(
+                codecName: 'mp3',
+                sampleRate: 44100,
+                bitRate: 320000,
+                durationSeconds: 10,
+              ),
+            ),
+            commandBuilder: const TranscodeCommandBuilder(),
+            processStarter: (executable, arguments) async {
+              return _FakeProcessHandle(
+                stderr: Stream<List<int>>.fromIterable([
+                  <int>[0x80, 0x80, 0x0A],
+                  utf8.encode('Error opening output file\n'),
+                ]),
+                exitCode: 1,
+              );
+            },
+          );
+
+          final item = TranscodeItem(
+            inputPath: inputPath,
+            probeInfo: _inputProbe(
+              path: inputPath,
+              kind: AudioEncodingKind.flac,
+              sampleRate: 96000,
+              bitDepth: 24,
+              durationSeconds: 10,
+            ),
+            decision: const TranscodeDecision(
+              shouldTranscode: true,
+              outputFormat: TranscodeOutputFormat.mp3,
+              targetSampleRate: 44100,
+              targetBitDepth: null,
+              targetBitRateKbps: 320,
+              requiresFormatChange: true,
+              requiresSampleRateChange: true,
+              requiresBitDepthChange: false,
+            ),
+            status: TranscodeItemStatus.ready,
+          );
+
+          final results = await queue.run(
+            items: [item],
+            request: _request(outputFormat: TranscodeOutputFormat.mp3),
+            onItemUpdated: (_) {},
+          );
+
+          expect(results, hasLength(1));
+          expect(results.single.isSuccess, isFalse);
+          expect(item.status, TranscodeItemStatus.error);
+          expect(item.message, contains('Error opening output file'));
+          expect(item.message, isNot(contains('FormatException')));
+        } finally {
+          await dir.delete(recursive: true);
+        }
+      },
+    );
   });
 }
 

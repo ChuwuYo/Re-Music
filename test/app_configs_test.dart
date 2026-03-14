@@ -62,6 +62,7 @@ void main() {
         'allowFormatOnlyConversion': true,
         'enableTranscodeDither': true,
         'transcodeOutputMode': 'replaceOriginal',
+        'transcodeOutputDirectory': 'E:/Music/Out',
         'transcodeConcurrency': 99,
       });
 
@@ -71,6 +72,7 @@ void main() {
       expect(config.allowFormatOnlyConversion, isTrue);
       expect(config.enableTranscodeDither, isTrue);
       expect(config.transcodeOutputMode, TranscodeOutputMode.replaceOriginal);
+      expect(config.transcodeOutputDirectory, 'E:/Music/Out');
       expect(config.transcodeConcurrency, AppConstants.transcodeConcurrencyMax);
 
       final json = config.toJson();
@@ -80,6 +82,7 @@ void main() {
       expect(json['allowFormatOnlyConversion'], isTrue);
       expect(json['enableTranscodeDither'], isTrue);
       expect(json['transcodeOutputMode'], 'replaceOriginal');
+      expect(json['transcodeOutputDirectory'], 'E:/Music/Out');
       expect(
         json['transcodeConcurrency'],
         AppConstants.transcodeConcurrencyMax,

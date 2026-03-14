@@ -26,11 +26,13 @@ class TranscodeCommandBuilder {
     required AudioProbeInfo probeInfo,
     required TranscodeDecision decision,
     required TranscodeRequest request,
+    Set<String>? reservedOutputPaths,
   }) {
     final outputPaths = _resolveOutputPaths(
       inputPath: probeInfo.path,
       decision: decision,
       request: request,
+      reservedOutputPaths: reservedOutputPaths,
     );
     final arguments = <String>[
       '-y',
@@ -102,6 +104,7 @@ class TranscodeCommandBuilder {
     required String inputPath,
     required TranscodeDecision decision,
     required TranscodeRequest request,
+    Set<String>? reservedOutputPaths,
   }) {
     final outputExtension = _outputExtension(decision.outputFormat);
     final baseName = p.basenameWithoutExtension(inputPath);
@@ -112,12 +115,35 @@ class TranscodeCommandBuilder {
         : inputDirectory;
 
     if (request.outputMode == TranscodeOutputMode.replaceOriginal) {
-      final finalPath = p.join(inputDirectory, '$baseName$outputExtension');
+      final defaultFinalPath = p.join(
+        inputDirectory,
+        '$baseName$outputExtension',
+      );
+      final finalPath =
+          _isConflictingPath(
+            defaultFinalPath,
+            inputPath,
+            reservedOutputPaths,
+            allowInputPath: true,
+          )
+          ? _uniqueFinalPath(
+              directory: inputDirectory,
+              baseName: baseName,
+              extension: outputExtension,
+              conflictSuffix: decision.conflictSuffix,
+              inputPath: inputPath,
+              reservedOutputPaths: reservedOutputPaths,
+              allowInputPath: false,
+            )
+          : defaultFinalPath;
       final tempPath = _uniqueTempPath(
         directory: inputDirectory,
         baseName: baseName,
         extension: outputExtension,
+        reservedOutputPaths: reservedOutputPaths,
       );
+      _reservePath(finalPath, reservedOutputPaths);
+      _reservePath(tempPath, reservedOutputPaths);
       return _ResolvedOutputPaths(
         commandOutputPath: tempPath,
         finalOutputPath: finalPath,
@@ -125,49 +151,93 @@ class TranscodeCommandBuilder {
     }
 
     final desiredPath = p.join(outputDirectory, '$baseName$outputExtension');
-    if (!_isConflictingPath(desiredPath, inputPath)) {
+    if (!_isConflictingPath(desiredPath, inputPath, reservedOutputPaths)) {
+      _reservePath(desiredPath, reservedOutputPaths);
       return _ResolvedOutputPaths(
         commandOutputPath: desiredPath,
         finalOutputPath: desiredPath,
       );
     }
 
-    var candidate = p.join(
-      outputDirectory,
-      '$baseName [${decision.conflictSuffix}]$outputExtension',
+    final candidate = _uniqueFinalPath(
+      directory: outputDirectory,
+      baseName: baseName,
+      extension: outputExtension,
+      conflictSuffix: decision.conflictSuffix,
+      inputPath: inputPath,
+      reservedOutputPaths: reservedOutputPaths,
     );
-    var index = 2;
-    while (_isConflictingPath(candidate, inputPath)) {
-      candidate = p.join(
-        outputDirectory,
-        '$baseName [${decision.conflictSuffix}] ($index)$outputExtension',
-      );
-      index++;
-    }
+    _reservePath(candidate, reservedOutputPaths);
     return _ResolvedOutputPaths(
       commandOutputPath: candidate,
       finalOutputPath: candidate,
     );
   }
 
-  bool _isConflictingPath(String candidate, String inputPath) {
+  bool _isConflictingPath(
+    String candidate,
+    String inputPath,
+    Set<String>? reservedOutputPaths, {
+    bool allowInputPath = false,
+  }) {
     final normalizedCandidate = p.normalize(candidate).toLowerCase();
     final normalizedInput = p.normalize(inputPath).toLowerCase();
-    return normalizedCandidate == normalizedInput ||
+    final isInputPath = normalizedCandidate == normalizedInput;
+    if (isInputPath) {
+      // Replace mode is allowed to target the input path itself, but still
+      // must avoid collisions already reserved by other planned tasks.
+      if (allowInputPath) {
+        return reservedOutputPaths?.contains(normalizedCandidate) ?? false;
+      }
+      return true;
+    }
+
+    return (reservedOutputPaths?.contains(normalizedCandidate) ?? false) ||
         File(candidate).existsSync();
+  }
+
+  String _uniqueFinalPath({
+    required String directory,
+    required String baseName,
+    required String extension,
+    required String conflictSuffix,
+    required String inputPath,
+    required Set<String>? reservedOutputPaths,
+    bool allowInputPath = false,
+  }) {
+    var candidate = p.join(directory, '$baseName [$conflictSuffix]$extension');
+    var index = 2;
+    while (_isConflictingPath(
+      candidate,
+      inputPath,
+      reservedOutputPaths,
+      allowInputPath: allowInputPath,
+    )) {
+      candidate = p.join(
+        directory,
+        '$baseName [$conflictSuffix] ($index)$extension',
+      );
+      index++;
+    }
+    return candidate;
   }
 
   String _uniqueTempPath({
     required String directory,
     required String baseName,
     required String extension,
+    Set<String>? reservedOutputPaths,
   }) {
     var candidate = p.join(
       directory,
       '$baseName${AppConstants.replaceTempFileMarker}$extension',
     );
     var index = 2;
-    while (File(candidate).existsSync()) {
+    while ((reservedOutputPaths?.contains(
+              p.normalize(candidate).toLowerCase(),
+            ) ??
+            false) ||
+        File(candidate).existsSync()) {
       candidate = p.join(
         directory,
         '$baseName${AppConstants.replaceTempFileMarker}-$index$extension',
@@ -175,6 +245,10 @@ class TranscodeCommandBuilder {
       index++;
     }
     return candidate;
+  }
+
+  void _reservePath(String path, Set<String>? reservedOutputPaths) {
+    reservedOutputPaths?.add(p.normalize(path).toLowerCase());
   }
 
   String _outputExtension(TranscodeOutputFormat outputFormat) {

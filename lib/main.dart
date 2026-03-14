@@ -47,6 +47,7 @@ void main() async {
     );
     transcodeProvider.setEnableDither(settings.enableTranscodeDither);
     transcodeProvider.setOutputMode(settings.transcodeOutputMode);
+    transcodeProvider.setOutputDirectory(settings.transcodeOutputDirectory);
     transcodeProvider.setConcurrency(settings.transcodeConcurrency);
   }
 
@@ -69,6 +70,7 @@ void main() async {
       allowFormatOnlyConversion: transcodeProvider.allowFormatOnlyConversion,
       enableTranscodeDither: transcodeProvider.enableDither,
       transcodeOutputMode: transcodeProvider.outputMode,
+      transcodeOutputDirectory: transcodeProvider.outputDirectory,
       transcodeConcurrency: transcodeProvider.concurrency,
     );
   }

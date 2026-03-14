@@ -77,28 +77,25 @@ class FileService {
   ) async {
     final tempFile = File(tempPath);
     final targetFile = File(targetPath);
-    final backupPath = '$targetPath.bak';
-    final backupFile = File(backupPath);
+    File? backupFile;
 
     if (!await tempFile.exists()) {
       throw FileSystemException('Temporary file not found', tempPath);
     }
 
-    if (await backupFile.exists()) {
-      await backupFile.delete();
-    }
-
     if (await targetFile.exists()) {
+      final backupPath = await _nextAvailableBackupPath(targetPath);
+      backupFile = File(backupPath);
       await targetFile.rename(backupPath);
     }
 
     try {
       await tempFile.rename(targetPath);
-      if (await backupFile.exists()) {
+      if (backupFile != null && await backupFile.exists()) {
         await backupFile.delete();
       }
     } catch (error) {
-      if (await backupFile.exists()) {
+      if (backupFile != null && await backupFile.exists()) {
         if (await targetFile.exists()) {
           await targetFile.delete();
         }
@@ -106,5 +103,16 @@ class FileService {
       }
       rethrow;
     }
+  }
+
+  static Future<String> _nextAvailableBackupPath(String targetPath) async {
+    final base = '$targetPath.bak';
+    var candidate = base;
+    var index = 2;
+    while (await File(candidate).exists()) {
+      candidate = '$base.$index';
+      index++;
+    }
+    return candidate;
   }
 }

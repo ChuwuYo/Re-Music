@@ -70,6 +70,7 @@ class TranscodeTaskQueue {
           AppConstants.transcodeConcurrencyMax,
         )
         .toInt();
+    final reservedOutputPaths = <String>{};
     var nextIndex = 0;
 
     Future<void> worker() async {
@@ -79,6 +80,7 @@ class TranscodeTaskQueue {
         final result = await _runSingle(
           item: item,
           request: request,
+          reservedOutputPaths: reservedOutputPaths,
           onItemUpdated: onItemUpdated,
         );
         results.add(result);
@@ -97,6 +99,7 @@ class TranscodeTaskQueue {
   Future<TranscodeResult> _runSingle({
     required TranscodeItem item,
     required TranscodeRequest request,
+    required Set<String> reservedOutputPaths,
     required void Function(TranscodeItem item) onItemUpdated,
   }) async {
     final probeInfo = item.probeInfo;
@@ -112,123 +115,152 @@ class TranscodeTaskQueue {
       );
     }
 
-    final plan = commandBuilder.build(
-      probeInfo: probeInfo,
-      decision: decision,
-      request: request,
-    );
-    item.plannedOutputPath = plan.finalOutputPath;
-    item.tempOutputPath = plan.commandOutputPath;
-    item.status = TranscodeItemStatus.queued;
-    item.progress = 0.0;
-    item.message = null;
-    onItemUpdated(item);
-
-    final process = await _processStarter(ffmpegExecutablePath, plan.arguments);
-    item.status = TranscodeItemStatus.running;
-    onItemUpdated(item);
-
-    final stdoutDone = process.stdout.drain<void>();
-    final stderrDone = Completer<void>();
-    final stderrBuffer = StringBuffer();
-
-    final stderrSubscription = process.stderr
-        .transform(utf8.decoder)
-        .listen(
-          (chunk) {
-            stderrBuffer.write(chunk);
-            _updateProgressFromChunk(item, chunk, probeInfo.durationSeconds);
-            onItemUpdated(item);
-          },
-          onDone: () => stderrDone.complete(),
-          onError: stderrDone.completeError,
-        );
-
-    final exitCode = await process.exitCode;
-    await stdoutDone;
-    await stderrDone.future;
-    await stderrSubscription.cancel();
-
-    if (exitCode != 0) {
-      await _cleanupOutput(
-        plan.commandOutputPath,
-        keepIfMatches: item.inputPath,
-      );
-      item.status = TranscodeItemStatus.error;
-      item.message = _trimMessage(stderrBuffer.toString());
-      _appendTranscodeErrorLog(
-        item: item,
-        stage: 'ffmpeg',
-        message: item.message ?? 'ffmpeg exited with an error',
-        rawOutput: stderrBuffer.toString(),
-      );
-      onItemUpdated(item);
-      return TranscodeResult(
-        inputPath: item.inputPath,
-        status: item.status,
-        errorMessage: item.message,
-      );
-    }
-
+    TranscodeCommandPlan? plan;
     try {
-      final outputProbe = await probeService.probeFile(plan.commandOutputPath);
-      final validationError = _validateOutput(outputProbe, decision);
-      if (validationError != null) {
+      plan = commandBuilder.build(
+        probeInfo: probeInfo,
+        decision: decision,
+        request: request,
+        reservedOutputPaths: reservedOutputPaths,
+      );
+      item.plannedOutputPath = plan.finalOutputPath;
+      item.tempOutputPath = plan.commandOutputPath;
+      item.status = TranscodeItemStatus.queued;
+      item.progress = 0.0;
+      item.message = null;
+      onItemUpdated(item);
+
+      final process = await _processStarter(
+        ffmpegExecutablePath,
+        plan.arguments,
+      );
+      item.status = TranscodeItemStatus.running;
+      onItemUpdated(item);
+
+      final stdoutDone = process.stdout.drain<void>();
+      final stderrDone = Completer<void>();
+      final stderrBuffer = StringBuffer();
+
+      final stderrSubscription = process.stderr.listen(
+        (chunk) {
+          final text = utf8.decode(chunk, allowMalformed: true);
+          stderrBuffer.write(text);
+          _updateProgressFromChunk(item, text, probeInfo.durationSeconds);
+          onItemUpdated(item);
+        },
+        onDone: () => stderrDone.complete(),
+        onError: stderrDone.completeError,
+      );
+
+      final exitCode = await process.exitCode;
+      await stdoutDone;
+      await stderrDone.future;
+      await stderrSubscription.cancel();
+
+      if (exitCode != 0) {
         await _cleanupOutput(
           plan.commandOutputPath,
           keepIfMatches: item.inputPath,
         );
         item.status = TranscodeItemStatus.error;
-        item.message = validationError;
+        item.message = _trimMessage(stderrBuffer.toString());
         _appendTranscodeErrorLog(
           item: item,
-          stage: 'validate',
-          message: validationError,
-          rawOutput:
-              'output=${plan.commandOutputPath}\nexpected=${decision.outputFormat}/${decision.targetSampleRate}/${decision.targetBitDepth}/${decision.targetBitRateKbps}',
+          stage: 'ffmpeg',
+          message: item.message ?? 'ffmpeg exited with an error',
+          rawOutput: stderrBuffer.toString(),
         );
         onItemUpdated(item);
         return TranscodeResult(
           inputPath: item.inputPath,
           status: item.status,
-          errorMessage: validationError,
+          errorMessage: item.message,
         );
       }
 
-      if (request.outputMode == TranscodeOutputMode.replaceOriginal) {
-        await FileService.replaceFileAtomically(
+      try {
+        final outputProbe = await probeService.probeFile(
           plan.commandOutputPath,
-          plan.finalOutputPath,
         );
-        await _deleteSupersededInput(
+        final validationError = _validateOutput(outputProbe, decision);
+        if (validationError != null) {
+          await _cleanupOutput(
+            plan.commandOutputPath,
+            keepIfMatches: item.inputPath,
+          );
+          item.status = TranscodeItemStatus.error;
+          item.message = validationError;
+          _appendTranscodeErrorLog(
+            item: item,
+            stage: 'validate',
+            message: validationError,
+            rawOutput:
+                'output=${plan.commandOutputPath}\nexpected=${decision.outputFormat}/${decision.targetSampleRate}/${decision.targetBitDepth}/${decision.targetBitRateKbps}',
+          );
+          onItemUpdated(item);
+          return TranscodeResult(
+            inputPath: item.inputPath,
+            status: item.status,
+            errorMessage: validationError,
+          );
+        }
+
+        if (request.outputMode == TranscodeOutputMode.replaceOriginal) {
+          await FileService.replaceFileAtomically(
+            plan.commandOutputPath,
+            plan.finalOutputPath,
+          );
+          await _deleteSupersededInput(
+            inputPath: item.inputPath,
+            outputPath: plan.finalOutputPath,
+          );
+        }
+
+        item.actualOutputPath = plan.finalOutputPath;
+        item.progress = 1.0;
+        item.status = TranscodeItemStatus.success;
+        item.message = null;
+        onItemUpdated(item);
+        return TranscodeResult(
           inputPath: item.inputPath,
-          outputPath: plan.finalOutputPath,
+          outputPath: item.actualOutputPath,
+          status: item.status,
+          outputProbeInfo: outputProbe,
+        );
+      } catch (error) {
+        await _cleanupOutput(
+          plan.commandOutputPath,
+          keepIfMatches: item.inputPath,
+        );
+        item.status = TranscodeItemStatus.error;
+        item.message = '$error';
+        _appendTranscodeErrorLog(
+          item: item,
+          stage: 'exception',
+          message: item.message ?? 'Unexpected transcode exception',
+          rawOutput: 'output=${plan.commandOutputPath}',
+        );
+        onItemUpdated(item);
+        return TranscodeResult(
+          inputPath: item.inputPath,
+          status: item.status,
+          errorMessage: item.message,
         );
       }
-
-      item.actualOutputPath = plan.finalOutputPath;
-      item.progress = 1.0;
-      item.status = TranscodeItemStatus.success;
-      item.message = null;
-      onItemUpdated(item);
-      return TranscodeResult(
-        inputPath: item.inputPath,
-        outputPath: item.actualOutputPath,
-        status: item.status,
-        outputProbeInfo: outputProbe,
-      );
     } catch (error) {
-      await _cleanupOutput(
-        plan.commandOutputPath,
-        keepIfMatches: item.inputPath,
-      );
+      if (plan != null) {
+        await _cleanupOutput(
+          plan.commandOutputPath,
+          keepIfMatches: item.inputPath,
+        );
+      }
       item.status = TranscodeItemStatus.error;
       item.message = '$error';
       _appendTranscodeErrorLog(
         item: item,
-        stage: 'exception',
-        message: item.message ?? 'Unexpected transcode exception',
-        rawOutput: 'output=${plan.commandOutputPath}',
+        stage: 'prepare',
+        message: item.message ?? 'Failed before ffmpeg execution',
+        rawOutput: 'ffmpeg=$ffmpegExecutablePath\ninput=${item.inputPath}',
       );
       onItemUpdated(item);
       return TranscodeResult(
@@ -284,9 +316,13 @@ class TranscodeTaskQueue {
       }
       return null;
     }
-    if (decision.targetBitDepth != null &&
-        outputProbe.bitDepth != decision.targetBitDepth) {
-      return 'Output bit depth does not match the requested target.';
+    if (decision.targetBitDepth != null) {
+      final outputBitDepth = outputProbe.bitDepth;
+      // ffprobe may omit bits_per_* for some containers and report only s32/s32p.
+      // In that case the effective depth is ambiguous; do not fail hard.
+      if (outputBitDepth != null && outputBitDepth != decision.targetBitDepth) {
+        return 'Output bit depth does not match the requested target.';
+      }
     }
     return null;
   }

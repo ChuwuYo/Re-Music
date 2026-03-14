@@ -81,7 +81,7 @@ void main() {
     });
 
     test(
-      'infers 24-bit from s32 sample format when raw bit depth is missing',
+      'keeps bit depth unknown for ambiguous s32 sample format without bit metadata',
       () {
         final info = service.parseProbeOutput('track.flac', '''
 {
@@ -100,11 +100,11 @@ void main() {
 ''');
 
         expect(info.kind, AudioEncodingKind.flac);
-        expect(info.bitDepth, 24);
+        expect(info.bitDepth, isNull);
       },
     );
 
-    test('defaults unknown sample format to 16-bit', () {
+    test('keeps bit depth unknown for unknown sample format', () {
       final info = service.parseProbeOutput('track.flac', '''
 {
   "streams": [
@@ -122,7 +122,29 @@ void main() {
 ''');
 
       expect(info.kind, AudioEncodingKind.flac);
-      expect(info.bitDepth, 16);
+      expect(info.bitDepth, isNull);
+    });
+
+    test('uses bits_per_sample metadata for true 32-bit sources', () {
+      final info = service.parseProbeOutput('track.wav', '''
+{
+  "streams": [
+    {
+      "codec_type": "audio",
+      "codec_name": "pcm_s32le",
+      "sample_rate": "96000",
+      "bits_per_sample": 32,
+      "sample_fmt": "s32"
+    }
+  ],
+  "format": {
+    "duration": "42.0"
+  }
+}
+''');
+
+      expect(info.kind, AudioEncodingKind.wav);
+      expect(info.bitDepth, 32);
     });
 
     test('uses float sample formats for 32-bit fallback', () {
@@ -202,5 +224,37 @@ duration=1.0
     expect(showEntriesIndex, greaterThanOrEqualTo(0));
     expect(capturedArgs[showEntriesIndex + 1], contains('bit_rate'));
     expect(capturedArgs[showEntriesIndex + 1], contains('duration'));
+  });
+
+  test('probeFile parses JSON output when runner returns JSON', () async {
+    final probe = ProbeService(
+      ffprobeExecutablePath: 'ffprobe',
+      runner: (executable, arguments) async {
+        return '''
+{
+  "streams": [
+    {
+      "codec_type": "audio",
+      "codec_name": "mp3",
+      "sample_fmt": "fltp",
+      "sample_rate": "44100",
+      "bit_rate": "320000",
+      "duration": "8.0"
+    }
+  ],
+  "format": {
+    "bit_rate": "320000",
+    "duration": "8.0"
+  }
+}
+''';
+      },
+    );
+
+    final info = await probe.probeFile('demo.mp3');
+    expect(info.kind, AudioEncodingKind.mp3);
+    expect(info.sampleRate, 44100);
+    expect(info.bitRate, 320000);
+    expect(info.durationSeconds, 8.0);
   });
 }

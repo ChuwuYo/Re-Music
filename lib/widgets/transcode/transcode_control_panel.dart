@@ -38,7 +38,7 @@ class TranscodeControlPanel extends StatelessWidget {
 
     Future<void> handlePickOutputDirectory() async {
       final path = await FileService.pickDirectory();
-      if (!context.mounted) return;
+      if (!context.mounted || path == null) return;
       context.read<TranscodeProvider>().setOutputDirectory(path);
     }
 

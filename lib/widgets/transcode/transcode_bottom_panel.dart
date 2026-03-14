@@ -53,14 +53,23 @@ class TranscodeBottomPanel extends StatelessWidget {
     BuildContext context,
     TranscodeProvider provider,
   ) async {
-    final count = await provider.startTranscoding();
-    if (!context.mounted) return;
-    final l10n = AppLocalizations.of(context)!;
-    ReMusicSnackBar.showFloating(
-      context,
-      message: l10n.transcodeCompleted(count),
-      adaptiveHorizontalMargin: true,
-    );
+    try {
+      final count = await provider.startTranscoding();
+      if (!context.mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      ReMusicSnackBar.showFloating(
+        context,
+        message: l10n.transcodeCompleted(count),
+        adaptiveHorizontalMargin: true,
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      ReMusicSnackBar.showFloating(
+        context,
+        message: '$error',
+        adaptiveHorizontalMargin: true,
+      );
+    }
   }
 
   @override

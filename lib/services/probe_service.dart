@@ -31,11 +31,11 @@ class ProbeService {
       filePath,
     ]);
     try {
-      try {
-        return parseProbeKeyValueOutput(filePath, probeText);
-      } on FormatException {
-        return parseProbeOutput(filePath, probeText);
-      }
+      // Writer-aware parsing: prefer explicit format detection over
+      // exception-driven fallback for predictable control flow.
+      return _looksLikeJson(probeText)
+          ? parseProbeOutput(filePath, probeText)
+          : parseProbeKeyValueOutput(filePath, probeText);
     } catch (error) {
       _appendProbeErrorLog(
         filePath: filePath,
@@ -45,6 +45,11 @@ class ProbeService {
       );
       rethrow;
     }
+  }
+
+  static bool _looksLikeJson(String output) {
+    final trimmed = output.trimLeft();
+    return trimmed.startsWith('{') || trimmed.startsWith('[');
   }
 
   AudioProbeInfo parseProbeKeyValueOutput(String filePath, String text) {
@@ -152,23 +157,40 @@ class ProbeService {
     String executable,
     List<String> arguments,
   ) async {
-    final result = await Process.run(executable, arguments);
+    final result = await Process.run(
+      executable,
+      arguments,
+      stdoutEncoding: null,
+      stderrEncoding: null,
+    );
+    final stdoutText = _decodeProcessOutput(result.stdout);
+    final stderrText = _decodeProcessOutput(result.stderr).trim();
     if (result.exitCode != 0) {
       final filePath = arguments.isNotEmpty ? arguments.last : '<unknown>';
       _appendProbeErrorLog(
         filePath: filePath,
         stage: 'ffprobe',
         message: 'Exit code ${result.exitCode}',
-        rawOutput: '${result.stderr}'.trim(),
+        rawOutput: stderrText,
       );
       throw ProcessException(
         executable,
         arguments,
-        '${result.stderr}'.trim(),
+        stderrText,
         result.exitCode,
       );
     }
-    return '${result.stdout}';
+    return stdoutText;
+  }
+
+  static String _decodeProcessOutput(Object? raw) {
+    if (raw == null) return '';
+    if (raw is String) return raw;
+    if (raw is List<int>) {
+      // ffprobe/ffmpeg may emit non-UTF8 bytes on localized Windows systems.
+      return utf8.decode(raw, allowMalformed: true);
+    }
+    return '$raw';
   }
 
   static String _sanitizeProbeJson(String jsonText) {
@@ -281,11 +303,11 @@ class ProbeService {
       'u8' || 'u8p' => 8,
       's16' || 's16p' => 16,
       's24' || 's24p' => 24,
-      // FFmpeg often reports 24-bit PCM as s32/s32p in containers/codecs.
-      's32' || 's32p' => 24,
+      // Ambiguous without bits_per_* metadata: may be 24-bit-in-32-container or true 32-bit.
+      's32' || 's32p' => null,
       'flt' || 'fltp' => 32,
       'dbl' || 'dblp' => 64,
-      _ => 16,
+      _ => null,
     };
   }
 

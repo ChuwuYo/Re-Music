@@ -20,6 +20,7 @@ class AppConfigs {
   final bool allowFormatOnlyConversion;
   final bool enableTranscodeDither;
   final TranscodeOutputMode transcodeOutputMode;
+  final String? transcodeOutputDirectory;
   final int transcodeConcurrency;
 
   const AppConfigs({
@@ -40,6 +41,7 @@ class AppConfigs {
     required this.allowFormatOnlyConversion,
     required this.enableTranscodeDither,
     required this.transcodeOutputMode,
+    required this.transcodeOutputDirectory,
     required this.transcodeConcurrency,
   });
 
@@ -62,6 +64,7 @@ class AppConfigs {
       allowFormatOnlyConversion: AppConstants.defaultAllowFormatOnlyConversion,
       enableTranscodeDither: AppConstants.defaultEnableTranscodeDither,
       transcodeOutputMode: AppConstants.defaultTranscodeOutputMode,
+      transcodeOutputDirectory: null,
       transcodeConcurrency: AppConstants.defaultTranscodeConcurrency,
     );
   }
@@ -85,6 +88,7 @@ class AppConfigs {
     final allowFormatOnlyConversionRaw = json['allowFormatOnlyConversion'];
     final enableTranscodeDitherRaw = json['enableTranscodeDither'];
     final transcodeOutputModeRaw = json['transcodeOutputMode'];
+    final transcodeOutputDirectoryRaw = json['transcodeOutputDirectory'];
     final transcodeConcurrencyRaw = json['transcodeConcurrency'];
 
     return AppConfigs(
@@ -127,6 +131,9 @@ class AppConfigs {
           ? enableTranscodeDitherRaw
           : AppConstants.defaultEnableTranscodeDither,
       transcodeOutputMode: _parseTranscodeOutputMode(transcodeOutputModeRaw),
+      transcodeOutputDirectory: _parseTranscodeOutputDirectory(
+        transcodeOutputDirectoryRaw,
+      ),
       transcodeConcurrency: _parseTranscodeConcurrency(transcodeConcurrencyRaw),
     );
   }
@@ -150,6 +157,7 @@ class AppConfigs {
       'allowFormatOnlyConversion': allowFormatOnlyConversion,
       'enableTranscodeDither': enableTranscodeDither,
       'transcodeOutputMode': transcodeOutputMode.name,
+      'transcodeOutputDirectory': transcodeOutputDirectory,
       'transcodeConcurrency': transcodeConcurrency,
     };
   }
@@ -289,6 +297,12 @@ class AppConfigs {
     return AppConstants.defaultTranscodeOutputMode;
   }
 
+  static String? _parseTranscodeOutputDirectory(Object? raw) {
+    if (raw is! String) return null;
+    final trimmed = raw.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
   static int _parseTranscodeConcurrency(Object? raw) {
     final parsed = switch (raw) {
       int value => value,
@@ -325,6 +339,7 @@ class AppConfigs {
         other.allowFormatOnlyConversion == allowFormatOnlyConversion &&
         other.enableTranscodeDither == enableTranscodeDither &&
         other.transcodeOutputMode == transcodeOutputMode &&
+        other.transcodeOutputDirectory == transcodeOutputDirectory &&
         other.transcodeConcurrency == transcodeConcurrency;
   }
 
@@ -347,6 +362,7 @@ class AppConfigs {
     allowFormatOnlyConversion,
     enableTranscodeDither,
     transcodeOutputMode,
+    transcodeOutputDirectory,
     transcodeConcurrency,
   );
 }

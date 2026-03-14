@@ -84,6 +84,80 @@ void main() {
     );
 
     test(
+      'replace mode keeps input path as final target when formats match',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('remusic_builder_');
+        try {
+          final inputPath = p.join(dir.path, 'source.wav');
+          await File(inputPath).writeAsString('input');
+
+          final plan = builder.build(
+            probeInfo: _probe(inputPath, AudioEncodingKind.wav),
+            decision: const TranscodeDecision(
+              shouldTranscode: true,
+              outputFormat: TranscodeOutputFormat.wav,
+              targetSampleRate: 48000,
+              targetBitDepth: 24,
+              targetBitRateKbps: null,
+              requiresFormatChange: false,
+              requiresSampleRateChange: true,
+              requiresBitDepthChange: true,
+            ),
+            request: _request(
+              outputFormat: TranscodeOutputFormat.wav,
+              outputMode: TranscodeOutputMode.replaceOriginal,
+            ),
+          );
+
+          expect(plan.commandOutputPath, isNot(equals(inputPath)));
+          expect(plan.finalOutputPath, equals(inputPath));
+        } finally {
+          await dir.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
+      'replace mode avoids overwriting existing sibling output files',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('remusic_builder_');
+        try {
+          final inputPath = p.join(dir.path, 'source.wav');
+          final existingSiblingPath = p.join(dir.path, 'source.flac');
+          await File(inputPath).writeAsString('input');
+          await File(existingSiblingPath).writeAsString('existing-output');
+
+          final plan = builder.build(
+            probeInfo: _probe(inputPath, AudioEncodingKind.wav),
+            decision: const TranscodeDecision(
+              shouldTranscode: true,
+              outputFormat: TranscodeOutputFormat.flac,
+              targetSampleRate: 44100,
+              targetBitDepth: 16,
+              targetBitRateKbps: null,
+              requiresFormatChange: true,
+              requiresSampleRateChange: true,
+              requiresBitDepthChange: true,
+            ),
+            request: _request(
+              outputFormat: TranscodeOutputFormat.flac,
+              outputMode: TranscodeOutputMode.replaceOriginal,
+            ),
+          );
+
+          expect(plan.commandOutputPath, isNot(equals(inputPath)));
+          expect(plan.finalOutputPath, isNot(equals(existingSiblingPath)));
+          expect(
+            p.basename(plan.finalOutputPath),
+            startsWith('source [FLAC 44.1kHz 16bit]'),
+          );
+        } finally {
+          await dir.delete(recursive: true);
+        }
+      },
+    );
+
+    test(
       'appends conflict suffix only when target path already exists',
       () async {
         final dir = await Directory.systemTemp.createTemp('remusic_builder_');
@@ -113,6 +187,56 @@ void main() {
         }
       },
     );
+
+    test('reserves names across same-batch planning', () async {
+      final dir = await Directory.systemTemp.createTemp('remusic_builder_');
+      try {
+        final firstInput = p.join(dir.path, 'song.flac');
+        final secondInput = p.join(dir.path, 'song.wav');
+        await File(firstInput).writeAsString('input-1');
+        await File(secondInput).writeAsString('input-2');
+        final reserved = <String>{};
+
+        final firstPlan = builder.build(
+          probeInfo: _probe(firstInput, AudioEncodingKind.flac),
+          decision: const TranscodeDecision(
+            shouldTranscode: true,
+            outputFormat: TranscodeOutputFormat.mp3,
+            targetSampleRate: 44100,
+            targetBitDepth: null,
+            targetBitRateKbps: 320,
+            requiresFormatChange: true,
+            requiresSampleRateChange: true,
+            requiresBitDepthChange: false,
+          ),
+          request: _request(outputFormat: TranscodeOutputFormat.mp3),
+          reservedOutputPaths: reserved,
+        );
+
+        final secondPlan = builder.build(
+          probeInfo: _probe(secondInput, AudioEncodingKind.wav),
+          decision: const TranscodeDecision(
+            shouldTranscode: true,
+            outputFormat: TranscodeOutputFormat.mp3,
+            targetSampleRate: 44100,
+            targetBitDepth: null,
+            targetBitRateKbps: 320,
+            requiresFormatChange: true,
+            requiresSampleRateChange: true,
+            requiresBitDepthChange: false,
+          ),
+          request: _request(outputFormat: TranscodeOutputFormat.mp3),
+          reservedOutputPaths: reserved,
+        );
+
+        expect(
+          firstPlan.finalOutputPath,
+          isNot(equals(secondPlan.finalOutputPath)),
+        );
+      } finally {
+        await dir.delete(recursive: true);
+      }
+    });
 
     test(
       'builds ALAC command with metadata copy and bit depth sample format',

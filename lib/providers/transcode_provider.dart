@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 
 import '../constants.dart';
 import '../models/transcode_item.dart';
@@ -194,6 +195,8 @@ class TranscodeProvider extends ChangeNotifier {
       notifyListeners();
     }
 
+    _refreshDecisions();
+
     _isBusy = false;
     _progress = 0.0;
     notifyListeners();
@@ -216,25 +219,27 @@ class TranscodeProvider extends ChangeNotifier {
     _isBusy = true;
     _progress = 0.0;
     notifyListeners();
+    try {
+      final queue = TranscodeTaskQueue(
+        ffmpegExecutablePath: _binaryPaths!.ffmpegPath,
+        probeService: _probeService!,
+        commandBuilder: _commandBuilder,
+      );
+      final results = await queue.run(
+        items: _items,
+        request: currentRequest,
+        onItemUpdated: (item) {
+          _progress = _calculateExecutionProgress(runnable);
+          notifyListeners();
+        },
+      );
 
-    final queue = TranscodeTaskQueue(
-      ffmpegExecutablePath: _binaryPaths!.ffmpegPath,
-      probeService: _probeService!,
-      commandBuilder: _commandBuilder,
-    );
-    final results = await queue.run(
-      items: _items,
-      request: currentRequest,
-      onItemUpdated: (item) {
-        _progress = _calculateExecutionProgress(runnable);
-        notifyListeners();
-      },
-    );
-
-    _isBusy = false;
-    _progress = 1.0;
-    notifyListeners();
-    return results.where((result) => result.isSuccess).length;
+      _progress = 1.0;
+      return results.where((result) => result.isSuccess).length;
+    } finally {
+      _isBusy = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _probeAndDecide(TranscodeItem item) async {
@@ -249,6 +254,7 @@ class TranscodeProvider extends ChangeNotifier {
   }
 
   void _refreshDecisions() {
+    final reservedOutputPaths = _buildReservedOutputPaths();
     for (final item in _items) {
       if (item.probeInfo == null) continue;
       if (item.status == TranscodeItemStatus.running ||
@@ -256,12 +262,12 @@ class TranscodeProvider extends ChangeNotifier {
           item.status == TranscodeItemStatus.success) {
         continue;
       }
-      _applyDecision(item);
+      _applyDecision(item, reservedOutputPaths: reservedOutputPaths);
     }
     notifyListeners();
   }
 
-  void _applyDecision(TranscodeItem item) {
+  void _applyDecision(TranscodeItem item, {Set<String>? reservedOutputPaths}) {
     final probeInfo = item.probeInfo;
     if (probeInfo == null) return;
 
@@ -275,6 +281,7 @@ class TranscodeProvider extends ChangeNotifier {
         probeInfo: probeInfo,
         decision: decision,
         request: currentRequest,
+        reservedOutputPaths: reservedOutputPaths,
       );
       item.plannedOutputPath = plan.finalOutputPath;
       item.tempOutputPath = plan.commandOutputPath;
@@ -291,6 +298,25 @@ class TranscodeProvider extends ChangeNotifier {
         ? TranscodeItemStatus.ready
         : TranscodeItemStatus.skipped;
     item.message = decision.skipReasonKey ?? binaryError;
+  }
+
+  Set<String> _buildReservedOutputPaths() {
+    final reserved = <String>{};
+    for (final item in _items) {
+      if (item.status == TranscodeItemStatus.running ||
+          item.status == TranscodeItemStatus.queued ||
+          item.status == TranscodeItemStatus.success) {
+        final planned = item.plannedOutputPath;
+        final temp = item.tempOutputPath;
+        if (planned != null && planned.isNotEmpty) {
+          reserved.add(p.normalize(planned).toLowerCase());
+        }
+        if (temp != null && temp.isNotEmpty) {
+          reserved.add(p.normalize(temp).toLowerCase());
+        }
+      }
+    }
+    return reserved;
   }
 
   double _calculateExecutionProgress(List<TranscodeItem> runnable) {

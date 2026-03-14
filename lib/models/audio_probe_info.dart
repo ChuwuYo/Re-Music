@@ -28,9 +28,8 @@ class AudioProbeInfo {
   });
 
   bool get isLossless => switch (kind) {
-    AudioEncodingKind.flac ||
-    AudioEncodingKind.wav ||
-    AudioEncodingKind.alac => true,
+    AudioEncodingKind.flac || AudioEncodingKind.alac => true,
+    AudioEncodingKind.wav => codecName.startsWith('pcm_'),
     _ => false,
   };
 
