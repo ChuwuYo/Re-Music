@@ -589,6 +589,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Separator for multiple artists'**
   String get artistSeparatorHint;
+
+  /// No description provided for @navTranscode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resample'**
+  String get navTranscode;
+
+  /// No description provided for @transcodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resample'**
+  String get transcodeTitle;
+
+  /// No description provided for @transcodeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start resample'**
+  String get transcodeStart;
+
+  /// No description provided for @transcodeCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Done! Processed {count} files'**
+  String transcodeCompleted(int count);
+
+  /// No description provided for @transcodeProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing... {percent}%'**
+  String transcodeProgress(int percent);
+
+  /// No description provided for @transcodeTotalFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Total {count} tasks'**
+  String transcodeTotalFiles(int count);
+
+  /// No description provided for @transcodeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add audio files to start resampling'**
+  String get transcodeEmptyTitle;
+
+  /// No description provided for @transcodeEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe results, skip reasons, and output paths will appear here'**
+  String get transcodeEmptySubtitle;
+
+  /// No description provided for @transcodeOutputFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Output format'**
+  String get transcodeOutputFormat;
+
+  /// No description provided for @transcodePreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Lossless preset'**
+  String get transcodePreset;
+
+  /// No description provided for @transcodeMp3Bitrate.
+  ///
+  /// In en, this message translates to:
+  /// **'MP3 bitrate'**
+  String get transcodeMp3Bitrate;
+
+  /// No description provided for @transcodeAllowFormatOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow format-only conversion'**
+  String get transcodeAllowFormatOnly;
+
+  /// No description provided for @transcodeEnableDither.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable triangular dither'**
+  String get transcodeEnableDither;
+
+  /// No description provided for @transcodeConcurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Concurrency'**
+  String get transcodeConcurrency;
+
+  /// No description provided for @transcodeKeepOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep original'**
+  String get transcodeKeepOriginal;
+
+  /// No description provided for @transcodeReplaceOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace original'**
+  String get transcodeReplaceOriginal;
+
+  /// No description provided for @transcodeOutputDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Output directory'**
+  String get transcodeOutputDirectory;
+
+  /// No description provided for @transcodeChooseOutputDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose output folder'**
+  String get transcodeChooseOutputDirectory;
+
+  /// No description provided for @transcodeOutputDirectoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an output folder first'**
+  String get transcodeOutputDirectoryRequired;
+
+  /// No description provided for @transcodeFormatFlac.
+  ///
+  /// In en, this message translates to:
+  /// **'FLAC'**
+  String get transcodeFormatFlac;
+
+  /// No description provided for @transcodeFormatWav.
+  ///
+  /// In en, this message translates to:
+  /// **'WAV'**
+  String get transcodeFormatWav;
+
+  /// No description provided for @transcodeFormatAlac.
+  ///
+  /// In en, this message translates to:
+  /// **'ALAC (.m4a)'**
+  String get transcodeFormatAlac;
+
+  /// No description provided for @transcodeFormatMp3.
+  ///
+  /// In en, this message translates to:
+  /// **'MP3'**
+  String get transcodeFormatMp3;
+
+  /// No description provided for @transcodePresetStudio24.
+  ///
+  /// In en, this message translates to:
+  /// **'48kHz / 24bit'**
+  String get transcodePresetStudio24;
+
+  /// No description provided for @transcodePresetCd24.
+  ///
+  /// In en, this message translates to:
+  /// **'44.1kHz / 24bit'**
+  String get transcodePresetCd24;
+
+  /// No description provided for @transcodePresetCd16.
+  ///
+  /// In en, this message translates to:
+  /// **'44.1kHz / 16bit'**
+  String get transcodePresetCd16;
+
+  /// No description provided for @transcodeTaskTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get transcodeTaskTarget;
+
+  /// No description provided for @transcodeTaskOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Output'**
+  String get transcodeTaskOutput;
+
+  /// No description provided for @transcodeTaskUnknownOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending output path'**
+  String get transcodeTaskUnknownOutput;
+
+  /// No description provided for @transcodeTaskUnknownProbe.
+  ///
+  /// In en, this message translates to:
+  /// **'Probe pending'**
+  String get transcodeTaskUnknownProbe;
+
+  /// No description provided for @transcodeStatusProbing.
+  ///
+  /// In en, this message translates to:
+  /// **'Probing'**
+  String get transcodeStatusProbing;
+
+  /// No description provided for @transcodeStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get transcodeStatusReady;
+
+  /// No description provided for @transcodeStatusSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get transcodeStatusSkipped;
+
+  /// No description provided for @transcodeStatusQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued'**
+  String get transcodeStatusQueued;
+
+  /// No description provided for @transcodeStatusRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get transcodeStatusRunning;
+
+  /// No description provided for @transcodeStatusSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get transcodeStatusSuccess;
+
+  /// No description provided for @transcodeStatusError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get transcodeStatusError;
+
+  /// No description provided for @transcodeSkipLossyToLossless.
+  ///
+  /// In en, this message translates to:
+  /// **'Lossy input cannot be converted to a lossless target'**
+  String get transcodeSkipLossyToLossless;
+
+  /// No description provided for @transcodeSkipAlreadyCompliantLossless.
+  ///
+  /// In en, this message translates to:
+  /// **'Already within the target lossless spec'**
+  String get transcodeSkipAlreadyCompliantLossless;
+
+  /// No description provided for @transcodeSkipAlreadyCompliantMp3.
+  ///
+  /// In en, this message translates to:
+  /// **'Already matches the target MP3 sample rate and bitrate'**
+  String get transcodeSkipAlreadyCompliantMp3;
+
+  /// No description provided for @transcodeSkipUnsupportedSourceFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Source format is not supported for transcoding'**
+  String get transcodeSkipUnsupportedSourceFormat;
+
+  /// No description provided for @transcodeSkipNoOutputDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Output folder is required for this output mode'**
+  String get transcodeSkipNoOutputDirectory;
+
+  /// No description provided for @transcodeSkipBinaryMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'FFmpeg binaries are missing'**
+  String get transcodeSkipBinaryMissing;
+
+  /// No description provided for @transcodeOpenDownloadPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open FFmpeg download page'**
+  String get transcodeOpenDownloadPage;
+
+  /// No description provided for @transcodeOpenDownloadPageSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'FFmpeg download page opened'**
+  String get transcodeOpenDownloadPageSuccess;
+
+  /// No description provided for @transcodeOpenDownloadPageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open FFmpeg download page'**
+  String get transcodeOpenDownloadPageFailed;
+
+  /// No description provided for @transcodeOpenBinaryFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Open FFmpeg folder'**
+  String get transcodeOpenBinaryFolder;
+
+  /// No description provided for @transcodeOpenBinaryFolderSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'FFmpeg folder opened'**
+  String get transcodeOpenBinaryFolderSuccess;
+
+  /// No description provided for @transcodeOpenBinaryFolderFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open FFmpeg folder'**
+  String get transcodeOpenBinaryFolderFailed;
 }
 
 class _AppLocalizationsDelegate

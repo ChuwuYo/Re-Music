@@ -7,6 +7,7 @@ import 'package:remusic/providers/audio_provider.dart';
 import 'package:remusic/providers/locale_provider.dart';
 import 'package:remusic/providers/navigation_provider.dart';
 import 'package:remusic/providers/theme_provider.dart';
+import 'package:remusic/providers/transcode_provider.dart';
 
 void main() {
   testWidgets('App builds and shows title', (WidgetTester tester) async {
@@ -14,11 +15,13 @@ void main() {
     final localeController = LocaleController();
     final themeController = ThemeController();
     final navigationController = NavigationController();
+    final transcodeProvider = TranscodeProvider();
 
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: audioProvider),
+          ChangeNotifierProvider.value(value: transcodeProvider),
           ChangeNotifierProvider.value(value: localeController),
           ChangeNotifierProvider.value(value: themeController),
           ChangeNotifierProvider.value(value: navigationController),

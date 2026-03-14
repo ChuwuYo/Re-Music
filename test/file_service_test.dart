@@ -54,4 +54,24 @@ void main() {
       await dir.delete(recursive: true);
     }
   });
+
+  test('replaceFileAtomically keeps unrelated existing .bak file', () async {
+    final dir = await Directory.systemTemp.createTemp('remusic_test_');
+    try {
+      final targetPath = p.join(dir.path, 'song.flac');
+      final tempPath = p.join(dir.path, 'song.tmp.flac');
+      final existingBackupPath = '$targetPath.bak';
+
+      await File(targetPath).writeAsString('original');
+      await File(tempPath).writeAsString('new-content');
+      await File(existingBackupPath).writeAsString('do-not-touch');
+
+      await FileService.replaceFileAtomically(tempPath, targetPath);
+
+      expect(await File(targetPath).readAsString(), 'new-content');
+      expect(await File(existingBackupPath).readAsString(), 'do-not-touch');
+    } finally {
+      await dir.delete(recursive: true);
+    }
+  });
 }

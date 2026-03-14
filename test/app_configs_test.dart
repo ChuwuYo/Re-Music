@@ -52,4 +52,41 @@ void main() {
       expect(json['sidebarExpanded'], isFalse);
     });
   });
+
+  group('AppConfigs transcode settings', () {
+    test('reads and serializes transcode fields', () {
+      final config = AppConfigs.fromJson({
+        'transcodeOutputFormat': 'mp3',
+        'transcodeLosslessPreset': 'studio24',
+        'transcodeMp3BitRateKbps': 256,
+        'allowFormatOnlyConversion': true,
+        'enableTranscodeDither': true,
+        'transcodeOutputMode': 'replaceOriginal',
+        'transcodeOutputDirectory': 'E:/Music/Out',
+        'transcodeConcurrency': 99,
+      });
+
+      expect(config.transcodeOutputFormat, TranscodeOutputFormat.mp3);
+      expect(config.transcodeLosslessPreset, TranscodeLosslessPreset.studio24);
+      expect(config.transcodeMp3BitRateKbps, 256);
+      expect(config.allowFormatOnlyConversion, isTrue);
+      expect(config.enableTranscodeDither, isTrue);
+      expect(config.transcodeOutputMode, TranscodeOutputMode.replaceOriginal);
+      expect(config.transcodeOutputDirectory, 'E:/Music/Out');
+      expect(config.transcodeConcurrency, AppConstants.transcodeConcurrencyMax);
+
+      final json = config.toJson();
+      expect(json['transcodeOutputFormat'], 'mp3');
+      expect(json['transcodeLosslessPreset'], 'studio24');
+      expect(json['transcodeMp3BitRateKbps'], 256);
+      expect(json['allowFormatOnlyConversion'], isTrue);
+      expect(json['enableTranscodeDither'], isTrue);
+      expect(json['transcodeOutputMode'], 'replaceOriginal');
+      expect(json['transcodeOutputDirectory'], 'E:/Music/Out');
+      expect(
+        json['transcodeConcurrency'],
+        AppConstants.transcodeConcurrencyMax,
+      );
+    });
+  });
 }

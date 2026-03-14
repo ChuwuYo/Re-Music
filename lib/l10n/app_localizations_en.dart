@@ -261,4 +261,165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get artistSeparatorHint => 'Separator for multiple artists';
+
+  @override
+  String get navTranscode => 'Resample';
+
+  @override
+  String get transcodeTitle => 'Resample';
+
+  @override
+  String get transcodeStart => 'Start resample';
+
+  @override
+  String transcodeCompleted(int count) {
+    return 'Done! Processed $count files';
+  }
+
+  @override
+  String transcodeProgress(int percent) {
+    return 'Processing... $percent%';
+  }
+
+  @override
+  String transcodeTotalFiles(int count) {
+    return 'Total $count tasks';
+  }
+
+  @override
+  String get transcodeEmptyTitle => 'Add audio files to start resampling';
+
+  @override
+  String get transcodeEmptySubtitle =>
+      'Probe results, skip reasons, and output paths will appear here';
+
+  @override
+  String get transcodeOutputFormat => 'Output format';
+
+  @override
+  String get transcodePreset => 'Lossless preset';
+
+  @override
+  String get transcodeMp3Bitrate => 'MP3 bitrate';
+
+  @override
+  String get transcodeAllowFormatOnly => 'Allow format-only conversion';
+
+  @override
+  String get transcodeEnableDither => 'Enable triangular dither';
+
+  @override
+  String get transcodeConcurrency => 'Concurrency';
+
+  @override
+  String get transcodeKeepOriginal => 'Keep original';
+
+  @override
+  String get transcodeReplaceOriginal => 'Replace original';
+
+  @override
+  String get transcodeOutputDirectory => 'Output directory';
+
+  @override
+  String get transcodeChooseOutputDirectory => 'Choose output folder';
+
+  @override
+  String get transcodeOutputDirectoryRequired =>
+      'Choose an output folder first';
+
+  @override
+  String get transcodeFormatFlac => 'FLAC';
+
+  @override
+  String get transcodeFormatWav => 'WAV';
+
+  @override
+  String get transcodeFormatAlac => 'ALAC (.m4a)';
+
+  @override
+  String get transcodeFormatMp3 => 'MP3';
+
+  @override
+  String get transcodePresetStudio24 => '48kHz / 24bit';
+
+  @override
+  String get transcodePresetCd24 => '44.1kHz / 24bit';
+
+  @override
+  String get transcodePresetCd16 => '44.1kHz / 16bit';
+
+  @override
+  String get transcodeTaskTarget => 'Target';
+
+  @override
+  String get transcodeTaskOutput => 'Output';
+
+  @override
+  String get transcodeTaskUnknownOutput => 'Pending output path';
+
+  @override
+  String get transcodeTaskUnknownProbe => 'Probe pending';
+
+  @override
+  String get transcodeStatusProbing => 'Probing';
+
+  @override
+  String get transcodeStatusReady => 'Ready';
+
+  @override
+  String get transcodeStatusSkipped => 'Skipped';
+
+  @override
+  String get transcodeStatusQueued => 'Queued';
+
+  @override
+  String get transcodeStatusRunning => 'Running';
+
+  @override
+  String get transcodeStatusSuccess => 'Success';
+
+  @override
+  String get transcodeStatusError => 'Error';
+
+  @override
+  String get transcodeSkipLossyToLossless =>
+      'Lossy input cannot be converted to a lossless target';
+
+  @override
+  String get transcodeSkipAlreadyCompliantLossless =>
+      'Already within the target lossless spec';
+
+  @override
+  String get transcodeSkipAlreadyCompliantMp3 =>
+      'Already matches the target MP3 sample rate and bitrate';
+
+  @override
+  String get transcodeSkipUnsupportedSourceFormat =>
+      'Source format is not supported for transcoding';
+
+  @override
+  String get transcodeSkipNoOutputDirectory =>
+      'Output folder is required for this output mode';
+
+  @override
+  String get transcodeSkipBinaryMissing => 'FFmpeg binaries are missing';
+
+  @override
+  String get transcodeOpenDownloadPage => 'Open FFmpeg download page';
+
+  @override
+  String get transcodeOpenDownloadPageSuccess => 'FFmpeg download page opened';
+
+  @override
+  String get transcodeOpenDownloadPageFailed =>
+      'Failed to open FFmpeg download page';
+
+  @override
+  String get transcodeOpenBinaryFolder => 'Open FFmpeg folder';
+
+  @override
+  String get transcodeOpenBinaryFolderSuccess => 'FFmpeg folder opened';
+
+  @override
+  String get transcodeOpenBinaryFolderFailed => 'Failed to open FFmpeg folder';
 }
