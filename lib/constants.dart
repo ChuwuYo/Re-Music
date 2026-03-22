@@ -116,6 +116,28 @@ class AppConstants {
   /// 默认艺术家分隔符（多个艺术家时使用什么符号分割）
   static const String defaultArtistSeparator = '_';
 
+  /// 内部展示使用的艺术家分隔符
+  static const String internalArtistDisplaySeparator = '; ';
+
+  /// 识别多艺术家输入时使用的业务分隔规则
+  static const List<String> artistSplitPatternParts = [
+    r'\u0000+',
+    r'\r?\n+',
+    r'\s*[;；/／·、]\s*',
+    r'\s*_\s*',
+  ];
+
+  /// 结构化艺术家结果中的 key
+  static const String tagArtistTrackKey = 'trackArtist';
+  static const String tagArtistAlbumKey = 'albumArtist';
+
+  /// 常用元数据字段名
+  static const String normalizedAlbumArtistMetadataKey = 'albumartist';
+  static const String mp3TrackArtistFrameId = 'TPE1';
+  static const String mp3AlbumArtistFrameId = 'TPE2';
+  static const String vorbisTrackArtistCommentKey = 'ARTIST';
+  static const String vorbisAlbumArtistCommentKey = 'ALBUMARTIST';
+
   /// 可选的艺术家分隔符列表
   static const List<String> artistSeparatorOptions = ['_', ';', ',', '·', '、'];
 
