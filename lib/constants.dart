@@ -81,7 +81,7 @@ class AppConstants {
   static const ThemeMode defaultThemeMode = ThemeMode.system;
 
   /// 默认主题色相（范围 0-360）
-  static const int defaultThemeHue = 180;
+  static const int defaultThemeHue = 80;
 
   /// 主题色相范围
   static const int themeHueMin = 0;
