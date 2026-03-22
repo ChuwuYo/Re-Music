@@ -162,6 +162,7 @@ class TranscodeTaskQueue {
           plan.commandOutputPath,
           keepIfMatches: item.inputPath,
         );
+        _unreservePaths(plan, reservedOutputPaths);
         item.status = TranscodeItemStatus.error;
         item.message = _trimMessage(stderrBuffer.toString());
         _appendTranscodeErrorLog(
@@ -188,6 +189,7 @@ class TranscodeTaskQueue {
             plan.commandOutputPath,
             keepIfMatches: item.inputPath,
           );
+          _unreservePaths(plan, reservedOutputPaths);
           item.status = TranscodeItemStatus.error;
           item.message = validationError;
           _appendTranscodeErrorLog(
@@ -232,6 +234,7 @@ class TranscodeTaskQueue {
           plan.commandOutputPath,
           keepIfMatches: item.inputPath,
         );
+        _unreservePaths(plan, reservedOutputPaths);
         item.status = TranscodeItemStatus.error;
         item.message = '$error';
         _appendTranscodeErrorLog(
@@ -253,6 +256,7 @@ class TranscodeTaskQueue {
           plan.commandOutputPath,
           keepIfMatches: item.inputPath,
         );
+        _unreservePaths(plan, reservedOutputPaths);
       }
       item.status = TranscodeItemStatus.error;
       item.message = '$error';
@@ -290,6 +294,18 @@ class TranscodeTaskQueue {
           .clamp(0.0, 0.99)
           .toDouble();
     }
+  }
+
+  void _unreservePaths(
+    TranscodeCommandPlan plan,
+    Set<String> reservedOutputPaths,
+  ) {
+    reservedOutputPaths.remove(
+      TranscodeCommandBuilder.normalizePath(plan.commandOutputPath),
+    );
+    reservedOutputPaths.remove(
+      TranscodeCommandBuilder.normalizePath(plan.finalOutputPath),
+    );
   }
 
   String? _validateOutput(

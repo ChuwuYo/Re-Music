@@ -22,6 +22,11 @@ class TranscodeCommandPlan {
 class TranscodeCommandBuilder {
   const TranscodeCommandBuilder();
 
+  static String normalizePath(String path) {
+    final normalized = p.normalize(path);
+    return Platform.isWindows ? normalized.toLowerCase() : normalized;
+  }
+
   TranscodeCommandPlan build({
     required AudioProbeInfo probeInfo,
     required TranscodeDecision decision,
@@ -180,8 +185,8 @@ class TranscodeCommandBuilder {
     Set<String>? reservedOutputPaths, {
     bool allowInputPath = false,
   }) {
-    final normalizedCandidate = p.normalize(candidate).toLowerCase();
-    final normalizedInput = p.normalize(inputPath).toLowerCase();
+    final normalizedCandidate = normalizePath(candidate);
+    final normalizedInput = normalizePath(inputPath);
     final isInputPath = normalizedCandidate == normalizedInput;
     if (isInputPath) {
       // Replace mode is allowed to target the input path itself, but still
@@ -233,10 +238,7 @@ class TranscodeCommandBuilder {
       '$baseName${AppConstants.replaceTempFileMarker}$extension',
     );
     var index = 2;
-    while ((reservedOutputPaths?.contains(
-              p.normalize(candidate).toLowerCase(),
-            ) ??
-            false) ||
+    while ((reservedOutputPaths?.contains(normalizePath(candidate)) ?? false) ||
         File(candidate).existsSync()) {
       candidate = p.join(
         directory,
@@ -248,7 +250,7 @@ class TranscodeCommandBuilder {
   }
 
   void _reservePath(String path, Set<String>? reservedOutputPaths) {
-    reservedOutputPaths?.add(p.normalize(path).toLowerCase());
+    reservedOutputPaths?.add(normalizePath(path));
   }
 
   String _outputExtension(TranscodeOutputFormat outputFormat) {

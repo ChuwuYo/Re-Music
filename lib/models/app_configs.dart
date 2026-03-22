@@ -130,7 +130,10 @@ class AppConfigs {
       enableTranscodeDither: enableTranscodeDitherRaw is bool
           ? enableTranscodeDitherRaw
           : AppConstants.defaultEnableTranscodeDither,
-      transcodeOutputMode: _parseTranscodeOutputMode(transcodeOutputModeRaw),
+      transcodeOutputMode: _parseSafeTranscodeOutputMode(
+        transcodeOutputModeRaw,
+        transcodeOutputDirectoryRaw,
+      ),
       transcodeOutputDirectory: _parseTranscodeOutputDirectory(
         transcodeOutputDirectoryRaw,
       ),
@@ -295,6 +298,18 @@ class AppConfigs {
       }
     }
     return AppConstants.defaultTranscodeOutputMode;
+  }
+
+  static TranscodeOutputMode _parseSafeTranscodeOutputMode(
+    Object? raw,
+    Object? directoryRaw,
+  ) {
+    final mode = _parseTranscodeOutputMode(raw);
+    if (mode == TranscodeOutputMode.outputDirectory &&
+        _parseTranscodeOutputDirectory(directoryRaw) == null) {
+      return AppConstants.defaultTranscodeOutputMode;
+    }
+    return mode;
   }
 
   static String? _parseTranscodeOutputDirectory(Object? raw) {

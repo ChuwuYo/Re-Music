@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
 
 import '../constants.dart';
 import '../models/transcode_item.dart';
@@ -80,6 +79,7 @@ class TranscodeProvider extends ChangeNotifier {
     _binaryError = _binaryPaths == null
         ? AppConstants.transcodeSkipBinaryMissing
         : null;
+    notifyListeners();
   }
 
   Future<bool> openBinaryDownloadPage() async {
@@ -179,33 +179,36 @@ class TranscodeProvider extends ChangeNotifier {
     _progress = 0.0;
     notifyListeners();
 
-    var completed = 0;
-    for (
-      int index = 0;
-      index < newItems.length;
-      index += AppConstants.transcodeProbeConcurrency
-    ) {
-      final chunk = newItems
-          .skip(index)
-          .take(AppConstants.transcodeProbeConcurrency)
-          .toList(growable: false);
-      await Future.wait(chunk.map(_probeAndDecide));
-      completed += chunk.length;
-      _progress = completed / newItems.length;
+    try {
+      var completed = 0;
+      for (
+        int index = 0;
+        index < newItems.length;
+        index += AppConstants.transcodeProbeConcurrency
+      ) {
+        final chunk = newItems
+            .skip(index)
+            .take(AppConstants.transcodeProbeConcurrency)
+            .toList(growable: false);
+        await Future.wait(chunk.map(_probeAndDecide));
+        completed += chunk.length;
+        _progress = completed / newItems.length;
+        notifyListeners();
+      }
+
+      _refreshDecisions();
+    } finally {
+      _isBusy = false;
+      _progress = 0.0;
       notifyListeners();
     }
-
-    _refreshDecisions();
-
-    _isBusy = false;
-    _progress = 0.0;
-    notifyListeners();
   }
 
   Future<int> startTranscoding() async {
+    if (_isBusy) return 0;
+
     refreshBinaryStatus();
     if (_binaryPaths == null || _probeService == null) {
-      notifyListeners();
       return 0;
     }
 
@@ -309,10 +312,10 @@ class TranscodeProvider extends ChangeNotifier {
         final planned = item.plannedOutputPath;
         final temp = item.tempOutputPath;
         if (planned != null && planned.isNotEmpty) {
-          reserved.add(p.normalize(planned).toLowerCase());
+          reserved.add(TranscodeCommandBuilder.normalizePath(planned));
         }
         if (temp != null && temp.isNotEmpty) {
-          reserved.add(p.normalize(temp).toLowerCase());
+          reserved.add(TranscodeCommandBuilder.normalizePath(temp));
         }
       }
     }

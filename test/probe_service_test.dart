@@ -257,4 +257,28 @@ duration=1.0
     expect(info.bitRate, 320000);
     expect(info.durationSeconds, 8.0);
   });
+
+  test('parses JSON with non-standard backslash escapes in paths', () {
+    final service = ProbeService(ffprobeExecutablePath: 'ffprobe');
+    final info = service.parseProbeOutput('song.flac', '''
+{
+  "streams": [
+    {
+      "codec_type": "audio",
+      "codec_name": "flac",
+      "sample_rate": "44100",
+      "bits_per_raw_sample": "16",
+      "sample_fmt": "s16"
+    }
+  ],
+  "format": {
+    "filename": "E:\\\\Music\\\\song.flac",
+    "duration": "3.0"
+  }
+}
+''');
+    expect(info.kind, AudioEncodingKind.flac);
+    expect(info.sampleRate, 44100);
+    expect(info.bitDepth, 16);
+  });
 }

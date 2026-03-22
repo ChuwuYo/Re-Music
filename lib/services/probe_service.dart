@@ -187,8 +187,18 @@ class ProbeService {
     if (raw == null) return '';
     if (raw is String) return raw;
     if (raw is List<int>) {
-      // ffprobe/ffmpeg may emit non-UTF8 bytes on localized Windows systems.
-      return utf8.decode(raw, allowMalformed: true);
+      // Prefer UTF-8 (standard for ffprobe metadata), then fall back to the
+      // OS code page for localized messages, and finally use lossy UTF-8 to
+      // guarantee we never throw on malformed bytes.
+      try {
+        return utf8.decode(raw);
+      } catch (_) {
+        try {
+          return systemEncoding.decode(raw);
+        } catch (_) {
+          return utf8.decode(raw, allowMalformed: true);
+        }
+      }
     }
     return '$raw';
   }
@@ -203,7 +213,7 @@ class ProbeService {
 
     final repairedEscapes = withoutTags.replaceAllMapped(
       RegExp(r'\\(?!["\\/bfnrtu])'),
-      (_) => r'\\\\',
+      (_) => r'\\',
     );
 
     // Remove filename to avoid both privacy leakage and invalid escape issues from raw paths.

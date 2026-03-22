@@ -39,6 +39,7 @@ class AudioProbeInfo {
     AudioEncodingKind.ogg ||
     AudioEncodingKind.opus ||
     AudioEncodingKind.wma => true,
+    AudioEncodingKind.wav => !codecName.startsWith('pcm_'),
     _ => false,
   };
 

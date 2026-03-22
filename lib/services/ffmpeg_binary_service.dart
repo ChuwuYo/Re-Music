@@ -54,11 +54,33 @@ class FfmpegBinaryService {
       return false;
     }
 
-    final folderPath = windowsBinaryFolderPath();
-    await Directory(folderPath).create(recursive: true);
+    final primaryPath = windowsBinaryFolderPath();
+    String folderPath;
+    try {
+      await Directory(primaryPath).create(recursive: true);
+      folderPath = primaryPath;
+    } on FileSystemException {
+      // Executable directory may be read-only in installed Windows builds;
+      // fall back to a user-writable application data directory.
+      final localAppData = Platform.environment['LOCALAPPDATA'];
+      if (localAppData != null && localAppData.isNotEmpty) {
+        final fallbackPath = p.join(
+          localAppData,
+          AppConstants.appName,
+          AppConstants.bundledToolsDirectory,
+          AppConstants.bundledFfmpegDirectory,
+          AppConstants.bundledWindowsDirectory,
+        );
+        await Directory(fallbackPath).create(recursive: true);
+        folderPath = fallbackPath;
+      } else {
+        folderPath = primaryPath;
+      }
+    }
 
     final result = await Process.run('explorer', [folderPath]);
-    return result.exitCode == 0;
+    // Explorer commonly returns exit code 1 even on success.
+    return result.exitCode == 0 || result.exitCode == 1;
   }
 
   String? _resolveBinary(String executableName) {
@@ -68,13 +90,33 @@ class FfmpegBinaryService {
         return candidate;
       }
     }
+    return _resolveFromSystemPath(executableName);
+  }
+
+  String? _resolveFromSystemPath(String executableName) {
+    try {
+      final command = Platform.isWindows ? 'where' : 'which';
+      final result = Process.runSync(command, [executableName]);
+      if (result.exitCode == 0) {
+        final firstLine = (result.stdout as String)
+            .trim()
+            .split('\n')
+            .first
+            .trim();
+        if (firstLine.isNotEmpty && File(firstLine).existsSync()) {
+          return firstLine;
+        }
+      }
+    } catch (_) {
+      // Fallback lookup is best-effort.
+    }
     return null;
   }
 
   List<String> _candidateDirectories() {
     final exeDir = File(Platform.resolvedExecutable).parent.path;
     final currentDir = Directory.current.path;
-    return [
+    final dirs = [
       exeDir,
       p.join(
         exeDir,
@@ -89,5 +131,20 @@ class FfmpegBinaryService {
         AppConstants.bundledWindowsDirectory,
       ),
     ];
+    if (Platform.isWindows) {
+      final localAppData = Platform.environment['LOCALAPPDATA'];
+      if (localAppData != null && localAppData.isNotEmpty) {
+        dirs.add(
+          p.join(
+            localAppData,
+            AppConstants.appName,
+            AppConstants.bundledToolsDirectory,
+            AppConstants.bundledFfmpegDirectory,
+            AppConstants.bundledWindowsDirectory,
+          ),
+        );
+      }
+    }
+    return dirs;
   }
 }

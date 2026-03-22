@@ -88,5 +88,27 @@ void main() {
         AppConstants.transcodeConcurrencyMax,
       );
     });
+
+    test(
+      'falls back outputDirectory mode to default when directory is missing',
+      () {
+        final config = AppConfigs.fromJson({
+          'transcodeOutputMode': 'outputDirectory',
+        });
+        expect(
+          config.transcodeOutputMode,
+          AppConstants.defaultTranscodeOutputMode,
+        );
+      },
+    );
+
+    test('preserves outputDirectory mode when directory is present', () {
+      final config = AppConfigs.fromJson({
+        'transcodeOutputMode': 'outputDirectory',
+        'transcodeOutputDirectory': 'E:/Music/Out',
+      });
+      expect(config.transcodeOutputMode, TranscodeOutputMode.outputDirectory);
+      expect(config.transcodeOutputDirectory, 'E:/Music/Out');
+    });
   });
 }
