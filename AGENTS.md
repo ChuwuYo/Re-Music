@@ -86,6 +86,7 @@ lib/
 - Template: `app_en.arb`
 - Supported locales: `en`, `zh`
 - Config: `l10n.yaml`
+- After changing ARB files, run `flutter gen-l10n`.
 - Access translations via `AppLocalizations.of(context)!.keyName`.
 
 This file contains only mandatory rules. For descriptive information, see README.md.

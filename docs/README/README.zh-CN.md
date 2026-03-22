@@ -109,6 +109,24 @@
     flutter run -d windows
     ```
 
+### 常用命令
+
+#### 校验
+
+```bash
+dart format .
+flutter analyze
+flutter test
+```
+
+#### 依赖与本地化
+
+```bash
+flutter pub get
+flutter pub outdated
+flutter gen-l10n
+```
+
 ### 构建发布 (Build)
 
 #### 1. 使用自动化脚本构建 (推荐)

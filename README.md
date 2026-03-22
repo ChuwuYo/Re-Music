@@ -109,6 +109,24 @@ Ensure your development environment has:
     flutter run -d windows
     ```
 
+### Common Commands
+
+#### Validation
+
+```bash
+dart format .
+flutter analyze
+flutter test
+```
+
+#### Dependencies and Localization
+
+```bash
+flutter pub get
+flutter pub outdated
+flutter gen-l10n
+```
+
 ### Build and Release
 
 #### 1. Automated Build (Recommended)
