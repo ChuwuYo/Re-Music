@@ -135,8 +135,9 @@
   "transcodeOutputFormat": "输出格式",
   "transcodePreset": "无损规格",
   "transcodeMp3Bitrate": "MP3 比特率",
-  "transcodeAllowFormatOnly": "允许仅换格式",
-  "transcodeEnableDither": "启用 triangular 抖动",
+  "transcodeAllowFormatOnly": "也转换仅需换格式的文件",
+  "transcodeEnableDither": "启用三角概率密度抖动",
+  "transcodeEnableDitherSubtitle": "降低位深时减少量化噪声",
   "transcodeConcurrency": "并发数",
   "transcodeKeepOriginal": "保留原文件",
   "transcodeReplaceOriginal": "替换原文件",
@@ -183,6 +184,7 @@
   "transcodeSortBySampleRate": "按采样率",
   "transcodeSortByStatus": "按状态",
   "transcodeNoMatchTitle": "没有符合当前筛选的任务",
-  "transcodeNoMatchSubtitle": "请调整筛选条件后再查看"
+  "transcodeNoMatchSubtitle": "请调整筛选条件后再查看",
+  "transcodeSettings": "降采样设置"
 }
 

@@ -372,26 +372,6 @@ class TranscodeControlPanel extends StatelessWidget {
               provider: provider,
               controlsLocked: controlsLocked,
             ),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: Text(l10n.transcodeAllowFormatOnly),
-              value: provider.allowFormatOnlyConversion,
-              onChanged: controlsLocked
-                  ? null
-                  : context
-                        .read<TranscodeProvider>()
-                        .setAllowFormatOnlyConversion,
-            ),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: Text(l10n.transcodeEnableDither),
-              value: provider.enableDither,
-              onChanged:
-                  controlsLocked ||
-                      provider.outputFormat == TranscodeOutputFormat.mp3
-                  ? null
-                  : context.read<TranscodeProvider>().setEnableDither,
-            ),
           ],
         ),
       ),

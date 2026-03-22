@@ -135,8 +135,9 @@
   "transcodeOutputFormat": "Output format",
   "transcodePreset": "Lossless preset",
   "transcodeMp3Bitrate": "MP3 bitrate",
-  "transcodeAllowFormatOnly": "Allow format-only conversion",
+  "transcodeAllowFormatOnly": "Convert files that only need a format change",
   "transcodeEnableDither": "Enable triangular dither",
+  "transcodeEnableDitherSubtitle": "Reduces quantization noise when lowering bit depth",
   "transcodeConcurrency": "Concurrency",
   "transcodeKeepOriginal": "Keep original",
   "transcodeReplaceOriginal": "Replace original",
@@ -183,6 +184,7 @@
   "transcodeSortBySampleRate": "By sample rate",
   "transcodeSortByStatus": "By status",
   "transcodeNoMatchTitle": "No tasks match the current filter",
-  "transcodeNoMatchSubtitle": "Adjust the filter to see your tasks"
+  "transcodeNoMatchSubtitle": "Adjust the filter to see your tasks",
+  "transcodeSettings": "Resample settings"
 }
 

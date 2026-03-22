@@ -303,10 +303,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcodeMp3Bitrate => 'MP3 bitrate';
 
   @override
-  String get transcodeAllowFormatOnly => 'Allow format-only conversion';
+  String get transcodeAllowFormatOnly =>
+      'Convert files that only need a format change';
 
   @override
   String get transcodeEnableDither => 'Enable triangular dither';
+
+  @override
+  String get transcodeEnableDitherSubtitle =>
+      'Reduces quantization noise when lowering bit depth';
 
   @override
   String get transcodeConcurrency => 'Concurrency';
@@ -455,4 +460,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transcodeNoMatchSubtitle => 'Adjust the filter to see your tasks';
+
+  @override
+  String get transcodeSettings => 'Resample settings';
 }

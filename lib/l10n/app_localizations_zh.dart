@@ -302,10 +302,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get transcodeMp3Bitrate => 'MP3 比特率';
 
   @override
-  String get transcodeAllowFormatOnly => '允许仅换格式';
+  String get transcodeAllowFormatOnly => '也转换仅需换格式的文件';
 
   @override
-  String get transcodeEnableDither => '启用 triangular 抖动';
+  String get transcodeEnableDither => '启用三角概率密度抖动';
+
+  @override
+  String get transcodeEnableDitherSubtitle => '降低位深时减少量化噪声';
 
   @override
   String get transcodeConcurrency => '并发数';
@@ -447,4 +450,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transcodeNoMatchSubtitle => '请调整筛选条件后再查看';
+
+  @override
+  String get transcodeSettings => '降采样设置';
 }

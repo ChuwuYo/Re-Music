@@ -659,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @transcodeAllowFormatOnly.
   ///
   /// In en, this message translates to:
-  /// **'Allow format-only conversion'**
+  /// **'Convert files that only need a format change'**
   String get transcodeAllowFormatOnly;
 
   /// No description provided for @transcodeEnableDither.
@@ -667,6 +667,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable triangular dither'**
   String get transcodeEnableDither;
+
+  /// No description provided for @transcodeEnableDitherSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduces quantization noise when lowering bit depth'**
+  String get transcodeEnableDitherSubtitle;
 
   /// No description provided for @transcodeConcurrency.
   ///
@@ -949,6 +955,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Adjust the filter to see your tasks'**
   String get transcodeNoMatchSubtitle;
+
+  /// No description provided for @transcodeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Resample settings'**
+  String get transcodeSettings;
 }
 
 class _AppLocalizationsDelegate
