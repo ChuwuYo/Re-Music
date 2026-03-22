@@ -49,6 +49,9 @@ void main() async {
     transcodeProvider.setOutputMode(settings.transcodeOutputMode);
     transcodeProvider.setOutputDirectory(settings.transcodeOutputDirectory);
     transcodeProvider.setConcurrency(settings.transcodeConcurrency);
+    transcodeProvider.setSortCriteria(settings.transcodeSortCriteria);
+    transcodeProvider.setSortAscending(settings.transcodeSortAscending);
+    transcodeProvider.setFilter(settings.transcodeFilter);
   }
 
   AppConfigs currentConfigsSnapshot() {
@@ -72,6 +75,9 @@ void main() async {
       transcodeOutputMode: transcodeProvider.outputMode,
       transcodeOutputDirectory: transcodeProvider.outputDirectory,
       transcodeConcurrency: transcodeProvider.concurrency,
+      transcodeSortCriteria: transcodeProvider.sortCriteria,
+      transcodeSortAscending: transcodeProvider.sortAscending,
+      transcodeFilter: transcodeProvider.filter,
     );
   }
 

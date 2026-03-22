@@ -22,6 +22,9 @@ class AppConfigs {
   final TranscodeOutputMode transcodeOutputMode;
   final String? transcodeOutputDirectory;
   final int transcodeConcurrency;
+  final String transcodeSortCriteria;
+  final bool transcodeSortAscending;
+  final TranscodeItemFilter transcodeFilter;
 
   const AppConfigs({
     required this.locale,
@@ -43,6 +46,9 @@ class AppConfigs {
     required this.transcodeOutputMode,
     required this.transcodeOutputDirectory,
     required this.transcodeConcurrency,
+    required this.transcodeSortCriteria,
+    required this.transcodeSortAscending,
+    required this.transcodeFilter,
   });
 
   static AppConfigs defaults() {
@@ -66,6 +72,9 @@ class AppConfigs {
       transcodeOutputMode: AppConstants.defaultTranscodeOutputMode,
       transcodeOutputDirectory: null,
       transcodeConcurrency: AppConstants.defaultTranscodeConcurrency,
+      transcodeSortCriteria: AppConstants.defaultTranscodeSortCriteria,
+      transcodeSortAscending: AppConstants.defaultSortAscending,
+      transcodeFilter: AppConstants.defaultTranscodeItemFilter,
     );
   }
 
@@ -90,6 +99,9 @@ class AppConfigs {
     final transcodeOutputModeRaw = json['transcodeOutputMode'];
     final transcodeOutputDirectoryRaw = json['transcodeOutputDirectory'];
     final transcodeConcurrencyRaw = json['transcodeConcurrency'];
+    final transcodeSortCriteriaRaw = json['transcodeSortCriteria'];
+    final transcodeSortAscendingRaw = json['transcodeSortAscending'];
+    final transcodeFilterRaw = json['transcodeFilter'];
 
     return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
@@ -138,6 +150,13 @@ class AppConfigs {
         transcodeOutputDirectoryRaw,
       ),
       transcodeConcurrency: _parseTranscodeConcurrency(transcodeConcurrencyRaw),
+      transcodeSortCriteria: _parseTranscodeSortCriteria(
+        transcodeSortCriteriaRaw,
+      ),
+      transcodeSortAscending: transcodeSortAscendingRaw is bool
+          ? transcodeSortAscendingRaw
+          : AppConstants.defaultSortAscending,
+      transcodeFilter: _parseTranscodeFilter(transcodeFilterRaw),
     );
   }
 
@@ -162,6 +181,9 @@ class AppConfigs {
       'transcodeOutputMode': transcodeOutputMode.name,
       'transcodeOutputDirectory': transcodeOutputDirectory,
       'transcodeConcurrency': transcodeConcurrency,
+      'transcodeSortCriteria': transcodeSortCriteria,
+      'transcodeSortAscending': transcodeSortAscending,
+      'transcodeFilter': transcodeFilter.name,
     };
   }
 
@@ -332,6 +354,28 @@ class AppConfigs {
         .toInt();
   }
 
+  static String _parseTranscodeSortCriteria(Object? raw) {
+    if (raw is String) {
+      switch (raw) {
+        case 'name':
+        case 'format':
+        case 'sampleRate':
+        case 'status':
+          return raw;
+      }
+    }
+    return AppConstants.defaultTranscodeSortCriteria;
+  }
+
+  static TranscodeItemFilter _parseTranscodeFilter(Object? raw) {
+    if (raw is String) {
+      for (final v in TranscodeItemFilter.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return AppConstants.defaultTranscodeItemFilter;
+  }
+
   @override
   bool operator ==(Object other) {
     return other is AppConfigs &&
@@ -353,11 +397,14 @@ class AppConfigs {
         other.enableTranscodeDither == enableTranscodeDither &&
         other.transcodeOutputMode == transcodeOutputMode &&
         other.transcodeOutputDirectory == transcodeOutputDirectory &&
-        other.transcodeConcurrency == transcodeConcurrency;
+        other.transcodeConcurrency == transcodeConcurrency &&
+        other.transcodeSortCriteria == transcodeSortCriteria &&
+        other.transcodeSortAscending == transcodeSortAscending &&
+        other.transcodeFilter == transcodeFilter;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     locale,
     themeMode,
     themeHue,
@@ -377,5 +424,8 @@ class AppConfigs {
     transcodeOutputMode,
     transcodeOutputDirectory,
     transcodeConcurrency,
-  );
+    transcodeSortCriteria,
+    transcodeSortAscending,
+    transcodeFilter,
+  ]);
 }

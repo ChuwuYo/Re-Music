@@ -110,5 +110,41 @@ void main() {
       expect(config.transcodeOutputMode, TranscodeOutputMode.outputDirectory);
       expect(config.transcodeOutputDirectory, 'E:/Music/Out');
     });
+
+    test('reads and serializes transcode sort/filter fields', () {
+      final config = AppConfigs.fromJson({
+        'transcodeSortCriteria': 'format',
+        'transcodeSortAscending': false,
+        'transcodeFilter': 'ready',
+      });
+
+      expect(config.transcodeSortCriteria, 'format');
+      expect(config.transcodeSortAscending, isFalse);
+      expect(config.transcodeFilter, TranscodeItemFilter.ready);
+
+      final json = config.toJson();
+      expect(json['transcodeSortCriteria'], 'format');
+      expect(json['transcodeSortAscending'], isFalse);
+      expect(json['transcodeFilter'], 'ready');
+    });
+
+    test('falls back transcode sort/filter to defaults when missing', () {
+      final config = AppConfigs.fromJson({});
+
+      expect(
+        config.transcodeSortCriteria,
+        AppConstants.defaultTranscodeSortCriteria,
+      );
+      expect(config.transcodeSortAscending, AppConstants.defaultSortAscending);
+      expect(config.transcodeFilter, AppConstants.defaultTranscodeItemFilter);
+    });
+
+    test('falls back transcode sort criteria for invalid value', () {
+      final config = AppConfigs.fromJson({'transcodeSortCriteria': 'invalid'});
+      expect(
+        config.transcodeSortCriteria,
+        AppConstants.defaultTranscodeSortCriteria,
+      );
+    });
   });
 }
