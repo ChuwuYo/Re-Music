@@ -74,7 +74,6 @@
   "metadataTitle": "标题",
   "metadataTrackArtist": "曲目艺术家",
   "metadataAlbumArtist": "专辑艺术家",
-  "metadataArtist": "艺术家",
   "metadataAlbum": "专辑",
   "metadataTrackNumber": "音轨号",
   "metadataTrackTotal": "总音轨数",
@@ -102,7 +101,6 @@
   "addModeAppend": "叠加到列表",
   "addModeReplace": "替换现有列表",
   "artistSeparator": "艺术家分隔符",
-  "artistSeparatorHint": "多个艺术家时使用的分隔符",
   "navTranscode": "转码",
   "transcodeTitle": "转码",
   "transcodeStart": "开始转码",
@@ -130,7 +128,7 @@
       }
     }
   },
-  "transcodeEmptyTitle": "添加音频文件后即可开始降采样",
+  "transcodeEmptyTitle": "添加音频文件后即可开始转码",
   "transcodeEmptySubtitle": "这里会显示探测结果、跳过原因和输出路径",
   "transcodeOutputFormat": "输出格式",
   "transcodePreset": "无损规格",
@@ -185,6 +183,6 @@
   "transcodeSortByStatus": "按状态",
   "transcodeNoMatchTitle": "没有符合当前筛选的任务",
   "transcodeNoMatchSubtitle": "请调整筛选条件后再查看",
-  "transcodeSettings": "降采样设置"
+  "transcodeSettings": "转码设置"
 }
 

@@ -176,9 +176,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get metadataAlbumArtist => 'Album artist';
 
   @override
-  String get metadataArtist => 'Artist';
-
-  @override
   String get metadataAlbum => 'Album';
 
   @override
@@ -260,9 +257,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get artistSeparator => 'Artist separator';
 
   @override
-  String get artistSeparatorHint => 'Separator for multiple artists';
-
-  @override
   String get navTranscode => 'Transcode';
 
   @override
@@ -287,7 +281,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get transcodeEmptyTitle => 'Add audio files to start resampling';
+  String get transcodeEmptyTitle => 'Add audio files to start transcoding';
 
   @override
   String get transcodeEmptySubtitle =>
@@ -462,5 +456,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcodeNoMatchSubtitle => 'Adjust the filter to see your tasks';
 
   @override
-  String get transcodeSettings => 'Resample settings';
+  String get transcodeSettings => 'Transcode settings';
 }

@@ -176,9 +176,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get metadataAlbumArtist => '专辑艺术家';
 
   @override
-  String get metadataArtist => '艺术家';
-
-  @override
   String get metadataAlbum => '专辑';
 
   @override
@@ -260,9 +257,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artistSeparator => '艺术家分隔符';
 
   @override
-  String get artistSeparatorHint => '多个艺术家时使用的分隔符';
-
-  @override
   String get navTranscode => '转码';
 
   @override
@@ -287,7 +281,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get transcodeEmptyTitle => '添加音频文件后即可开始降采样';
+  String get transcodeEmptyTitle => '添加音频文件后即可开始转码';
 
   @override
   String get transcodeEmptySubtitle => '这里会显示探测结果、跳过原因和输出路径';
@@ -452,5 +446,5 @@ class AppLocalizationsZh extends AppLocalizations {
   String get transcodeNoMatchSubtitle => '请调整筛选条件后再查看';
 
   @override
-  String get transcodeSettings => '降采样设置';
+  String get transcodeSettings => '转码设置';
 }

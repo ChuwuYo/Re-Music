@@ -38,7 +38,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Resample'), findsOneWidget);
+    expect(find.text('Transcode'), findsOneWidget);
     expect(find.text('FFmpeg binaries are missing'), findsOneWidget);
   });
 }

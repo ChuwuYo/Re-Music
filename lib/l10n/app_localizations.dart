@@ -416,12 +416,6 @@ abstract class AppLocalizations {
   /// **'Album artist'**
   String get metadataAlbumArtist;
 
-  /// No description provided for @metadataArtist.
-  ///
-  /// In en, this message translates to:
-  /// **'Artist'**
-  String get metadataArtist;
-
   /// No description provided for @metadataAlbum.
   ///
   /// In en, this message translates to:
@@ -584,12 +578,6 @@ abstract class AppLocalizations {
   /// **'Artist separator'**
   String get artistSeparator;
 
-  /// No description provided for @artistSeparatorHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Separator for multiple artists'**
-  String get artistSeparatorHint;
-
   /// No description provided for @navTranscode.
   ///
   /// In en, this message translates to:
@@ -629,7 +617,7 @@ abstract class AppLocalizations {
   /// No description provided for @transcodeEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add audio files to start resampling'**
+  /// **'Add audio files to start transcoding'**
   String get transcodeEmptyTitle;
 
   /// No description provided for @transcodeEmptySubtitle.
@@ -959,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @transcodeSettings.
   ///
   /// In en, this message translates to:
-  /// **'Resample settings'**
+  /// **'Transcode settings'**
   String get transcodeSettings;
 }
 

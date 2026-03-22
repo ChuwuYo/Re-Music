@@ -74,7 +74,6 @@
   "metadataTitle": "Title",
   "metadataTrackArtist": "Track artist",
   "metadataAlbumArtist": "Album artist",
-  "metadataArtist": "Artist",
   "metadataAlbum": "Album",
   "metadataTrackNumber": "Track No.",
   "metadataTrackTotal": "Total tracks",
@@ -102,7 +101,6 @@
   "addModeAppend": "Append to list",
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
-  "artistSeparatorHint": "Separator for multiple artists",
   "navTranscode": "Transcode",
   "transcodeTitle": "Transcode",
   "transcodeStart": "Start transcode",
@@ -130,7 +128,7 @@
       }
     }
   },
-  "transcodeEmptyTitle": "Add audio files to start resampling",
+  "transcodeEmptyTitle": "Add audio files to start transcoding",
   "transcodeEmptySubtitle": "Probe results, skip reasons, and output paths will appear here",
   "transcodeOutputFormat": "Output format",
   "transcodePreset": "Lossless preset",
@@ -185,6 +183,6 @@
   "transcodeSortByStatus": "By status",
   "transcodeNoMatchTitle": "No tasks match the current filter",
   "transcodeNoMatchSubtitle": "Adjust the filter to see your tasks",
-  "transcodeSettings": "Resample settings"
+  "transcodeSettings": "Transcode settings"
 }
 
