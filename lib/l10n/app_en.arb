@@ -172,6 +172,17 @@
   "transcodeOpenDownloadPageFailed": "Failed to open FFmpeg download page",
   "transcodeOpenBinaryFolder": "Open FFmpeg folder",
   "transcodeOpenBinaryFolderSuccess": "FFmpeg folder opened",
-  "transcodeOpenBinaryFolderFailed": "Failed to open FFmpeg folder"
+  "transcodeOpenBinaryFolderFailed": "Failed to open FFmpeg folder",
+  "transcodeShowAll": "Show all",
+  "transcodeShowReady": "Only show ready",
+  "transcodeShowSkipped": "Only show skipped",
+  "transcodeShowSuccess": "Only show success",
+  "transcodeShowError": "Only show errors",
+  "transcodeSortByName": "By file name",
+  "transcodeSortByFormat": "By format",
+  "transcodeSortBySampleRate": "By sample rate",
+  "transcodeSortByStatus": "By status",
+  "transcodeNoMatchTitle": "No tasks match the current filter",
+  "transcodeNoMatchSubtitle": "Adjust the filter to see your tasks"
 }
 

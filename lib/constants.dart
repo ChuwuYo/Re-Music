@@ -55,6 +55,13 @@ class AppConstants {
   /// 默认排序顺序（升序）
   static const bool defaultSortAscending = true;
 
+  /// 默认转码排序标准
+  static const String defaultTranscodeSortCriteria = 'name';
+
+  /// 默认转码筛选器
+  static const TranscodeItemFilter defaultTranscodeItemFilter =
+      TranscodeItemFilter.all;
+
   /// 文件名非法字符正则表达式
   static final RegExp invalidFilenameChars = RegExp(r'[\\/:*?"<>|]');
 
@@ -329,3 +336,6 @@ enum TranscodeItemStatus {
   success,
   error,
 }
+
+/// 转码列表筛选器
+enum TranscodeItemFilter { all, ready, skipped, success, error }

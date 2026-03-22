@@ -422,4 +422,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transcodeOpenBinaryFolderFailed => 'Failed to open FFmpeg folder';
+
+  @override
+  String get transcodeShowAll => 'Show all';
+
+  @override
+  String get transcodeShowReady => 'Only show ready';
+
+  @override
+  String get transcodeShowSkipped => 'Only show skipped';
+
+  @override
+  String get transcodeShowSuccess => 'Only show success';
+
+  @override
+  String get transcodeShowError => 'Only show errors';
+
+  @override
+  String get transcodeSortByName => 'By file name';
+
+  @override
+  String get transcodeSortByFormat => 'By format';
+
+  @override
+  String get transcodeSortBySampleRate => 'By sample rate';
+
+  @override
+  String get transcodeSortByStatus => 'By status';
+
+  @override
+  String get transcodeNoMatchTitle => 'No tasks match the current filter';
+
+  @override
+  String get transcodeNoMatchSubtitle => 'Adjust the filter to see your tasks';
 }

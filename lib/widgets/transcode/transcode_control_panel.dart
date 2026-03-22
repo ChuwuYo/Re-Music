@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/transcode_provider.dart';
 import '../../services/file_service.dart';
 import '../common/remusic_snack_bar.dart';
+import '../common/sort_filter_buttons.dart';
 
 class TranscodeControlPanel extends StatelessWidget {
   const TranscodeControlPanel({super.key});
@@ -127,28 +128,91 @@ class TranscodeControlPanel extends StatelessWidget {
               ),
             if (provider.binaryError != null)
               const SizedBox(height: AppConstants.spacingMedium),
-            Wrap(
-              spacing: AppConstants.spacingSmall,
-              runSpacing: AppConstants.spacingSmall,
+            Row(
               children: [
-                FilledButton.tonalIcon(
-                  onPressed: controlsLocked ? null : handleAddFiles,
-                  icon: const Icon(Icons.audio_file),
-                  label: Text(l10n.addFiles),
-                ),
-                OutlinedButton.icon(
-                  onPressed: controlsLocked ? null : handleScanDirectory,
-                  icon: const Icon(Icons.create_new_folder),
-                  label: Text(l10n.scanDirectory),
-                ),
-                if (outputMode == TranscodeOutputMode.outputDirectory)
-                  OutlinedButton.icon(
-                    onPressed: controlsLocked
-                        ? null
-                        : handlePickOutputDirectory,
-                    icon: const Icon(Icons.folder_open),
-                    label: Text(l10n.transcodeChooseOutputDirectory),
+                Expanded(
+                  child: Wrap(
+                    spacing: AppConstants.spacingSmall,
+                    runSpacing: AppConstants.spacingSmall,
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: controlsLocked ? null : handleAddFiles,
+                        icon: const Icon(Icons.audio_file),
+                        label: Text(l10n.addFiles),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: controlsLocked ? null : handleScanDirectory,
+                        icon: const Icon(Icons.create_new_folder),
+                        label: Text(l10n.scanDirectory),
+                      ),
+                      if (outputMode == TranscodeOutputMode.outputDirectory)
+                        OutlinedButton.icon(
+                          onPressed: controlsLocked
+                              ? null
+                              : handlePickOutputDirectory,
+                          icon: const Icon(Icons.folder_open),
+                          label: Text(l10n.transcodeChooseOutputDirectory),
+                        ),
+                    ],
                   ),
+                ),
+                FilterMenuButton<TranscodeItemFilter>(
+                  tooltip: l10n.filter,
+                  currentValue: provider.filter,
+                  defaultValue: TranscodeItemFilter.all,
+                  options: [
+                    MenuOption(
+                      value: TranscodeItemFilter.all,
+                      label: l10n.transcodeShowAll,
+                    ),
+                    MenuOption(
+                      value: TranscodeItemFilter.ready,
+                      label: l10n.transcodeShowReady,
+                    ),
+                    MenuOption(
+                      value: TranscodeItemFilter.skipped,
+                      label: l10n.transcodeShowSkipped,
+                    ),
+                    MenuOption(
+                      value: TranscodeItemFilter.success,
+                      label: l10n.transcodeShowSuccess,
+                    ),
+                    MenuOption(
+                      value: TranscodeItemFilter.error,
+                      label: l10n.transcodeShowError,
+                    ),
+                  ],
+                  onSelected: provider.setFilter,
+                ),
+                const SizedBox(width: AppConstants.spacingSmall),
+                SortMenuButton(
+                  tooltip: l10n.sort,
+                  currentCriteria: provider.sortCriteria,
+                  options: [
+                    MenuOption(value: 'name', label: l10n.transcodeSortByName),
+                    MenuOption(
+                      value: 'format',
+                      label: l10n.transcodeSortByFormat,
+                    ),
+                    MenuOption(
+                      value: 'sampleRate',
+                      label: l10n.transcodeSortBySampleRate,
+                    ),
+                    MenuOption(
+                      value: 'status',
+                      label: l10n.transcodeSortByStatus,
+                    ),
+                  ],
+                  onSelected: provider.setSortCriteria,
+                ),
+                const SizedBox(width: AppConstants.spacingSmall),
+                SortOrderButton(
+                  ascending: provider.sortAscending,
+                  ascendingTooltip: l10n.sortAscending,
+                  descendingTooltip: l10n.sortDescending,
+                  onToggle: () =>
+                      provider.setSortAscending(!provider.sortAscending),
+                ),
               ],
             ),
             if (outputMode == TranscodeOutputMode.outputDirectory)

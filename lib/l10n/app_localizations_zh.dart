@@ -414,4 +414,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transcodeOpenBinaryFolderFailed => '打开 FFmpeg 文件夹失败';
+
+  @override
+  String get transcodeShowAll => '显示全部';
+
+  @override
+  String get transcodeShowReady => '仅显示就绪';
+
+  @override
+  String get transcodeShowSkipped => '仅显示已跳过';
+
+  @override
+  String get transcodeShowSuccess => '仅显示成功';
+
+  @override
+  String get transcodeShowError => '仅显示失败';
+
+  @override
+  String get transcodeSortByName => '按文件名';
+
+  @override
+  String get transcodeSortByFormat => '按格式';
+
+  @override
+  String get transcodeSortBySampleRate => '按采样率';
+
+  @override
+  String get transcodeSortByStatus => '按状态';
+
+  @override
+  String get transcodeNoMatchTitle => '没有符合当前筛选的任务';
+
+  @override
+  String get transcodeNoMatchSubtitle => '请调整筛选条件后再查看';
 }

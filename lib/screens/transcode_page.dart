@@ -17,17 +17,23 @@ class TranscodePage extends StatelessWidget {
       children: [
         Consumer<TranscodeProvider>(
           builder: (context, provider, child) {
-            final items = provider.items;
+            final hasAnyItems = provider.totalFilesCount > 0;
+            final items = provider.displayItems;
             return CustomScrollView(
-              physics: items.isEmpty
-                  ? const NeverScrollableScrollPhysics()
-                  : null,
+              physics: hasAnyItems
+                  ? null
+                  : const NeverScrollableScrollPhysics(),
               slivers: [
                 const SliverToBoxAdapter(child: TranscodeControlPanel()),
-                if (items.isEmpty)
+                if (!hasAnyItems)
                   const SliverFillRemaining(
                     hasScrollBody: false,
                     child: TranscodeEmptyState(),
+                  )
+                else if (items.isEmpty)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: TranscodeNoMatchState(),
                   )
                 else
                   SliverPadding(

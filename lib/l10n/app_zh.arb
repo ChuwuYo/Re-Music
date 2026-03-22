@@ -172,6 +172,17 @@
   "transcodeOpenDownloadPageFailed": "打开 FFmpeg 下载页面失败",
   "transcodeOpenBinaryFolder": "打开 FFmpeg 文件夹",
   "transcodeOpenBinaryFolderSuccess": "已打开 FFmpeg 文件夹",
-  "transcodeOpenBinaryFolderFailed": "打开 FFmpeg 文件夹失败"
+  "transcodeOpenBinaryFolderFailed": "打开 FFmpeg 文件夹失败",
+  "transcodeShowAll": "显示全部",
+  "transcodeShowReady": "仅显示就绪",
+  "transcodeShowSkipped": "仅显示已跳过",
+  "transcodeShowSuccess": "仅显示成功",
+  "transcodeShowError": "仅显示失败",
+  "transcodeSortByName": "按文件名",
+  "transcodeSortByFormat": "按格式",
+  "transcodeSortBySampleRate": "按采样率",
+  "transcodeSortByStatus": "按状态",
+  "transcodeNoMatchTitle": "没有符合当前筛选的任务",
+  "transcodeNoMatchSubtitle": "请调整筛选条件后再查看"
 }
 

@@ -22,6 +22,9 @@ class TranscodeProvider extends ChangeNotifier {
   bool _isBusy = false;
   double _progress = 0.0;
   String? _outputDirectory;
+  TranscodeItemFilter _filter = AppConstants.defaultTranscodeItemFilter;
+  String _sortCriteria = AppConstants.defaultTranscodeSortCriteria;
+  bool _sortAscending = AppConstants.defaultSortAscending;
   TranscodeOutputFormat _outputFormat =
       AppConstants.defaultTranscodeOutputFormat;
   TranscodeLosslessPreset _losslessPreset =
@@ -57,6 +60,29 @@ class TranscodeProvider extends ChangeNotifier {
   int get concurrency => _concurrency;
   int get totalFilesCount => _items.length;
   int get runnableCount => _items.where((item) => item.canRun).length;
+  TranscodeItemFilter get filter => _filter;
+  String get sortCriteria => _sortCriteria;
+  bool get sortAscending => _sortAscending;
+
+  List<TranscodeItem> get displayItems {
+    Iterable<TranscodeItem> result = _items;
+    if (_filter != TranscodeItemFilter.all) {
+      result = result.where(
+        (item) => switch (_filter) {
+          TranscodeItemFilter.ready => item.status == TranscodeItemStatus.ready,
+          TranscodeItemFilter.skipped =>
+            item.status == TranscodeItemStatus.skipped,
+          TranscodeItemFilter.success =>
+            item.status == TranscodeItemStatus.success,
+          TranscodeItemFilter.error => item.status == TranscodeItemStatus.error,
+          TranscodeItemFilter.all => true,
+        },
+      );
+    }
+    final list = result.toList();
+    _sortItems(list);
+    return list;
+  }
 
   bool get canStart => !_isBusy && runnableCount > 0 && _binaryPaths != null;
 
@@ -70,6 +96,24 @@ class TranscodeProvider extends ChangeNotifier {
     outputDirectory: _outputDirectory,
     concurrency: _concurrency,
   );
+
+  void setFilter(TranscodeItemFilter filter) {
+    if (_filter == filter) return;
+    _filter = filter;
+    notifyListeners();
+  }
+
+  void setSortCriteria(String criteria) {
+    if (_sortCriteria == criteria) return;
+    _sortCriteria = criteria;
+    notifyListeners();
+  }
+
+  void setSortAscending(bool ascending) {
+    if (_sortAscending == ascending) return;
+    _sortAscending = ascending;
+    notifyListeners();
+  }
 
   void refreshBinaryStatus() {
     _binaryPaths = _binaryService.resolve();
@@ -320,6 +364,22 @@ class TranscodeProvider extends ChangeNotifier {
       }
     }
     return reserved;
+  }
+
+  void _sortItems(List<TranscodeItem> list) {
+    list.sort((a, b) {
+      final cmp = switch (_sortCriteria) {
+        'format' => (a.probeInfo?.kind.index ?? 99).compareTo(
+          b.probeInfo?.kind.index ?? 99,
+        ),
+        'sampleRate' => (a.probeInfo?.sampleRate ?? 0).compareTo(
+          b.probeInfo?.sampleRate ?? 0,
+        ),
+        'status' => a.status.index.compareTo(b.status.index),
+        _ => a.fileName.compareTo(b.fileName),
+      };
+      return _sortAscending ? cmp : -cmp;
+    });
   }
 
   double _calculateExecutionProgress(List<TranscodeItem> runnable) {

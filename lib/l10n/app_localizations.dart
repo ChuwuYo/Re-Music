@@ -883,6 +883,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to open FFmpeg folder'**
   String get transcodeOpenBinaryFolderFailed;
+
+  /// No description provided for @transcodeShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all'**
+  String get transcodeShowAll;
+
+  /// No description provided for @transcodeShowReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show ready'**
+  String get transcodeShowReady;
+
+  /// No description provided for @transcodeShowSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show skipped'**
+  String get transcodeShowSkipped;
+
+  /// No description provided for @transcodeShowSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show success'**
+  String get transcodeShowSuccess;
+
+  /// No description provided for @transcodeShowError.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show errors'**
+  String get transcodeShowError;
+
+  /// No description provided for @transcodeSortByName.
+  ///
+  /// In en, this message translates to:
+  /// **'By file name'**
+  String get transcodeSortByName;
+
+  /// No description provided for @transcodeSortByFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'By format'**
+  String get transcodeSortByFormat;
+
+  /// No description provided for @transcodeSortBySampleRate.
+  ///
+  /// In en, this message translates to:
+  /// **'By sample rate'**
+  String get transcodeSortBySampleRate;
+
+  /// No description provided for @transcodeSortByStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'By status'**
+  String get transcodeSortByStatus;
+
+  /// No description provided for @transcodeNoMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks match the current filter'**
+  String get transcodeNoMatchTitle;
+
+  /// No description provided for @transcodeNoMatchSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust the filter to see your tasks'**
+  String get transcodeNoMatchSubtitle;
 }
 
 class _AppLocalizationsDelegate
