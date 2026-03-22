@@ -103,9 +103,9 @@
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
   "artistSeparatorHint": "Separator for multiple artists",
-  "navTranscode": "Resample",
-  "transcodeTitle": "Resample",
-  "transcodeStart": "Start resample",
+  "navTranscode": "Transcode",
+  "transcodeTitle": "Transcode",
+  "transcodeStart": "Start transcode",
   "transcodeCompleted": "Done! Processed {count} files",
   "@transcodeCompleted": {
     "placeholders": {

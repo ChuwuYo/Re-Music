@@ -103,9 +103,9 @@
   "addModeReplace": "替换现有列表",
   "artistSeparator": "艺术家分隔符",
   "artistSeparatorHint": "多个艺术家时使用的分隔符",
-  "navTranscode": "降采样",
-  "transcodeTitle": "降采样",
-  "transcodeStart": "开始降采样",
+  "navTranscode": "转码",
+  "transcodeTitle": "转码",
+  "transcodeStart": "开始转码",
   "transcodeCompleted": "完成！成功处理 {count} 个文件",
   "@transcodeCompleted": {
     "placeholders": {

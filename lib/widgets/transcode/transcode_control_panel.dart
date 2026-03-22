@@ -136,12 +136,18 @@ class TranscodeControlPanel extends StatelessWidget {
                     runSpacing: AppConstants.spacingSmall,
                     children: [
                       FilledButton.tonalIcon(
-                        onPressed: controlsLocked ? null : handleAddFiles,
+                        onPressed:
+                            controlsLocked || provider.binaryError != null
+                            ? null
+                            : handleAddFiles,
                         icon: const Icon(Icons.audio_file),
                         label: Text(l10n.addFiles),
                       ),
                       OutlinedButton.icon(
-                        onPressed: controlsLocked ? null : handleScanDirectory,
+                        onPressed:
+                            controlsLocked || provider.binaryError != null
+                            ? null
+                            : handleScanDirectory,
                         icon: const Icon(Icons.create_new_folder),
                         label: Text(l10n.scanDirectory),
                       ),
@@ -236,6 +242,7 @@ class TranscodeControlPanel extends StatelessWidget {
                 SizedBox(
                   width: 260,
                   child: DropdownButtonFormField<TranscodeOutputFormat>(
+                    key: ValueKey(provider.outputFormat),
                     initialValue: provider.outputFormat,
                     isExpanded: true,
                     decoration: InputDecoration(
@@ -274,6 +281,7 @@ class TranscodeControlPanel extends StatelessWidget {
                   SizedBox(
                     width: 260,
                     child: DropdownButtonFormField<int>(
+                      key: ValueKey(provider.mp3BitRateKbps),
                       initialValue: provider.mp3BitRateKbps,
                       isExpanded: true,
                       decoration: InputDecoration(
@@ -302,6 +310,7 @@ class TranscodeControlPanel extends StatelessWidget {
                   SizedBox(
                     width: 260,
                     child: DropdownButtonFormField<TranscodeLosslessPreset>(
+                      key: ValueKey(provider.losslessPreset),
                       initialValue: provider.losslessPreset,
                       isExpanded: true,
                       decoration: InputDecoration(
@@ -335,6 +344,7 @@ class TranscodeControlPanel extends StatelessWidget {
                 SizedBox(
                   width: 260,
                   child: DropdownButtonFormField<int>(
+                    key: ValueKey(provider.concurrency),
                     initialValue: provider.concurrency,
                     isExpanded: true,
                     decoration: InputDecoration(
@@ -389,6 +399,7 @@ class TranscodeControlPanel extends StatelessWidget {
         final useDropdown = constraints.maxWidth < 640;
         if (useDropdown) {
           return DropdownButtonFormField<TranscodeOutputMode>(
+            key: ValueKey(provider.outputMode),
             initialValue: provider.outputMode,
             decoration: InputDecoration(labelText: l10n.transcodeTaskOutput),
             items: [

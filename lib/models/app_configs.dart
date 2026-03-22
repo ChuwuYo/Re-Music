@@ -200,9 +200,7 @@ class AppConfigs {
   }
 
   static int _clampThemeHue(int hue) {
-    return hue
-        .clamp(AppConstants.themeHueMin, AppConstants.themeHueMax)
-        .toInt();
+    return hue.clamp(AppConstants.themeHueMin, AppConstants.themeHueMax);
   }
 
   static int? _legacySeedColorToHue(Object? raw) {

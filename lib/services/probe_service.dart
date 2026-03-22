@@ -25,7 +25,7 @@ class ProbeService {
       '-select_streams',
       'a:0',
       '-show_entries',
-      'stream=codec_name,sample_fmt,sample_rate,bits_per_raw_sample,bits_per_sample,bit_rate,duration:format=bit_rate,duration',
+      'stream=codec_type,codec_name,sample_fmt,sample_rate,bits_per_raw_sample,bits_per_sample,bit_rate,duration:format=bit_rate,duration',
       '-of',
       'default=noprint_wrappers=1:nokey=0',
       filePath,

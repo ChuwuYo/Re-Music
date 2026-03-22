@@ -263,13 +263,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artistSeparatorHint => '多个艺术家时使用的分隔符';
 
   @override
-  String get navTranscode => '降采样';
+  String get navTranscode => '转码';
 
   @override
-  String get transcodeTitle => '降采样';
+  String get transcodeTitle => '转码';
 
   @override
-  String get transcodeStart => '开始降采样';
+  String get transcodeStart => '开始转码';
 
   @override
   String transcodeCompleted(int count) {

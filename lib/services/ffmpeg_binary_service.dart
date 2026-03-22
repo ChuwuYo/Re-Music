@@ -40,47 +40,54 @@ class FfmpegBinaryService {
     if (!Platform.isWindows) {
       return false;
     }
-    final result = await Process.run('cmd', [
-      '/c',
-      'start',
-      '',
-      AppConstants.ffmpegWindowsDownloadUrl,
-    ]);
-    return result.exitCode == 0;
+    try {
+      final result = await Process.run('cmd', [
+        '/c',
+        'start',
+        '',
+        AppConstants.ffmpegWindowsDownloadUrl,
+      ]);
+      return result.exitCode == 0;
+    } on Exception {
+      return false;
+    }
   }
 
   Future<bool> openWindowsBinaryFolder() async {
     if (!Platform.isWindows) {
       return false;
     }
-
-    final primaryPath = windowsBinaryFolderPath();
-    String folderPath;
     try {
-      await Directory(primaryPath).create(recursive: true);
-      folderPath = primaryPath;
-    } on FileSystemException {
-      // Executable directory may be read-only in installed Windows builds;
-      // fall back to a user-writable application data directory.
-      final localAppData = Platform.environment['LOCALAPPDATA'];
-      if (localAppData != null && localAppData.isNotEmpty) {
-        final fallbackPath = p.join(
-          localAppData,
-          AppConstants.appName,
-          AppConstants.bundledToolsDirectory,
-          AppConstants.bundledFfmpegDirectory,
-          AppConstants.bundledWindowsDirectory,
-        );
-        await Directory(fallbackPath).create(recursive: true);
-        folderPath = fallbackPath;
-      } else {
+      final primaryPath = windowsBinaryFolderPath();
+      String folderPath;
+      try {
+        await Directory(primaryPath).create(recursive: true);
         folderPath = primaryPath;
+      } on FileSystemException {
+        // Executable directory may be read-only in installed Windows builds;
+        // fall back to a user-writable application data directory.
+        final localAppData = Platform.environment['LOCALAPPDATA'];
+        if (localAppData != null && localAppData.isNotEmpty) {
+          final fallbackPath = p.join(
+            localAppData,
+            AppConstants.appName,
+            AppConstants.bundledToolsDirectory,
+            AppConstants.bundledFfmpegDirectory,
+            AppConstants.bundledWindowsDirectory,
+          );
+          await Directory(fallbackPath).create(recursive: true);
+          folderPath = fallbackPath;
+        } else {
+          folderPath = primaryPath;
+        }
       }
-    }
 
-    final result = await Process.run('explorer', [folderPath]);
-    // Explorer commonly returns exit code 1 even on success.
-    return result.exitCode == 0 || result.exitCode == 1;
+      final result = await Process.run('explorer', [folderPath]);
+      // Explorer commonly returns exit code 1 even on success.
+      return result.exitCode == 0 || result.exitCode == 1;
+    } on Exception {
+      return false;
+    }
   }
 
   String? _resolveBinary(String executableName) {

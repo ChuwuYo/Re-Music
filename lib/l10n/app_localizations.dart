@@ -593,19 +593,19 @@ abstract class AppLocalizations {
   /// No description provided for @navTranscode.
   ///
   /// In en, this message translates to:
-  /// **'Resample'**
+  /// **'Transcode'**
   String get navTranscode;
 
   /// No description provided for @transcodeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Resample'**
+  /// **'Transcode'**
   String get transcodeTitle;
 
   /// No description provided for @transcodeStart.
   ///
   /// In en, this message translates to:
-  /// **'Start resample'**
+  /// **'Start transcode'**
   String get transcodeStart;
 
   /// No description provided for @transcodeCompleted.

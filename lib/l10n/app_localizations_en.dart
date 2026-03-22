@@ -263,13 +263,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get artistSeparatorHint => 'Separator for multiple artists';
 
   @override
-  String get navTranscode => 'Resample';
+  String get navTranscode => 'Transcode';
 
   @override
-  String get transcodeTitle => 'Resample';
+  String get transcodeTitle => 'Transcode';
 
   @override
-  String get transcodeStart => 'Start resample';
+  String get transcodeStart => 'Start transcode';
 
   @override
   String transcodeCompleted(int count) {
