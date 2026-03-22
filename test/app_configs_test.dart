@@ -52,4 +52,99 @@ void main() {
       expect(json['sidebarExpanded'], isFalse);
     });
   });
+
+  group('AppConfigs transcode settings', () {
+    test('reads and serializes transcode fields', () {
+      final config = AppConfigs.fromJson({
+        'transcodeOutputFormat': 'mp3',
+        'transcodeLosslessPreset': 'studio24',
+        'transcodeMp3BitRateKbps': 256,
+        'allowFormatOnlyConversion': true,
+        'enableTranscodeDither': true,
+        'transcodeOutputMode': 'replaceOriginal',
+        'transcodeOutputDirectory': 'E:/Music/Out',
+        'transcodeConcurrency': 99,
+      });
+
+      expect(config.transcodeOutputFormat, TranscodeOutputFormat.mp3);
+      expect(config.transcodeLosslessPreset, TranscodeLosslessPreset.studio24);
+      expect(config.transcodeMp3BitRateKbps, 256);
+      expect(config.allowFormatOnlyConversion, isTrue);
+      expect(config.enableTranscodeDither, isTrue);
+      expect(config.transcodeOutputMode, TranscodeOutputMode.replaceOriginal);
+      expect(config.transcodeOutputDirectory, 'E:/Music/Out');
+      expect(config.transcodeConcurrency, AppConstants.transcodeConcurrencyMax);
+
+      final json = config.toJson();
+      expect(json['transcodeOutputFormat'], 'mp3');
+      expect(json['transcodeLosslessPreset'], 'studio24');
+      expect(json['transcodeMp3BitRateKbps'], 256);
+      expect(json['allowFormatOnlyConversion'], isTrue);
+      expect(json['enableTranscodeDither'], isTrue);
+      expect(json['transcodeOutputMode'], 'replaceOriginal');
+      expect(json['transcodeOutputDirectory'], 'E:/Music/Out');
+      expect(
+        json['transcodeConcurrency'],
+        AppConstants.transcodeConcurrencyMax,
+      );
+    });
+
+    test(
+      'falls back outputDirectory mode to default when directory is missing',
+      () {
+        final config = AppConfigs.fromJson({
+          'transcodeOutputMode': 'outputDirectory',
+        });
+        expect(
+          config.transcodeOutputMode,
+          AppConstants.defaultTranscodeOutputMode,
+        );
+      },
+    );
+
+    test('preserves outputDirectory mode when directory is present', () {
+      final config = AppConfigs.fromJson({
+        'transcodeOutputMode': 'outputDirectory',
+        'transcodeOutputDirectory': 'E:/Music/Out',
+      });
+      expect(config.transcodeOutputMode, TranscodeOutputMode.outputDirectory);
+      expect(config.transcodeOutputDirectory, 'E:/Music/Out');
+    });
+
+    test('reads and serializes transcode sort/filter fields', () {
+      final config = AppConfigs.fromJson({
+        'transcodeSortCriteria': 'format',
+        'transcodeSortAscending': false,
+        'transcodeFilter': 'ready',
+      });
+
+      expect(config.transcodeSortCriteria, 'format');
+      expect(config.transcodeSortAscending, isFalse);
+      expect(config.transcodeFilter, TranscodeItemFilter.ready);
+
+      final json = config.toJson();
+      expect(json['transcodeSortCriteria'], 'format');
+      expect(json['transcodeSortAscending'], isFalse);
+      expect(json['transcodeFilter'], 'ready');
+    });
+
+    test('falls back transcode sort/filter to defaults when missing', () {
+      final config = AppConfigs.fromJson({});
+
+      expect(
+        config.transcodeSortCriteria,
+        AppConstants.defaultTranscodeSortCriteria,
+      );
+      expect(config.transcodeSortAscending, AppConstants.defaultSortAscending);
+      expect(config.transcodeFilter, AppConstants.defaultTranscodeItemFilter);
+    });
+
+    test('falls back transcode sort criteria for invalid value', () {
+      final config = AppConfigs.fromJson({'transcodeSortCriteria': 'invalid'});
+      expect(
+        config.transcodeSortCriteria,
+        AppConstants.defaultTranscodeSortCriteria,
+      );
+    });
+  });
 }

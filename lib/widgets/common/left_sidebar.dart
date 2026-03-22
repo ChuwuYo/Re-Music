@@ -7,6 +7,7 @@ import '../../providers/audio_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/navigation_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/transcode_provider.dart';
 
 /// 左侧竖向工具栏：支持展开（图标+文字）和收起（仅图标）两种状态。
 /// 窗口宽度小于 [AppConstants.sidebarAutoCollapseWidth] 时自动收起。
@@ -106,6 +107,16 @@ class _LeftSidebarState extends State<LeftSidebar> {
                         .navigateTo(AppPage.home),
                   ),
 
+                  _SidebarItem(
+                    icon: Icons.graphic_eq,
+                    label: l10n.navTranscode,
+                    expanded: expanded,
+                    isActive: currentPage == AppPage.transcode,
+                    onPressed: () => context
+                        .read<NavigationController>()
+                        .navigateTo(AppPage.transcode),
+                  ),
+
                   const Spacer(),
 
                   const Divider(height: 1, indent: 8, endIndent: 8),
@@ -179,17 +190,29 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   ),
 
                   // ── 清空列表 ───────────────────────────────────────
-                  Consumer<AudioProvider>(
-                    builder: (context, provider, child) {
-                      return _SidebarItem(
-                        icon: Icons.delete_sweep_outlined,
-                        label: l10n.clearList,
-                        expanded: expanded,
-                        onPressed: provider.totalFilesCount == 0
-                            ? null
-                            : () => provider.clearFiles(),
-                      );
-                    },
+                  Consumer2<AudioProvider, TranscodeProvider>(
+                    builder:
+                        (context, audioProvider, transcodeProvider, child) {
+                          final isTranscodePage =
+                              currentPage == AppPage.transcode;
+                          final canClear = isTranscodePage
+                              ? transcodeProvider.totalFilesCount > 0
+                              : audioProvider.totalFilesCount > 0;
+                          return _SidebarItem(
+                            icon: Icons.delete_sweep_outlined,
+                            label: l10n.clearList,
+                            expanded: expanded,
+                            onPressed: !canClear
+                                ? null
+                                : () async {
+                                    if (isTranscodePage) {
+                                      await transcodeProvider.clearItems();
+                                    } else {
+                                      audioProvider.clearFiles();
+                                    }
+                                  },
+                          );
+                        },
                   ),
 
                   const SizedBox(height: 8),

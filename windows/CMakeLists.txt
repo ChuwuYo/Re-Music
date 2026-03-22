@@ -87,6 +87,43 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
+set(FFMPEG_BUNDLE_DIR
+  "${CMAKE_CURRENT_SOURCE_DIR}/../tools/ffmpeg/windows")
+
+# Developer-friendly default: local builds should not fail if bundled FFmpeg
+# files are absent. CI/release can opt into strict enforcement.
+option(REMUSIC_REQUIRE_BUNDLED_FFMPEG
+  "Fail configure when bundled ffmpeg.exe/ffprobe.exe are missing"
+  OFF)
+
+set(REMUSIC_FFMPEG_EXE "${FFMPEG_BUNDLE_DIR}/ffmpeg.exe")
+set(REMUSIC_FFPROBE_EXE "${FFMPEG_BUNDLE_DIR}/ffprobe.exe")
+
+set(REMUSIC_HAS_BUNDLED_FFMPEG TRUE)
+if(NOT EXISTS "${REMUSIC_FFMPEG_EXE}" OR NOT EXISTS "${REMUSIC_FFPROBE_EXE}")
+  set(REMUSIC_HAS_BUNDLED_FFMPEG FALSE)
+endif()
+
+if(REMUSIC_REQUIRE_BUNDLED_FFMPEG AND NOT REMUSIC_HAS_BUNDLED_FFMPEG)
+  message(FATAL_ERROR
+    "Bundled FFmpeg binaries are missing under ${FFMPEG_BUNDLE_DIR}. "
+    "Download/copy ffmpeg.exe and ffprobe.exe before building distributable artifacts.")
+endif()
+
+if(REMUSIC_HAS_BUNDLED_FFMPEG)
+  install(FILES "${REMUSIC_FFMPEG_EXE}"
+    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
+
+  install(FILES "${REMUSIC_FFPROBE_EXE}"
+    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
+else()
+  message(STATUS
+    "Bundled FFmpeg binaries not found at ${FFMPEG_BUNDLE_DIR}; "
+    "build will continue without packaging ffmpeg.exe/ffprobe.exe.")
+endif()
+
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"
@@ -106,3 +143,4 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+

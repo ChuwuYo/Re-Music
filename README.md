@@ -16,7 +16,7 @@
 
 ## Introduction
 
-**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata, music tag editing, online metadata retrieval (WIP), and audio resampling with format conversion (WIP).
+**Re:Music** is a native desktop audio file management tool built with Flutter. It supports batch renaming based on audio metadata, music tag editing, online metadata retrieval (WIP), and audio resampling with format conversion.
 
 ## Preview
 
@@ -32,7 +32,7 @@
 *   **Batch Renaming**: Supports reading audio metadata and provides flexible renaming rule configuration, including `{artist}` and `{albumArtist}` placeholders
 *   **Music Tag Editing**: Supports separate editing of track artist and album artist, with batch modification and saving capabilities
 *   **Online Metadata Retrieval (WIP)**: Fetch song tags and cover art from online sources
-*   **Audio Resampling (WIP)**: Lossless audio downsampling for improved compatibility.
+*   **Audio Resampling**: Audio resampling with format conversion, including lossless profile targets and MP3 output options.
 *   **File Management**: Supports drag-and-drop import of folders or files, file list filtering, and sorting
 *   **Personalization**: Built-in light and dark modes, hue slider theme tuning (MD3), and support for Chinese and English
 *   **Responsive Layout**: Left sidebar that auto-collapses when the window is narrow
@@ -108,6 +108,24 @@ Ensure your development environment has:
     ```bash
     flutter run -d windows
     ```
+
+### Common Commands
+
+#### Validation
+
+```bash
+dart format .
+flutter analyze
+flutter test
+```
+
+#### Dependencies and Localization
+
+```bash
+flutter pub get
+flutter pub outdated
+flutter gen-l10n
+```
 
 ### Build and Release
 

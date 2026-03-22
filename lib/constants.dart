@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 应用常量定义
 /// 集中管理项目中的所有常量，提高代码可维护性
-
 class AppConstants {
   AppConstants._();
 
@@ -18,6 +17,18 @@ class AppConstants {
     'opus',
     'dsf',
     'dff',
+  ];
+
+  /// 支持转码探测/输入的音频文件扩展名
+  static const List<String> supportedTranscodeInputExtensions = [
+    'mp3',
+    'flac',
+    'wav',
+    'm4a',
+    'aac',
+    'ogg',
+    'opus',
+    'wma',
   ];
 
   /// 预定义的命名模式
@@ -43,6 +54,13 @@ class AppConstants {
 
   /// 默认排序顺序（升序）
   static const bool defaultSortAscending = true;
+
+  /// 默认转码排序标准
+  static const String defaultTranscodeSortCriteria = 'name';
+
+  /// 默认转码筛选器
+  static const TranscodeItemFilter defaultTranscodeItemFilter =
+      TranscodeItemFilter.all;
 
   /// 文件名非法字符正则表达式
   static final RegExp invalidFilenameChars = RegExp(r'[\\/:*?"<>|]');
@@ -112,6 +130,47 @@ class AppConstants {
   static const FileAddMode defaultSingleFileAddMode = FileAddMode.append;
   static const FileAddMode defaultDirectoryAddMode = FileAddMode.append;
 
+  /// 默认转码设置
+  static const TranscodeOutputFormat defaultTranscodeOutputFormat =
+      TranscodeOutputFormat.flac;
+  static const TranscodeLosslessPreset defaultTranscodeLosslessPreset =
+      TranscodeLosslessPreset.cd16;
+  static const int defaultTranscodeMp3BitRateKbps = 320;
+  static const bool defaultAllowFormatOnlyConversion = false;
+  static const bool defaultEnableTranscodeDither = false;
+  static const TranscodeOutputMode defaultTranscodeOutputMode =
+      TranscodeOutputMode.keepOriginal;
+  static const int transcodeConcurrencyMin = 1;
+  static const int transcodeConcurrencyMax = 5;
+  static const int defaultTranscodeConcurrency = 2;
+  static const List<int> transcodeMp3BitRateOptions = [128, 192, 256, 320];
+
+  /// 转码工具打包相关
+  static const String bundledToolsDirectory = 'tools';
+  static const String bundledFfmpegDirectory = 'ffmpeg';
+  static const String bundledWindowsDirectory = 'windows';
+  static const String ffmpegExecutableName = 'ffmpeg.exe';
+  static const String ffprobeExecutableName = 'ffprobe.exe';
+  static const String replaceTempFileMarker = '.remusic-transcoding';
+  static const String ffmpegWindowsDownloadUrl =
+      'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z';
+  static const String logsDirectoryName = 'logs';
+  static const String probeErrorLogFileName = 'probe_errors.log';
+  static const String transcodeErrorLogFileName = 'transcode_errors.log';
+
+  /// 转码跳过原因 key
+  static const String transcodeSkipLossyToLossless =
+      'transcodeSkipLossyToLossless';
+  static const String transcodeSkipAlreadyCompliantLossless =
+      'transcodeSkipAlreadyCompliantLossless';
+  static const String transcodeSkipAlreadyCompliantMp3 =
+      'transcodeSkipAlreadyCompliantMp3';
+  static const String transcodeSkipUnsupportedSourceFormat =
+      'transcodeSkipUnsupportedSourceFormat';
+  static const String transcodeSkipNoOutputDirectory =
+      'transcodeSkipNoOutputDirectory';
+  static const String transcodeSkipBinaryMissing = 'transcodeSkipBinaryMissing';
+
   /// 窗口配置
   static const double defaultWindowWidth = 1440;
   static const double defaultWindowHeight = 900;
@@ -143,6 +202,9 @@ class AppConstants {
 
   /// 元数据并发读取数量上限
   static const int metadataConcurrency = 8;
+
+  /// 转码探测并发数量上限
+  static const int transcodeProbeConcurrency = 4;
 
   /// 设置相关常量
   static const String settingsFileName = 'remusic.settings.json';
@@ -238,4 +300,42 @@ enum FileAddMode { append, replace }
 enum ProcessingStatus { pending, success, error }
 
 /// 应用页面枚举
-enum AppPage { home, settings }
+enum AppPage { home, transcode, settings }
+
+/// 转码输出格式
+enum TranscodeOutputFormat { flac, wav, alac, mp3 }
+
+/// 无损输出目标规格
+enum TranscodeLosslessPreset {
+  studio24,
+  cd24,
+  cd16;
+
+  int get sampleRate => switch (this) {
+    TranscodeLosslessPreset.studio24 => 48000,
+    TranscodeLosslessPreset.cd24 || TranscodeLosslessPreset.cd16 => 44100,
+  };
+
+  int get bitDepth => switch (this) {
+    TranscodeLosslessPreset.studio24 || TranscodeLosslessPreset.cd24 => 24,
+    TranscodeLosslessPreset.cd16 => 16,
+  };
+}
+
+/// 转码输出策略
+enum TranscodeOutputMode { keepOriginal, replaceOriginal, outputDirectory }
+
+/// 转码任务状态
+enum TranscodeItemStatus {
+  pending,
+  probing,
+  ready,
+  skipped,
+  queued,
+  running,
+  success,
+  error,
+}
+
+/// 转码列表筛选器
+enum TranscodeItemFilter { all, ready, skipped, success, error }

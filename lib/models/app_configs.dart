@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../constants.dart';
 
 class AppConfigs {
@@ -13,6 +14,17 @@ class AppConfigs {
   final FileAddMode singleFileAddMode;
   final FileAddMode directoryAddMode;
   final bool sidebarExpanded;
+  final TranscodeOutputFormat transcodeOutputFormat;
+  final TranscodeLosslessPreset transcodeLosslessPreset;
+  final int transcodeMp3BitRateKbps;
+  final bool allowFormatOnlyConversion;
+  final bool enableTranscodeDither;
+  final TranscodeOutputMode transcodeOutputMode;
+  final String? transcodeOutputDirectory;
+  final int transcodeConcurrency;
+  final String transcodeSortCriteria;
+  final bool transcodeSortAscending;
+  final TranscodeItemFilter transcodeFilter;
 
   const AppConfigs({
     required this.locale,
@@ -26,6 +38,17 @@ class AppConfigs {
     required this.singleFileAddMode,
     required this.directoryAddMode,
     required this.sidebarExpanded,
+    required this.transcodeOutputFormat,
+    required this.transcodeLosslessPreset,
+    required this.transcodeMp3BitRateKbps,
+    required this.allowFormatOnlyConversion,
+    required this.enableTranscodeDither,
+    required this.transcodeOutputMode,
+    required this.transcodeOutputDirectory,
+    required this.transcodeConcurrency,
+    required this.transcodeSortCriteria,
+    required this.transcodeSortAscending,
+    required this.transcodeFilter,
   });
 
   static AppConfigs defaults() {
@@ -41,6 +64,17 @@ class AppConfigs {
       singleFileAddMode: AppConstants.defaultSingleFileAddMode,
       directoryAddMode: AppConstants.defaultDirectoryAddMode,
       sidebarExpanded: AppConstants.defaultSidebarExpanded,
+      transcodeOutputFormat: AppConstants.defaultTranscodeOutputFormat,
+      transcodeLosslessPreset: AppConstants.defaultTranscodeLosslessPreset,
+      transcodeMp3BitRateKbps: AppConstants.defaultTranscodeMp3BitRateKbps,
+      allowFormatOnlyConversion: AppConstants.defaultAllowFormatOnlyConversion,
+      enableTranscodeDither: AppConstants.defaultEnableTranscodeDither,
+      transcodeOutputMode: AppConstants.defaultTranscodeOutputMode,
+      transcodeOutputDirectory: null,
+      transcodeConcurrency: AppConstants.defaultTranscodeConcurrency,
+      transcodeSortCriteria: AppConstants.defaultTranscodeSortCriteria,
+      transcodeSortAscending: AppConstants.defaultSortAscending,
+      transcodeFilter: AppConstants.defaultTranscodeItemFilter,
     );
   }
 
@@ -48,7 +82,7 @@ class AppConfigs {
     final locale = json['locale'];
     final themeModeRaw = json['themeMode'];
     final themeHueRaw = json['themeHue'];
-    final seedColorRaw = json['seedColor']; // legacy field
+    final seedColorRaw = json['seedColor'];
     final sortCriteriaRaw = json['sortCriteria'];
     final sortAscendingRaw = json['sortAscending'];
     final pattern = json['pattern'];
@@ -57,6 +91,17 @@ class AppConfigs {
     final singleFileAddModeRaw = json['singleFileAddMode'];
     final directoryAddModeRaw = json['directoryAddMode'];
     final sidebarExpandedRaw = json['sidebarExpanded'];
+    final transcodeOutputFormatRaw = json['transcodeOutputFormat'];
+    final transcodeLosslessPresetRaw = json['transcodeLosslessPreset'];
+    final transcodeMp3BitRateKbpsRaw = json['transcodeMp3BitRateKbps'];
+    final allowFormatOnlyConversionRaw = json['allowFormatOnlyConversion'];
+    final enableTranscodeDitherRaw = json['enableTranscodeDither'];
+    final transcodeOutputModeRaw = json['transcodeOutputMode'];
+    final transcodeOutputDirectoryRaw = json['transcodeOutputDirectory'];
+    final transcodeConcurrencyRaw = json['transcodeConcurrency'];
+    final transcodeSortCriteriaRaw = json['transcodeSortCriteria'];
+    final transcodeSortAscendingRaw = json['transcodeSortAscending'];
+    final transcodeFilterRaw = json['transcodeFilter'];
 
     return AppConfigs(
       locale: locale is String && locale.isNotEmpty ? locale : null,
@@ -82,6 +127,36 @@ class AppConfigs {
       sidebarExpanded: sidebarExpandedRaw is bool
           ? sidebarExpandedRaw
           : AppConstants.defaultSidebarExpanded,
+      transcodeOutputFormat: _parseTranscodeOutputFormat(
+        transcodeOutputFormatRaw,
+      ),
+      transcodeLosslessPreset: _parseTranscodeLosslessPreset(
+        transcodeLosslessPresetRaw,
+      ),
+      transcodeMp3BitRateKbps: _parseTranscodeMp3BitRateKbps(
+        transcodeMp3BitRateKbpsRaw,
+      ),
+      allowFormatOnlyConversion: allowFormatOnlyConversionRaw is bool
+          ? allowFormatOnlyConversionRaw
+          : AppConstants.defaultAllowFormatOnlyConversion,
+      enableTranscodeDither: enableTranscodeDitherRaw is bool
+          ? enableTranscodeDitherRaw
+          : AppConstants.defaultEnableTranscodeDither,
+      transcodeOutputMode: _parseSafeTranscodeOutputMode(
+        transcodeOutputModeRaw,
+        transcodeOutputDirectoryRaw,
+      ),
+      transcodeOutputDirectory: _parseTranscodeOutputDirectory(
+        transcodeOutputDirectoryRaw,
+      ),
+      transcodeConcurrency: _parseTranscodeConcurrency(transcodeConcurrencyRaw),
+      transcodeSortCriteria: _parseTranscodeSortCriteria(
+        transcodeSortCriteriaRaw,
+      ),
+      transcodeSortAscending: transcodeSortAscendingRaw is bool
+          ? transcodeSortAscendingRaw
+          : AppConstants.defaultSortAscending,
+      transcodeFilter: _parseTranscodeFilter(transcodeFilterRaw),
     );
   }
 
@@ -98,6 +173,17 @@ class AppConfigs {
       'singleFileAddMode': singleFileAddMode.name,
       'directoryAddMode': directoryAddMode.name,
       'sidebarExpanded': sidebarExpanded,
+      'transcodeOutputFormat': transcodeOutputFormat.name,
+      'transcodeLosslessPreset': transcodeLosslessPreset.name,
+      'transcodeMp3BitRateKbps': transcodeMp3BitRateKbps,
+      'allowFormatOnlyConversion': allowFormatOnlyConversion,
+      'enableTranscodeDither': enableTranscodeDither,
+      'transcodeOutputMode': transcodeOutputMode.name,
+      'transcodeOutputDirectory': transcodeOutputDirectory,
+      'transcodeConcurrency': transcodeConcurrency,
+      'transcodeSortCriteria': transcodeSortCriteria,
+      'transcodeSortAscending': transcodeSortAscending,
+      'transcodeFilter': transcodeFilter.name,
     };
   }
 
@@ -193,6 +279,103 @@ class AppConfigs {
     return AppConstants.defaultArtistSeparator;
   }
 
+  static TranscodeOutputFormat _parseTranscodeOutputFormat(Object? raw) {
+    if (raw is String) {
+      for (final v in TranscodeOutputFormat.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return AppConstants.defaultTranscodeOutputFormat;
+  }
+
+  static TranscodeLosslessPreset _parseTranscodeLosslessPreset(Object? raw) {
+    if (raw is String) {
+      for (final v in TranscodeLosslessPreset.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return AppConstants.defaultTranscodeLosslessPreset;
+  }
+
+  static int _parseTranscodeMp3BitRateKbps(Object? raw) {
+    final parsed = switch (raw) {
+      int value => value,
+      num value => value.round(),
+      String value => int.tryParse(value),
+      _ => null,
+    };
+    if (parsed != null &&
+        AppConstants.transcodeMp3BitRateOptions.contains(parsed)) {
+      return parsed;
+    }
+    return AppConstants.defaultTranscodeMp3BitRateKbps;
+  }
+
+  static TranscodeOutputMode _parseTranscodeOutputMode(Object? raw) {
+    if (raw is String) {
+      for (final v in TranscodeOutputMode.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return AppConstants.defaultTranscodeOutputMode;
+  }
+
+  static TranscodeOutputMode _parseSafeTranscodeOutputMode(
+    Object? raw,
+    Object? directoryRaw,
+  ) {
+    final mode = _parseTranscodeOutputMode(raw);
+    if (mode == TranscodeOutputMode.outputDirectory &&
+        _parseTranscodeOutputDirectory(directoryRaw) == null) {
+      return AppConstants.defaultTranscodeOutputMode;
+    }
+    return mode;
+  }
+
+  static String? _parseTranscodeOutputDirectory(Object? raw) {
+    if (raw is! String) return null;
+    final trimmed = raw.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  static int _parseTranscodeConcurrency(Object? raw) {
+    final parsed = switch (raw) {
+      int value => value,
+      num value => value.round(),
+      String value => int.tryParse(value),
+      _ => null,
+    };
+    if (parsed == null) return AppConstants.defaultTranscodeConcurrency;
+    return parsed
+        .clamp(
+          AppConstants.transcodeConcurrencyMin,
+          AppConstants.transcodeConcurrencyMax,
+        )
+        .toInt();
+  }
+
+  static String _parseTranscodeSortCriteria(Object? raw) {
+    if (raw is String) {
+      switch (raw) {
+        case 'name':
+        case 'format':
+        case 'sampleRate':
+        case 'status':
+          return raw;
+      }
+    }
+    return AppConstants.defaultTranscodeSortCriteria;
+  }
+
+  static TranscodeItemFilter _parseTranscodeFilter(Object? raw) {
+    if (raw is String) {
+      for (final v in TranscodeItemFilter.values) {
+        if (v.name == raw) return v;
+      }
+    }
+    return AppConstants.defaultTranscodeItemFilter;
+  }
+
   @override
   bool operator ==(Object other) {
     return other is AppConfigs &&
@@ -206,11 +389,22 @@ class AppConfigs {
         other.artistSeparator == artistSeparator &&
         other.singleFileAddMode == singleFileAddMode &&
         other.directoryAddMode == directoryAddMode &&
-        other.sidebarExpanded == sidebarExpanded;
+        other.sidebarExpanded == sidebarExpanded &&
+        other.transcodeOutputFormat == transcodeOutputFormat &&
+        other.transcodeLosslessPreset == transcodeLosslessPreset &&
+        other.transcodeMp3BitRateKbps == transcodeMp3BitRateKbps &&
+        other.allowFormatOnlyConversion == allowFormatOnlyConversion &&
+        other.enableTranscodeDither == enableTranscodeDither &&
+        other.transcodeOutputMode == transcodeOutputMode &&
+        other.transcodeOutputDirectory == transcodeOutputDirectory &&
+        other.transcodeConcurrency == transcodeConcurrency &&
+        other.transcodeSortCriteria == transcodeSortCriteria &&
+        other.transcodeSortAscending == transcodeSortAscending &&
+        other.transcodeFilter == transcodeFilter;
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     locale,
     themeMode,
     themeHue,
@@ -222,5 +416,16 @@ class AppConfigs {
     singleFileAddMode,
     directoryAddMode,
     sidebarExpanded,
-  );
+    transcodeOutputFormat,
+    transcodeLosslessPreset,
+    transcodeMp3BitRateKbps,
+    allowFormatOnlyConversion,
+    enableTranscodeDither,
+    transcodeOutputMode,
+    transcodeOutputDirectory,
+    transcodeConcurrency,
+    transcodeSortCriteria,
+    transcodeSortAscending,
+    transcodeFilter,
+  ]);
 }

@@ -74,7 +74,6 @@
   "metadataTitle": "Title",
   "metadataTrackArtist": "Track artist",
   "metadataAlbumArtist": "Album artist",
-  "metadataArtist": "Artist",
   "metadataAlbum": "Album",
   "metadataTrackNumber": "Track No.",
   "metadataTrackTotal": "Total tracks",
@@ -102,5 +101,88 @@
   "addModeAppend": "Append to list",
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
-  "artistSeparatorHint": "Separator for multiple artists"
+  "navTranscode": "Transcode",
+  "transcodeTitle": "Transcode",
+  "transcodeStart": "Start transcode",
+  "transcodeCompleted": "Done! Processed {count} files",
+  "@transcodeCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeProgress": "Processing... {percent}%",
+  "@transcodeProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeTotalFiles": "Total {count} tasks",
+  "@transcodeTotalFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeEmptyTitle": "Add audio files to start transcoding",
+  "transcodeEmptySubtitle": "Probe results, skip reasons, and output paths will appear here",
+  "transcodeOutputFormat": "Output format",
+  "transcodePreset": "Lossless preset",
+  "transcodeMp3Bitrate": "MP3 bitrate",
+  "transcodeAllowFormatOnly": "Convert files that only need a format change",
+  "transcodeEnableDither": "Enable triangular dither",
+  "transcodeEnableDitherSubtitle": "Reduces quantization noise when lowering bit depth",
+  "transcodeConcurrency": "Concurrency",
+  "transcodeKeepOriginal": "Keep original",
+  "transcodeReplaceOriginal": "Replace original",
+  "transcodeOutputDirectory": "Output directory",
+  "transcodeChooseOutputDirectory": "Choose output folder",
+  "transcodeOutputDirectoryRequired": "Choose an output folder first",
+  "transcodeFormatFlac": "FLAC",
+  "transcodeFormatWav": "WAV",
+  "transcodeFormatAlac": "ALAC (.m4a)",
+  "transcodeFormatMp3": "MP3",
+  "transcodePresetStudio24": "48kHz / 24bit",
+  "transcodePresetCd24": "44.1kHz / 24bit",
+  "transcodePresetCd16": "44.1kHz / 16bit",
+  "transcodeTaskTarget": "Target",
+  "transcodeTaskOutput": "Output",
+  "transcodeTaskUnknownOutput": "Pending output path",
+  "transcodeTaskUnknownProbe": "Probe pending",
+  "transcodeStatusProbing": "Probing",
+  "transcodeStatusReady": "Ready",
+  "transcodeStatusSkipped": "Skipped",
+  "transcodeStatusQueued": "Queued",
+  "transcodeStatusRunning": "Running",
+  "transcodeStatusSuccess": "Success",
+  "transcodeStatusError": "Error",
+  "transcodeSkipLossyToLossless": "Lossy input cannot be converted to a lossless target",
+  "transcodeSkipAlreadyCompliantLossless": "Already within the target lossless spec",
+  "transcodeSkipAlreadyCompliantMp3": "Already matches the target MP3 sample rate and bitrate",
+  "transcodeSkipUnsupportedSourceFormat": "Source format is not supported for transcoding",
+  "transcodeSkipNoOutputDirectory": "Output folder is required for this output mode",
+  "transcodeSkipBinaryMissing": "FFmpeg binaries are missing",
+  "transcodeOpenDownloadPage": "Open FFmpeg download page",
+  "transcodeOpenDownloadPageSuccess": "FFmpeg download page opened",
+  "transcodeOpenDownloadPageFailed": "Failed to open FFmpeg download page",
+  "transcodeOpenBinaryFolder": "Open FFmpeg folder",
+  "transcodeOpenBinaryFolderSuccess": "FFmpeg folder opened",
+  "transcodeOpenBinaryFolderFailed": "Failed to open FFmpeg folder",
+  "transcodeShowAll": "Show all",
+  "transcodeShowReady": "Only show ready",
+  "transcodeShowSkipped": "Only show skipped",
+  "transcodeShowSuccess": "Only show success",
+  "transcodeShowError": "Only show errors",
+  "transcodeSortByName": "By file name",
+  "transcodeSortByFormat": "By format",
+  "transcodeSortBySampleRate": "By sample rate",
+  "transcodeSortByStatus": "By status",
+  "transcodeNoMatchTitle": "No tasks match the current filter",
+  "transcodeNoMatchSubtitle": "Adjust the filter to see your tasks",
+  "transcodeSettings": "Transcode settings"
 }
+

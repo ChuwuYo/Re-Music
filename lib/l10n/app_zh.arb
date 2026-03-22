@@ -74,7 +74,6 @@
   "metadataTitle": "标题",
   "metadataTrackArtist": "曲目艺术家",
   "metadataAlbumArtist": "专辑艺术家",
-  "metadataArtist": "艺术家",
   "metadataAlbum": "专辑",
   "metadataTrackNumber": "音轨号",
   "metadataTrackTotal": "总音轨数",
@@ -102,5 +101,88 @@
   "addModeAppend": "叠加到列表",
   "addModeReplace": "替换现有列表",
   "artistSeparator": "艺术家分隔符",
-  "artistSeparatorHint": "多个艺术家时使用的分隔符"
+  "navTranscode": "转码",
+  "transcodeTitle": "转码",
+  "transcodeStart": "开始转码",
+  "transcodeCompleted": "完成！成功处理 {count} 个文件",
+  "@transcodeCompleted": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeProgress": "处理中... {percent}%",
+  "@transcodeProgress": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeTotalFiles": "共 {count} 个任务",
+  "@transcodeTotalFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcodeEmptyTitle": "添加音频文件后即可开始转码",
+  "transcodeEmptySubtitle": "这里会显示探测结果、跳过原因和输出路径",
+  "transcodeOutputFormat": "输出格式",
+  "transcodePreset": "无损规格",
+  "transcodeMp3Bitrate": "MP3 比特率",
+  "transcodeAllowFormatOnly": "也转换仅需换格式的文件",
+  "transcodeEnableDither": "启用三角概率密度抖动",
+  "transcodeEnableDitherSubtitle": "降低位深时减少量化噪声",
+  "transcodeConcurrency": "并发数",
+  "transcodeKeepOriginal": "保留原文件",
+  "transcodeReplaceOriginal": "替换原文件",
+  "transcodeOutputDirectory": "输出到目录",
+  "transcodeChooseOutputDirectory": "选择输出目录",
+  "transcodeOutputDirectoryRequired": "请先选择输出目录",
+  "transcodeFormatFlac": "FLAC",
+  "transcodeFormatWav": "WAV",
+  "transcodeFormatAlac": "ALAC (.m4a)",
+  "transcodeFormatMp3": "MP3",
+  "transcodePresetStudio24": "48kHz / 24bit",
+  "transcodePresetCd24": "44.1kHz / 24bit",
+  "transcodePresetCd16": "44.1kHz / 16bit",
+  "transcodeTaskTarget": "目标",
+  "transcodeTaskOutput": "输出",
+  "transcodeTaskUnknownOutput": "输出路径待确定",
+  "transcodeTaskUnknownProbe": "等待探测",
+  "transcodeStatusProbing": "探测中",
+  "transcodeStatusReady": "就绪",
+  "transcodeStatusSkipped": "已跳过",
+  "transcodeStatusQueued": "排队中",
+  "transcodeStatusRunning": "处理中",
+  "transcodeStatusSuccess": "成功",
+  "transcodeStatusError": "失败",
+  "transcodeSkipLossyToLossless": "有损输入不能转为无损目标",
+  "transcodeSkipAlreadyCompliantLossless": "已符合目标无损规格",
+  "transcodeSkipAlreadyCompliantMp3": "已符合目标 MP3 采样率和比特率",
+  "transcodeSkipUnsupportedSourceFormat": "该源格式暂不支持转码",
+  "transcodeSkipNoOutputDirectory": "当前输出模式必须先选择输出目录",
+  "transcodeSkipBinaryMissing": "缺少 FFmpeg 二进制文件",
+  "transcodeOpenDownloadPage": "打开 FFmpeg 下载页面",
+  "transcodeOpenDownloadPageSuccess": "已打开 FFmpeg 下载页面",
+  "transcodeOpenDownloadPageFailed": "打开 FFmpeg 下载页面失败",
+  "transcodeOpenBinaryFolder": "打开 FFmpeg 文件夹",
+  "transcodeOpenBinaryFolderSuccess": "已打开 FFmpeg 文件夹",
+  "transcodeOpenBinaryFolderFailed": "打开 FFmpeg 文件夹失败",
+  "transcodeShowAll": "显示全部",
+  "transcodeShowReady": "仅显示就绪",
+  "transcodeShowSkipped": "仅显示已跳过",
+  "transcodeShowSuccess": "仅显示成功",
+  "transcodeShowError": "仅显示失败",
+  "transcodeSortByName": "按文件名",
+  "transcodeSortByFormat": "按格式",
+  "transcodeSortBySampleRate": "按采样率",
+  "transcodeSortByStatus": "按状态",
+  "transcodeNoMatchTitle": "没有符合当前筛选的任务",
+  "transcodeNoMatchSubtitle": "请调整筛选条件后再查看",
+  "transcodeSettings": "转码设置"
 }
+

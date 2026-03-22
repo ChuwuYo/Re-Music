@@ -86,7 +86,19 @@ lib/
 - Template: `app_en.arb`
 - Supported locales: `en`, `zh`
 - Config: `l10n.yaml`
+- After changing ARB files, run `flutter gen-l10n`.
 - Access translations via `AppLocalizations.of(context)!.keyName`.
+
+## Configuration Persistence
+
+- All user-facing settings and preferences must be persisted via `AppConfigs`.
+- When adding a new setting or option to any provider:
+  1. Add the field to `lib/models/app_configs.dart` (class field, constructor, `defaults()`, `fromJson`, `toJson`, `==`, `hashCode`).
+  2. Add a safe parser (e.g. `_parseFoo`) with fallback to the default constant.
+  3. Load the value in `main.dart`'s `applySettings` block (call the provider's setter).
+  4. Include the value in `currentConfigsSnapshot()`.
+  5. Add or update tests in `test/app_configs_test.dart`.
+- Runtime-only state (e.g. `_isBusy`, `_progress`, `_items`, `_binaryPaths`) must **not** be persisted.
 
 This file contains only mandatory rules. For descriptive information, see README.md.
 When creating or modifying code, run the mandatory commands above before commit/PR and final handoff.
