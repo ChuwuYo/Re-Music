@@ -12,16 +12,15 @@ class FileService {
   static Future<List<String>> pickFiles({
     List<String>? allowedExtensions,
   }) async {
-    final result = await FilePicker.platform.pickFiles(
+    final files = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: allowedExtensions ?? supportedExtensions,
-      allowMultiple: true,
     );
-    return result?.paths.whereType<String>().toList() ?? [];
+    return files.map((f) => f.path).whereType<String>().toList();
   }
 
   static Future<String?> pickDirectory() async {
-    return FilePicker.platform.getDirectoryPath();
+    return FilePicker.getDirectoryPath();
   }
 
   static Future<bool> isDirectory(String path) async {

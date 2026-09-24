@@ -185,6 +185,11 @@ class MetadataService {
             trackArtists: ArtistNameService.splitArtists(metadata.artist),
           );
           break;
+        case ApeMetadata metadata:
+          structuredArtists = _buildStructuredArtists(
+            trackArtists: ArtistNameService.splitArtists(metadata.artist),
+          );
+          break;
       }
 
       return {
