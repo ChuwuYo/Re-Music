@@ -204,7 +204,10 @@ class VorbisArtistTagParser {
       offset += 4;
       if (!ensureLength(commentLength)) break;
 
-      final comment = utf8.decode(data.sublist(offset, offset + commentLength));
+      final comment = utf8.decode(
+        data.sublist(offset, offset + commentLength),
+        allowMalformed: true,
+      );
       offset += commentLength;
 
       final separatorIndex = comment.indexOf('=');

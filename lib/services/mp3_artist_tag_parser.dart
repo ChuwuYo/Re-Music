@@ -63,8 +63,11 @@ class Mp3ArtistTagParser {
         final extendedHeaderSize = majorVersion == 4
             ? _decodeSyncSafeInt(extendedHeaderBytes)
             : _decodeBigEndianInt(extendedHeaderBytes);
-        reader.setPositionSync(10 + extendedHeaderSize);
-        offset = 10 + extendedHeaderSize;
+        final extendedHeaderTotalSize = majorVersion == 4
+            ? extendedHeaderSize
+            : 4 + extendedHeaderSize;
+        reader.setPositionSync(10 + extendedHeaderTotalSize);
+        offset = 10 + extendedHeaderTotalSize;
       }
 
       while (offset + 10 <= tagEnd) {
@@ -171,21 +174,22 @@ class Mp3ArtistTagParser {
       final unsynchronization = (formatFlags & 0x02) != 0;
       final dataLengthIndicator = (formatFlags & 0x01) != 0;
 
+      if (encryption) return null;
+
       if (groupingIdentity) offset += 1;
-      if (encryption) offset += 1;
       if (dataLengthIndicator) offset += 4;
       if (offset > bytes.length) return null;
 
       var payload = Uint8List.fromList(bytes.sublist(offset));
+      if (unsynchronization || tagUnsynchronization) {
+        payload = _removeUnsynchronization(payload);
+      }
       if (compression) {
         try {
           payload = Uint8List.fromList(ZLibDecoder().convert(payload));
         } catch (_) {
           return null;
         }
-      }
-      if (unsynchronization || tagUnsynchronization) {
-        payload = _removeUnsynchronization(payload);
       }
       return payload;
     }
@@ -195,21 +199,22 @@ class Mp3ArtistTagParser {
       final encryption = (formatFlags & 0x40) != 0;
       final groupingIdentity = (formatFlags & 0x20) != 0;
 
+      if (encryption) return null;
+
       if (compression) offset += 4;
-      if (encryption) offset += 1;
       if (groupingIdentity) offset += 1;
       if (offset > bytes.length) return null;
 
       var payload = Uint8List.fromList(bytes.sublist(offset));
+      if (tagUnsynchronization) {
+        payload = _removeUnsynchronization(payload);
+      }
       if (compression) {
         try {
           payload = Uint8List.fromList(ZLibDecoder().convert(payload));
         } catch (_) {
           return null;
         }
-      }
-      if (tagUnsynchronization) {
-        payload = _removeUnsynchronization(payload);
       }
       return payload;
     }
