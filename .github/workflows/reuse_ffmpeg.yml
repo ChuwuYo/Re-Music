@@ -3,11 +3,11 @@
 # This workflow automatically copies the most recent `ffmpeg.zip`
 # asset from a previous release (if any) to the newly published release.
 # It works for releases created via the GitHub UI, via `git tag`/`git push`,
-# and also when an existing release is edited (e.g., tag changed) or
-# a draft is published again.
+# and also when an existing release is edited or re‑published.
 
 # Enhancements:
-# • Uses the official `actions/upload-release-asset` action.
+# • Uses `gh release upload` (gh CLI) instead of the deprecated
+#   actions/upload-release-asset@v1 which has a known "Bad credentials" bug.
 # • Prints useful debug information.
 # • Safely skips processing when no prior `ffmpeg.zip` exists.
 # • Runs on GitHub‑hosted `ubuntu-latest` (includes the `gh` CLI).
@@ -19,59 +19,60 @@ permissions:
 
 on:
   release:
-    types: [published, edited, released]   # trigger on publish, edit, and re‑publish
+    types: [published, edited, released]
 
 jobs:
   reuse-ffmpeg:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout repository (needed for actions)
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Determine current release ID
         id: current
         run: |
-          echo "Current release ID: $(jq -r '.release.id' "$GITHUB_EVENT_PATH")"
-          echo "release_id=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")" >> $GITHUB_OUTPUT
+          RELEASE_ID=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")
+          TAG_NAME=$(jq -r '.release.tag_name' "$GITHUB_EVENT_PATH")
+          echo "Current release ID: $RELEASE_ID  tag: $TAG_NAME"
+          echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
 
       - name: Find previous release that contains ffmpeg.zip
         id: previous
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PREV_RELEASE=$(gh api repos/${{ github.repository }}/releases \
+          PREV_ID=$(gh api repos/${{ github.repository }}/releases \
             --jq ".[] | select(.id != ${{ steps.current.outputs.release_id }} and (.assets[]?.name == \"ffmpeg.zip\")) | .id" \
             | head -n1)
-          if [ -z "$PREV_RELEASE" ]; then
+          if [ -z "$PREV_ID" ]; then
+            echo "No previous release with ffmpeg.zip found. Skipping."
             echo "found=false" >> $GITHUB_OUTPUT
-            echo "No previous release with ffmpeg.zip found. Skipping further steps."
             exit 0
           fi
+          echo "Found previous release ID: $PREV_ID"
           echo "found=true" >> $GITHUB_OUTPUT
-          echo "prev_id=$PREV_RELEASE" >> $GITHUB_OUTPUT
+          echo "prev_id=$PREV_ID" >> $GITHUB_OUTPUT
 
       - name: Download ffmpeg.zip from previous release
         if: steps.previous.outputs.found == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/${{ steps.previous.outputs.prev_id }} \
             --jq ".assets[] | select(.name == \"ffmpeg.zip\") | .browser_download_url")
-          echo "Downloading ffmpeg.zip from $DOWNLOAD_URL"
-          curl -L -H "Authorization: token $GITHUB_TOKEN" -o ffmpeg.zip "$DOWNLOAD_URL"
+          echo "Downloading ffmpeg.zip from: $DOWNLOAD_URL"
+          curl -L -H "Authorization: token $GH_TOKEN" -o ffmpeg.zip "$DOWNLOAD_URL"
+          echo "Downloaded $(du -sh ffmpeg.zip | cut -f1)"
 
-      - name: Upload ffmpeg.zip to the new release
+      - name: Upload ffmpeg.zip to current release
         if: steps.previous.outputs.found == 'true'
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./ffmpeg.zip
-          asset_name: ffmpeg.zip
-          asset_content_type: application/zip
+        run: |
+          gh release upload "${{ steps.current.outputs.tag_name }}" ffmpeg.zip \
+            --repo ${{ github.repository }} \
+            --clobber
 
-      - name: Final debug output
+      - name: Debug summary
         run: |
           echo "--- Workflow completed ---"
-          echo "Current release: ${{ steps.current.outputs.release_id }}"
+          echo "Current release tag:         ${{ steps.current.outputs.tag_name }}"
           echo "Previous release with ffmpeg: ${{ steps.previous.outputs.prev_id }}"
-          echo "Was ffmpeg copied? ${{ steps.previous.outputs.found }}"
+          echo "ffmpeg copied?               ${{ steps.previous.outputs.found }}"
