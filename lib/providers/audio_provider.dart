@@ -197,8 +197,8 @@ class AudioProvider extends ChangeNotifier {
     required String trackTotal,
     required String year,
     required String genre,
-    required String language,
     required String comment,
+    String? language,
     int? discNumber,
     int? discTotal,
     double? bpm,
@@ -227,7 +227,9 @@ class AudioProvider extends ChangeNotifier {
         discNumber: discNumber,
         discTotal: discTotal,
         bpm: bpm,
-        lyrics: _normalizeNullableText(lyrics),
+        lyrics: lyrics != null
+            ? _normalizeNullableText(lyrics)
+            : existingTags?.lyrics,
         year: _parseInt(year),
         genre: _normalizeText(genre),
         pictures: existingTags?.pictures ?? [],
@@ -250,7 +252,9 @@ class AudioProvider extends ChangeNotifier {
         currentMetadata.trackNumber = _parseInt(trackNumber);
         currentMetadata.trackTotal = _parseInt(trackTotal);
         currentMetadata.year = _parseYear(year);
-        currentMetadata.language = _normalizeText(language);
+        if (language != null) {
+          currentMetadata.language = _normalizeText(language);
+        }
         currentMetadata.genres = _parseGenres(genre);
         file.metadata = currentMetadata;
       }
@@ -266,7 +270,9 @@ class AudioProvider extends ChangeNotifier {
       file.discNumber = discNumber;
       file.discTotal = discTotal;
       file.bpm = bpm;
-      file.lyrics = _normalizeNullableText(lyrics);
+      if (lyrics != null) {
+        file.lyrics = _normalizeNullableText(lyrics);
+      }
       if (composer != null) {
         file.composer = _normalizeNullableText(composer);
       }

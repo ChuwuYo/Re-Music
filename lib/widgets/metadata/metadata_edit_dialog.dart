@@ -33,14 +33,12 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
   late final TextEditingController _trackTotalController;
   late final TextEditingController _yearController;
   late final TextEditingController _genreController;
-  late final TextEditingController _languageController;
-  late final TextEditingController _commentController;
 
-  // Extended fields (physically writable)
+  // Right column fields (comment & extended)
+  late final TextEditingController _commentController;
   late final TextEditingController _discNumberController;
   late final TextEditingController _discTotalController;
   late final TextEditingController _bpmController;
-  late final TextEditingController _lyricsController;
 
   @override
   void initState() {
@@ -64,9 +62,8 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _genreController = TextEditingController(
       text: (metadata?.genres ?? []).join(', '),
     );
-    _languageController = TextEditingController(text: metadata?.language ?? '');
-    _commentController = TextEditingController(text: file.comment ?? '');
 
+    _commentController = TextEditingController(text: file.comment ?? '');
     _discNumberController = TextEditingController(
       text: file.discNumber?.toString() ?? '',
     );
@@ -76,7 +73,6 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _bpmController = TextEditingController(
       text: file.bpm != null ? file.bpm.toString() : '',
     );
-    _lyricsController = TextEditingController(text: file.lyrics ?? '');
   }
 
   @override
@@ -89,12 +85,10 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     _trackTotalController.dispose();
     _yearController.dispose();
     _genreController.dispose();
-    _languageController.dispose();
     _commentController.dispose();
     _discNumberController.dispose();
     _discTotalController.dispose();
     _bpmController.dispose();
-    _lyricsController.dispose();
     super.dispose();
   }
 
@@ -110,12 +104,10 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
         trackTotal: _trackTotalController.text,
         year: _yearController.text,
         genre: _genreController.text,
-        language: _languageController.text,
         comment: _commentController.text,
         discNumber: int.tryParse(_discNumberController.text.trim()),
         discTotal: int.tryParse(_discTotalController.text.trim()),
         bpm: double.tryParse(_bpmController.text.trim()),
-        lyrics: _lyricsController.text,
       );
 
       if (close) {
@@ -207,19 +199,17 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                             trackTotalController: _trackTotalController,
                             yearController: _yearController,
                             genreController: _genreController,
-                            languageController: _languageController,
-                            commentController: _commentController,
                           ),
                         ),
                         const SizedBox(width: AppConstants.spacingLarge),
 
-                        // Right Column: Extended Fields
+                        // Right Column: Comment & Extended Fields
                         Expanded(
                           child: MetadataExtendedSection(
+                            commentController: _commentController,
                             discNumberController: _discNumberController,
                             discTotalController: _discTotalController,
                             bpmController: _bpmController,
-                            lyricsController: _lyricsController,
                           ),
                         ),
                       ],

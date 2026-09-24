@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @metadataExtendedSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Disc numbers, tempo, and embedded lyrics'**
+  /// **'Disc numbers and BPM'**
   String get metadataExtendedSubtitle;
 
   /// No description provided for @metadataDiscNumber.

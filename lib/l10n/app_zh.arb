@@ -84,7 +84,7 @@
   "metadataPrimaryTitle": "主要信息",
   "metadataPrimarySubtitle": "核心曲目与专辑信息",
   "metadataExtendedTitle": "其他项",
-  "metadataExtendedSubtitle": "光盘编号、节拍与内嵌歌词",
+  "metadataExtendedSubtitle": "光盘编号与节拍 (BPM)",
   "metadataDiscNumber": "光盘号",
   "metadataDiscTotal": "总光盘数",
   "metadataComposer": "作曲",

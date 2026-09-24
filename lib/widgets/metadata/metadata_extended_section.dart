@@ -3,24 +3,19 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import 'overflow_text_field.dart';
 
-/// Right-column extended metadata form section.
-///
-/// Contains standard audio tags physically supported for writing by the underlying engine:
-/// - Disc number & disc total
-/// - BPM (beats per minute)
-/// - Embedded lyrics
+/// Right-column section containing comment and extended metadata (disc number & BPM).
 class MetadataExtendedSection extends StatelessWidget {
+  final TextEditingController commentController;
   final TextEditingController discNumberController;
   final TextEditingController discTotalController;
   final TextEditingController bpmController;
-  final TextEditingController lyricsController;
 
   const MetadataExtendedSection({
     super.key,
+    required this.commentController,
     required this.discNumberController,
     required this.discTotalController,
     required this.bpmController,
-    required this.lyricsController,
   });
 
   @override
@@ -32,6 +27,31 @@ class MetadataExtendedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // 备注/注释
+        Row(
+          children: [
+            Icon(Icons.notes_outlined, size: 20, color: colorScheme.secondary),
+            const SizedBox(width: AppConstants.spacingSmall),
+            Text(
+              l10n.metadataComment,
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.secondary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppConstants.spacingSmall),
+        OverflowTextField(
+          controller: commentController,
+          label: l10n.metadataComment,
+          minLines: 3,
+          maxLines: 4,
+          enablePopout: true,
+        ),
+        const SizedBox(height: AppConstants.spacingMedium),
+
+        // 备注下面是：其他项
         Row(
           children: [
             Icon(Icons.tune_outlined, size: 20, color: colorScheme.secondary),
@@ -80,14 +100,6 @@ class MetadataExtendedSection extends StatelessWidget {
           label: l10n.metadataBpm,
           keyboardType: TextInputType.number,
           isNumeric: true,
-        ),
-        const SizedBox(height: AppConstants.spacingMediumSmall),
-        OverflowTextField(
-          controller: lyricsController,
-          label: l10n.metadataLyrics,
-          minLines: 8,
-          maxLines: 12,
-          enablePopout: true,
         ),
       ],
     );

@@ -206,7 +206,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get metadataExtendedTitle => '其他项';
 
   @override
-  String get metadataExtendedSubtitle => '光盘编号、节拍与内嵌歌词';
+  String get metadataExtendedSubtitle => '光盘编号与节拍 (BPM)';
 
   @override
   String get metadataDiscNumber => '光盘号';

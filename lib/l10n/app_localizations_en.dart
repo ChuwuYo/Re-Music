@@ -206,8 +206,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get metadataExtendedTitle => 'Other Fields';
 
   @override
-  String get metadataExtendedSubtitle =>
-      'Disc numbers, tempo, and embedded lyrics';
+  String get metadataExtendedSubtitle => 'Disc numbers and BPM';
 
   @override
   String get metadataDiscNumber => 'Disc No.';

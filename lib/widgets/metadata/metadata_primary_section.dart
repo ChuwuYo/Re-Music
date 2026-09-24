@@ -12,8 +12,6 @@ class MetadataPrimarySection extends StatelessWidget {
   final TextEditingController trackTotalController;
   final TextEditingController yearController;
   final TextEditingController genreController;
-  final TextEditingController languageController;
-  final TextEditingController commentController;
 
   const MetadataPrimarySection({
     super.key,
@@ -24,8 +22,6 @@ class MetadataPrimarySection extends StatelessWidget {
     required this.trackTotalController,
     required this.yearController,
     required this.genreController,
-    required this.languageController,
-    required this.commentController,
   });
 
   @override
@@ -120,19 +116,6 @@ class MetadataPrimarySection extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        const SizedBox(height: AppConstants.spacingMediumSmall),
-        OverflowTextField(
-          controller: languageController,
-          label: l10n.metadataLanguage,
-        ),
-        const SizedBox(height: AppConstants.spacingMediumSmall),
-        OverflowTextField(
-          controller: commentController,
-          label: l10n.metadataComment,
-          minLines: 2,
-          maxLines: 3,
-          enablePopout: true,
         ),
       ],
     );

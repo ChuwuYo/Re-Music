@@ -25,7 +25,7 @@ void main() {
       discNumber: 1,
       discTotal: 2,
       bpm: 128.0,
-      lyrics: 'La la la song lyrics',
+      comment: 'Initial comment',
     );
 
     final audioProvider = AudioProvider();
@@ -56,13 +56,13 @@ void main() {
     // Verify primary and extended section headers
     expect(find.text('主要信息'), findsOneWidget);
     expect(find.text('其他项'), findsOneWidget);
-    expect(find.text('光盘编号、节拍与内嵌歌词'), findsOneWidget);
+    expect(find.text('光盘编号与节拍 (BPM)'), findsOneWidget);
 
-    // Verify pre-populated extended metadata
+    // Verify pre-populated metadata
     expect(find.text('1'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
     expect(find.text('128.0'), findsOneWidget);
-    expect(find.text('La la la song lyrics'), findsOneWidget);
+    expect(find.text('Initial comment'), findsOneWidget);
   });
 
   testWidgets('OverflowTextField displays expand button when text is long', (
@@ -130,7 +130,7 @@ void main() {
       discNumber: 1,
       discTotal: 2,
       bpm: 120.0,
-      lyrics: 'Old lyrics',
+      comment: 'Old comment',
     );
 
     final testProvider = _TestAudioProvider();
@@ -184,9 +184,9 @@ void main() {
     await tester.ensureVisible(bpmField);
     await tester.enterText(bpmField, '135');
 
-    final lyricsField = find.widgetWithText(TextFormField, '歌词');
-    await tester.ensureVisible(lyricsField);
-    await tester.enterText(lyricsField, 'Updated song lyrics line 1\nLine 2');
+    final commentField = find.widgetWithText(TextFormField, '注释');
+    await tester.ensureVisible(commentField);
+    await tester.enterText(commentField, 'Updated comment text');
 
     // Tap confirm button
     final confirmButton = find.widgetWithText(FilledButton, '确认');
@@ -204,8 +204,8 @@ void main() {
     expect(testProvider.updatedArgs!['discNumber'], equals(3));
     expect(testProvider.updatedArgs!['bpm'], equals(135.0));
     expect(
-      testProvider.updatedArgs!['lyrics'],
-      equals('Updated song lyrics line 1\nLine 2'),
+      testProvider.updatedArgs!['comment'],
+      equals('Updated comment text'),
     );
   });
 }
@@ -225,8 +225,8 @@ class _TestAudioProvider extends AudioProvider {
     required String trackTotal,
     required String year,
     required String genre,
-    required String language,
     required String comment,
+    String? language,
     int? discNumber,
     int? discTotal,
     double? bpm,
@@ -246,8 +246,8 @@ class _TestAudioProvider extends AudioProvider {
       'trackTotal': trackTotal,
       'year': year,
       'genre': genre,
-      'language': language,
       'comment': comment,
+      'language': language,
       'discNumber': discNumber,
       'discTotal': discTotal,
       'bpm': bpm,
