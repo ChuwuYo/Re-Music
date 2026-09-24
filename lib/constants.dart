@@ -317,10 +317,14 @@ class AppConstants {
   static const double themeHueSliderBorderAlpha = 0.6;
   static const double themeHueThumbFillAlpha = 0.78;
   static const double themeHueThumbStrokeAlpha = 0.18;
+  static const double bannerErrorBackgroundAlpha = 0.12;
+  static const double bannerErrorBorderAlpha = 0.35;
+  static const double bannerErrorButtonBorderAlpha = 0.5;
 
   /// 图标相关常量
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 18.0;
+  static const double iconSizeNotice = 20.0;
   static const double iconSizeLarge = 28.0;
   static const double iconSizeExtraLarge = 72.0;
   static const double iconSizeHuge = 80.0;

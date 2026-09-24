@@ -17,6 +17,7 @@ class TranscodeControlPanel extends StatelessWidget {
     final provider = context.watch<TranscodeProvider>();
     final outputMode = provider.outputMode;
     final controlsLocked = provider.isBusy;
+    final colorScheme = Theme.of(context).colorScheme;
 
     Future<void> handleAddFiles() async {
       final paths = await FileService.pickFiles(
@@ -88,19 +89,42 @@ class TranscodeControlPanel extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppConstants.spacingMediumSmall),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer,
+                  color: colorScheme.error.withValues(
+                    alpha: AppConstants.bannerErrorBackgroundAlpha,
+                  ),
                   borderRadius: BorderRadius.circular(
                     AppConstants.borderRadiusMedium,
+                  ),
+                  border: Border.all(
+                    color: colorScheme.error.withValues(
+                      alpha: AppConstants.bannerErrorBorderAlpha,
+                    ),
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _localizedBinaryMessage(l10n, provider.binaryError!),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onErrorContainer,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: AppConstants.iconSizeNotice,
+                          color: colorScheme.error,
+                        ),
+                        const SizedBox(width: AppConstants.spacingSmall),
+                        Expanded(
+                          child: Text(
+                            _localizedBinaryMessage(
+                              l10n,
+                              provider.binaryError!,
+                            ),
+                            style: TextStyle(
+                              color: colorScheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: AppConstants.spacingSmall),
                     Wrap(
@@ -108,6 +132,15 @@ class TranscodeControlPanel extends StatelessWidget {
                       runSpacing: AppConstants.spacingSmall,
                       children: [
                         OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: colorScheme.error,
+                            side: BorderSide(
+                              color: colorScheme.error.withValues(
+                                alpha:
+                                    AppConstants.bannerErrorButtonBorderAlpha,
+                              ),
+                            ),
+                          ),
                           onPressed: controlsLocked
                               ? null
                               : handleOpenDownloadPage,
@@ -115,6 +148,15 @@ class TranscodeControlPanel extends StatelessWidget {
                           label: Text(l10n.transcodeOpenDownloadPage),
                         ),
                         OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: colorScheme.error,
+                            side: BorderSide(
+                              color: colorScheme.error.withValues(
+                                alpha:
+                                    AppConstants.bannerErrorButtonBorderAlpha,
+                              ),
+                            ),
+                          ),
                           onPressed: controlsLocked
                               ? null
                               : handleOpenBinaryFolder,
