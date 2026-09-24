@@ -20,6 +20,11 @@ permissions:
 on:
   release:
     types: [published, edited, released]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag to copy ffmpeg.zip to (e.g. v0.2.4)'
+        required: true
 
 jobs:
   reuse-ffmpeg:
@@ -33,8 +38,14 @@ jobs:
       - name: Determine current release ID
         id: current
         run: |
-          RELEASE_ID=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")
-          TAG_NAME=$(jq -r '.release.tag_name' "$GITHUB_EVENT_PATH")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG_NAME="${{ github.event.inputs.tag_name }}"
+            RELEASE_ID=$(gh api repos/${{ github.repository }}/releases \
+              --jq ".[] | select(.tag_name == \"$TAG_NAME\") | .id" | head -n1)
+          else
+            RELEASE_ID=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")
+            TAG_NAME=$(jq -r '.release.tag_name' "$GITHUB_EVENT_PATH")
+          fi
           echo "Current release ID: $RELEASE_ID  tag: $TAG_NAME"
           echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
