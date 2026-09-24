@@ -287,7 +287,7 @@ class AppConstants {
   static const double dialogMaxHeight = 640.0;
 
   /// 元数据编辑对话框尺寸约束
-  /// 当窗口处于最小限制 900x600 时，配合左右各 24px 的 insetPadding（可用宽度 852px），
+  /// 当窗口处于最小限制 900x760 时，配合左右各 24px 的 insetPadding（可用宽度 852px），
   /// 对话框会自动响应式收缩适应视口；在较宽窗口下最大限制为 860px 以保证双栏排版最佳阅读体验。
   static const double metadataDialogMaxWidth = 860.0;
   static const double metadataDialogMaxHeight = 700.0;

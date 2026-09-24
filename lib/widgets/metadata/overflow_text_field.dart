@@ -17,6 +17,7 @@ class OverflowTextField extends StatelessWidget {
   final bool isNumeric;
   final bool enablePopout;
   final FormFieldValidator<String>? validator;
+  final bool allowDecimal;
   final ValueChanged<String>? onChanged;
 
   const OverflowTextField({
@@ -28,6 +29,7 @@ class OverflowTextField extends StatelessWidget {
     this.maxLines = 1,
     this.keyboardType = TextInputType.text,
     this.isNumeric = false,
+    this.allowDecimal = false,
     this.enablePopout = false,
     this.validator,
     this.onChanged,
@@ -60,15 +62,14 @@ class OverflowTextField extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final expandTooltip = l10n?.expandEditor ?? 'Expand';
     final invalidNumberMsg = l10n?.invalidNumber ?? 'Invalid number';
-    final text = controller.text;
 
-    Widget field = ValueListenableBuilder<TextEditingValue>(
+    return ValueListenableBuilder<TextEditingValue>(
       valueListenable: controller,
       builder: (context, value, child) {
         final currentText = value.text;
         final showPopout = enablePopout && currentText.isNotEmpty;
 
-        return TextFormField(
+        final field = TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           minLines: minLines,
@@ -88,25 +89,32 @@ class OverflowTextField extends StatelessWidget {
           ),
           validator: (val) {
             if (isNumeric && val != null && val.isNotEmpty) {
-              if (int.tryParse(val) == null) {
-                return invalidNumberMsg;
+              if (allowDecimal) {
+                final parsed = double.tryParse(val);
+                if (parsed == null || parsed.isNaN || parsed.isInfinite) {
+                  return invalidNumberMsg;
+                }
+              } else {
+                if (int.tryParse(val) == null) {
+                  return invalidNumberMsg;
+                }
               }
             }
             return validator?.call(val);
           },
         );
+
+        if (currentText.isNotEmpty && currentText.length > 25) {
+          return Tooltip(
+            message: currentText,
+            waitDuration: const Duration(milliseconds: 600),
+            child: field,
+          );
+        }
+
+        return field;
       },
     );
-
-    if (text.isNotEmpty && text.length > 25) {
-      return Tooltip(
-        message: text,
-        waitDuration: const Duration(milliseconds: 600),
-        child: field,
-      );
-    }
-
-    return field;
   }
 }
 

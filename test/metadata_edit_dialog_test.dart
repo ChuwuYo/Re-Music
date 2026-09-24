@@ -208,11 +208,128 @@ void main() {
       equals('Updated comment text'),
     );
   });
+
+  testWidgets(
+    'MetadataEditDialog shows snackbar and stays open when update fails',
+    (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final audioFile = AudioFile(
+        path: 'C:/music/test_fail.flac',
+        extension: '.flac',
+        size: 1024,
+        modified: DateTime.now(),
+        bpm: 120.5,
+      );
+
+      final testProvider = _TestAudioProvider();
+      testProvider.throwError = Exception('Disk write failed');
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<AudioProvider>.value(
+          value: testProvider,
+          child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [Locale('zh'), Locale('en')],
+            locale: const Locale('zh'),
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: Center(
+                  child: ElevatedButton(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (_) => MetadataEditDialog(file: audioFile),
+                    ),
+                    child: const Text('Open Dialog'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Open dialog
+      await tester.tap(find.text('Open Dialog'));
+      await tester.pumpAndSettle();
+      expect(find.byType(MetadataEditDialog), findsOneWidget);
+
+      // BPM should accept decimal prefilled value 120.5 without validation error
+      final bpmField = find.widgetWithText(TextFormField, 'BPM (节拍)');
+      expect(bpmField, findsOneWidget);
+      expect(find.text('120.5'), findsOneWidget);
+
+      // Tap confirm button
+      final confirmButton = find.widgetWithText(FilledButton, '确认');
+      await tester.ensureVisible(confirmButton);
+      await tester.tap(confirmButton);
+      await tester.pumpAndSettle();
+
+      // Dialog should NOT be dismissed because save failed
+      expect(find.byType(MetadataEditDialog), findsOneWidget);
+
+      // SnackBar with error message should be displayed
+      expect(find.text('Exception: Disk write failed'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'OverflowTextField dynamically displays Tooltip when text exceeds 25 chars',
+    (WidgetTester tester) async {
+      final controller = TextEditingController(text: 'Short');
+      addTearDown(controller.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [Locale('en')],
+          locale: const Locale('en'),
+          home: Scaffold(
+            body: OverflowTextField(
+              controller: controller,
+              label: 'Dynamic Label',
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Initially short text should not have Tooltip
+      expect(find.byType(Tooltip), findsNothing);
+
+      // Enter long text (> 25 characters)
+      controller.text =
+          'This is a long text that definitely exceeds twenty five characters';
+      await tester.pumpAndSettle();
+
+      // Tooltip should now be present with the updated text
+      expect(find.byType(Tooltip), findsOneWidget);
+      final tooltipWidget = tester.widget<Tooltip>(find.byType(Tooltip));
+      expect(tooltipWidget.message, equals(controller.text));
+    },
+  );
 }
 
 class _TestAudioProvider extends AudioProvider {
   AudioFile? updatedFile;
   Map<String, dynamic>? updatedArgs;
+  Object? throwError;
 
   @override
   Future<void> updateMetadata(
@@ -236,6 +353,9 @@ class _TestAudioProvider extends AudioProvider {
     String? publisher,
     Map<String, String>? customTags,
   }) async {
+    if (throwError != null) {
+      throw throwError!;
+    }
     updatedFile = file;
     updatedArgs = {
       'title': title,

@@ -20,7 +20,7 @@
   - **设计思路**：复用项目中现有的 FFmpeg 二进制环境，使用流拷贝（`-c copy -metadata key=value`）进行秒级重写。
   - **优势**：天然支持全音频格式（MP3, FLAC, M4A, OGG, Opus, WMA, WAV, APE, DSF 等），原生支持任意自定义标签与扩展属性。
   - **配套机制**：结合 `file_service.dart` 的 `replaceFileAtomically` 原子安全替换文件，保障掉电或中断不损坏源文件。
-  - **考量点**：需依赖本地 FFmpeg 环境或捆绑可执行文件，涉及子进程开销。
+  - **考量点**：需依赖本地 FFmpeg 环境（现阶段依托 Windows 路径与 PATH 探测机制）或捆绑可执行文件，涉及子进程开销。
 
 - [ ] **综合选型或混合路线评估**：
   - 届时可评估采用“**自研纯 Dart 处理主流格式（FLAC / MP3），FFmpeg 仅作为特殊格式兜底**”或直接单方案落地的可行性。
@@ -31,7 +31,7 @@
 
 ### 3. 封面管理与在线搜刮
 - [ ] 添加本地封面图片更换、拖拽导入与直接导出保存到本地文件。
-- [ ] 添加在线获取歌曲标签与高清封面功能（例如集成网易云/MusicBrainz API：`http://music.163.com/api/search/get/?s=<关键词>&limit=<数量>&type=1&offset=0`）。
+- [ ] 添加在线获取歌曲标签与高清封面功能（例如集成网易云/MusicBrainz API：`https://music.163.com/api/search/get/?s=<关键词>&limit=<数量>&type=1&offset=0`）。
 
 ### 4. 彻底解耦第三方解析库缺陷
 - [ ] 现状：第三方纯 Dart 库 `audio_metadata_reader` 存在 FLAC/OGG “语言 = 艺术家”的低级 Copy-Paste Bug（ReMusic 现已加入拦截过滤防线）。

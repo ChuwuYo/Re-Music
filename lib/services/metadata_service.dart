@@ -55,7 +55,12 @@ class MetadataService {
     final metadata = readMetadata(File(filePath), getImage: false);
     // Fix third-party bug in audio_metadata_reader 1.4.2 where FlacParser & OggParser
     // copy artist.firstOrNull into language.
-    if (metadata.language != null && metadata.language == metadata.artist) {
+    final ext = filePath.toLowerCase();
+    final isVorbisContainer =
+        ext.endsWith('.flac') || ext.endsWith('.ogg') || ext.endsWith('.oga');
+    if (isVorbisContainer &&
+        metadata.language != null &&
+        metadata.language == metadata.artist) {
       metadata.language = null;
     }
     return metadata;
@@ -154,6 +159,8 @@ class MetadataService {
           composer = metadata.composer.isNotEmpty
               ? metadata.composer.join(', ')
               : null;
+          lyricist =
+              metadata.unknowns['LYRICIST'] ?? metadata.unknowns['TEXTWRITER'];
           publisher = metadata.organization.isNotEmpty
               ? metadata.organization.join(', ')
               : null;

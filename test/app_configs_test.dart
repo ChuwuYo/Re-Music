@@ -172,6 +172,15 @@ void main() {
         AppConstants.defaultAllowedArtistSeparators,
       );
       expect(config.artistSeparator, AppConstants.defaultArtistSeparator);
+
+      final emptyConfig = AppConfigs.fromJson({
+        'allowedArtistSeparators': <String>[],
+      });
+      expect(
+        emptyConfig.allowedArtistSeparators,
+        AppConstants.defaultAllowedArtistSeparators,
+      );
+      expect(emptyConfig.artistSeparator, AppConstants.defaultArtistSeparator);
     });
 
     test('serializes allowedArtistSeparators and artistSeparator', () {

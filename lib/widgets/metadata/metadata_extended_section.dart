@@ -98,8 +98,9 @@ class MetadataExtendedSection extends StatelessWidget {
         OverflowTextField(
           controller: bpmController,
           label: l10n.metadataBpm,
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           isNumeric: true,
+          allowDecimal: true,
         ),
       ],
     );

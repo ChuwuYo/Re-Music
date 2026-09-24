@@ -5,6 +5,7 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/audio_file.dart';
 import '../../providers/audio_provider.dart';
+import '../common/remusic_snack_bar.dart';
 import 'metadata_extended_section.dart';
 import 'metadata_primary_section.dart';
 import 'overflow_text_field.dart';
@@ -21,6 +22,7 @@ class MetadataEditDialog extends StatefulWidget {
 
 class _MetadataEditDialogState extends State<MetadataEditDialog> {
   final _formKey = GlobalKey<FormState>();
+  bool _isSubmitting = false;
 
   // Full-width title
   late final TextEditingController _titleController;
@@ -92,9 +94,18 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
     super.dispose();
   }
 
-  void _applyChanges({required bool close}) {
-    if (_formKey.currentState?.validate() ?? false) {
-      context.read<AudioProvider>().updateMetadata(
+  Future<void> _applyChanges({required bool close}) async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+    if (_isSubmitting) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      await context.read<AudioProvider>().updateMetadata(
         widget.file,
         title: _titleController.text,
         trackArtist: _trackArtistController.text,
@@ -110,9 +121,21 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
         bpm: double.tryParse(_bpmController.text.trim()),
       );
 
+      if (!mounted) return;
+
       if (close) {
         Navigator.of(context).pop();
+      } else {
+        setState(() {
+          _isSubmitting = false;
+        });
       }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+      });
+      ReMusicSnackBar.showFloating(context, message: e.toString());
     }
   }
 
@@ -224,17 +247,23 @@ class _MetadataEditDialogState extends State<MetadataEditDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => Navigator.of(context).pop(),
                     child: Text(l10n.cancel),
                   ),
                   const SizedBox(width: AppConstants.spacingSmall),
                   OutlinedButton(
-                    onPressed: () => _applyChanges(close: false),
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => _applyChanges(close: false),
                     child: Text(l10n.apply),
                   ),
                   const SizedBox(width: AppConstants.spacingSmall),
                   FilledButton(
-                    onPressed: () => _applyChanges(close: true),
+                    onPressed: _isSubmitting
+                        ? null
+                        : () => _applyChanges(close: true),
                     child: Text(l10n.confirm),
                   ),
                 ],
