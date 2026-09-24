@@ -15,6 +15,32 @@ class TagArtists {
   const TagArtists({this.trackArtist, this.albumArtist});
 }
 
+class ExtendedTagDetails {
+  final TagArtists? artists;
+  final int? discNumber;
+  final int? discTotal;
+  final double? bpm;
+  final String? lyrics;
+  final String? composer;
+  final String? lyricist;
+  final String? publisher;
+  final String? comment;
+  final Map<String, String> customTags;
+
+  const ExtendedTagDetails({
+    this.artists,
+    this.discNumber,
+    this.discTotal,
+    this.bpm,
+    this.lyrics,
+    this.composer,
+    this.lyricist,
+    this.publisher,
+    this.comment,
+    this.customTags = const {},
+  });
+}
+
 class MetadataService {
   static Future<AudioMetadata?> getMetadata(String filePath) async {
     try {
@@ -30,71 +56,142 @@ class MetadataService {
   }
 
   static Future<TagArtists?> getTagArtists(String filePath) async {
+    final details = await getTagDetails(filePath);
+    return details?.artists;
+  }
+
+  static Future<ExtendedTagDetails?> getTagDetails(String filePath) async {
     try {
-      final parsedArtists = await compute(
-        _readStructuredArtistsIsolate,
-        filePath,
-      );
+      final parsed = await compute(_readStructuredMetadataIsolate, filePath);
       final tags = await at.AudioTags.read(filePath);
+
+      final structuredArtists =
+          (parsed['artists'] as Map<dynamic, dynamic>?)
+              ?.cast<String, List<String>>() ??
+          {};
       final trackArtists = ArtistNameService.mergeArtistSources(
         rawValues: [tags?.trackArtist],
         collections: [
-          (parsedArtists[AppConstants.tagArtistTrackKey] as List<dynamic>)
-              .cast<String>(),
+          structuredArtists[AppConstants.tagArtistTrackKey] ?? const <String>[],
         ],
       );
       final albumArtists = ArtistNameService.mergeArtistSources(
         rawValues: [tags?.albumArtist],
         collections: [
-          (parsedArtists[AppConstants.tagArtistAlbumKey] as List<dynamic>)
-              .cast<String>(),
+          structuredArtists[AppConstants.tagArtistAlbumKey] ?? const <String>[],
         ],
       );
 
-      if (trackArtists.isEmpty && albumArtists.isEmpty) {
-        return null;
+      TagArtists? artists;
+      if (trackArtists.isNotEmpty || albumArtists.isNotEmpty) {
+        artists = TagArtists(
+          trackArtist: ArtistNameService.joinArtists(trackArtists),
+          albumArtist: ArtistNameService.joinArtists(albumArtists),
+        );
       }
 
-      return TagArtists(
-        trackArtist: ArtistNameService.joinArtists(trackArtists),
-        albumArtist: ArtistNameService.joinArtists(albumArtists),
+      return ExtendedTagDetails(
+        artists: artists,
+        discNumber: tags?.discNumber ?? parsed['discNumber'] as int?,
+        discTotal: tags?.discTotal ?? parsed['discTotal'] as int?,
+        bpm: tags?.bpm,
+        lyrics: tags?.lyrics ?? parsed['lyrics'] as String?,
+        composer: parsed['composer'] as String?,
+        lyricist: parsed['lyricist'] as String?,
+        publisher: parsed['publisher'] as String?,
+        comment: parsed['comment'] as String?,
+        customTags:
+            (parsed['customTags'] as Map<dynamic, dynamic>?)
+                ?.cast<String, String>() ??
+            const {},
       );
     } catch (e) {
-      debugPrint('Error reading tag artists for $filePath: $e');
+      debugPrint('Error reading tag details for $filePath: $e');
       return null;
     }
   }
 
-  static Map<String, List<String>> _readStructuredArtistsIsolate(
-    String filePath,
-  ) {
+  static Map<String, dynamic> _readStructuredMetadataIsolate(String filePath) {
     try {
       final parserTag = readAllMetadata(File(filePath), getImage: false);
+      String? composer;
+      String? lyricist;
+      String? publisher;
+      String? comment;
+      int? discNumber;
+      int? discTotal;
+      String? lyrics;
+      Map<String, String> customTags = {};
+      Map<String, List<String>> structuredArtists = {};
 
       switch (parserTag) {
         case Mp3Metadata metadata:
-          return Mp3ArtistTagParser.readStructuredArtists(
+          structuredArtists = Mp3ArtistTagParser.readStructuredArtists(
             filePath,
             leadPerformer: metadata.leadPerformer,
             bandOrOrchestra: metadata.bandOrOrchestra,
             customMetadata: metadata.customMetadata,
           );
-        case VorbisMetadata _:
-          return VorbisArtistTagParser.readStructuredArtists(filePath);
+          composer = metadata.composer;
+          lyricist = metadata.textWriter;
+          publisher = metadata.publisher;
+          comment = metadata.comments.isNotEmpty
+              ? metadata.comments.first.text
+              : null;
+          lyrics = metadata.lyric;
+          customTags = Map<String, String>.from(metadata.customMetadata);
+          break;
+        case VorbisMetadata metadata:
+          structuredArtists = VorbisArtistTagParser.readStructuredArtists(
+            filePath,
+          );
+          composer = metadata.composer.isNotEmpty
+              ? metadata.composer.join(', ')
+              : null;
+          publisher = metadata.organization.isNotEmpty
+              ? metadata.organization.join(', ')
+              : null;
+          comment = metadata.comment.isNotEmpty
+              ? metadata.comment.join('\n')
+              : null;
+          discNumber = metadata.discNumber;
+          discTotal = metadata.discTotal;
+          lyrics = metadata.lyric;
+          customTags = Map<String, String>.from(metadata.unknowns);
+          break;
         case Mp4Metadata metadata:
-          return _buildStructuredArtists(
+          structuredArtists = _buildStructuredArtists(
             trackArtists: ArtistNameService.splitArtists(metadata.artist),
           );
+          discNumber = metadata.discNumber;
+          discTotal = metadata.totalDiscs;
+          lyrics = metadata.lyrics;
+          break;
         case RiffMetadata metadata:
-          return _buildStructuredArtists(
+          structuredArtists = _buildStructuredArtists(
             trackArtists: ArtistNameService.splitArtists(metadata.artist),
           );
+          break;
       }
-    } catch (e) {
-      debugPrint('Error reading structured artists for $filePath: $e');
-    }
 
-    return _buildStructuredArtists();
+      return {
+        'artists': structuredArtists,
+        'composer': composer,
+        'lyricist': lyricist,
+        'publisher': publisher,
+        'comment': comment,
+        'discNumber': discNumber,
+        'discTotal': discTotal,
+        'lyrics': lyrics,
+        'customTags': customTags,
+      };
+    } catch (e) {
+      debugPrint('Error reading structured metadata for $filePath: $e');
+      return {
+        'artists': _buildStructuredArtists(),
+        'customTags': <String, String>{},
+      };
+    }
   }
 
   static Map<String, List<String>> _buildStructuredArtists({

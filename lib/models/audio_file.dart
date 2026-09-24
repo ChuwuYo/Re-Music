@@ -12,6 +12,14 @@ class AudioFile {
   String? tagTrackArtist;
   String? tagAlbumArtist;
   String? comment;
+  int? discNumber;
+  int? discTotal;
+  double? bpm;
+  String? lyrics;
+  String? composer;
+  String? lyricist;
+  String? publisher;
+  Map<String, String> customTags;
   String? newFileName;
   ProcessingStatus status;
   String? errorMessage;
@@ -25,10 +33,20 @@ class AudioFile {
     this.tagTrackArtist,
     this.tagAlbumArtist,
     this.comment,
+    this.discNumber,
+    this.discTotal,
+    this.bpm,
+    this.lyrics,
+    this.composer,
+    this.lyricist,
+    this.publisher,
+    Map<String, String>? customTags,
     this.newFileName,
     this.status = ProcessingStatus.pending,
     this.errorMessage,
-  });
+  }) : customTags = customTags != null
+           ? Map<String, String>.from(customTags)
+           : {};
 
   String get originalFileName => p.basename(path);
 

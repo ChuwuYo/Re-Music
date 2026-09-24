@@ -176,6 +176,17 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
+  /// 更新音频文件元数据。
+  ///
+  /// 【持久化边界说明】：
+  /// 1. 物理文件写入（On-disk persistence）：
+  ///    受底层 [audiotags] 库能力的约束，当前真正写入物理音频文件二进制头的字段包括：
+  ///    [title], [trackArtist], [albumArtist], [album], [trackNumber], [trackTotal],
+  ///    [discNumber], [discTotal], [bpm], [lyrics], [year], [genre]，以及保留的现有封面 [pictures]。
+  /// 2. 内存状态保留（In-memory persistence）：
+  ///    字段 [comment], [composer], [lyricist], [publisher] 和任意键值对 [customTags]
+  ///    因 [audiotags.Tag] 结构未开放自定义/扩展帧写入接口，目前保存在当前会话的 [AudioFile] 内存对象中，
+  ///    用于应用内的文件重命名规则替换、界面展示与列表交互。如需未来物理持久化，需引入底层专用写入器。
   Future<void> updateMetadata(
     AudioFile file, {
     required String title,
@@ -188,10 +199,24 @@ class AudioProvider extends ChangeNotifier {
     required String genre,
     required String language,
     required String comment,
+    int? discNumber,
+    int? discTotal,
+    double? bpm,
+    String? lyrics,
+    String? composer,
+    String? lyricist,
+    String? publisher,
+    Map<String, String>? customTags,
   }) async {
     try {
       final normalizedTrackArtist = _normalizeText(trackArtist);
       final normalizedAlbumArtist = _normalizeText(albumArtist);
+
+      at.Tag? existingTags;
+      try {
+        existingTags = await at.AudioTags.read(file.path);
+      } catch (_) {}
+
       final tags = at.Tag(
         title: _normalizeText(title),
         trackArtist: normalizedTrackArtist,
@@ -199,16 +224,20 @@ class AudioProvider extends ChangeNotifier {
         albumArtist: normalizedAlbumArtist,
         trackNumber: _parseInt(trackNumber),
         trackTotal: _parseInt(trackTotal),
+        discNumber: discNumber,
+        discTotal: discTotal,
+        bpm: bpm,
+        lyrics: _normalizeNullableText(lyrics),
         year: _parseInt(year),
         genre: _normalizeText(genre),
-        pictures: [],
+        pictures: existingTags?.pictures ?? [],
       );
 
       await at.AudioTags.write(file.path, tags);
 
       // Re-read metadata to ensure consistency
       final metadata = await MetadataService.getMetadata(file.path);
-      final tagArtists = await MetadataService.getTagArtists(file.path);
+      final tagDetails = await MetadataService.getTagDetails(file.path);
       if (metadata != null) {
         file.metadata = metadata;
       } else {
@@ -227,12 +256,29 @@ class AudioProvider extends ChangeNotifier {
       }
       _applyTagArtists(
         file,
-        tagArtists,
+        tagDetails?.artists,
         fallbackTrackArtist: normalizedTrackArtist,
         fallbackAlbumArtist: normalizedAlbumArtist,
       );
+      _applyExtendedDetails(file, tagDetails);
 
       file.comment = _normalizeText(comment);
+      file.discNumber = discNumber;
+      file.discTotal = discTotal;
+      file.bpm = bpm;
+      file.lyrics = _normalizeNullableText(lyrics);
+      if (composer != null) {
+        file.composer = _normalizeNullableText(composer);
+      }
+      if (lyricist != null) {
+        file.lyricist = _normalizeNullableText(lyricist);
+      }
+      if (publisher != null) {
+        file.publisher = _normalizeNullableText(publisher);
+      }
+      if (customTags != null) {
+        file.customTags = Map<String, String>.from(customTags);
+      }
 
       if (file.status != ProcessingStatus.success) {
         file.status = ProcessingStatus.success;
@@ -293,9 +339,10 @@ class AudioProvider extends ChangeNotifier {
           try {
             final metadata = await MetadataService.getMetadata(file.path);
             if (metadata != null) {
-              final tagArtists = await MetadataService.getTagArtists(file.path);
+              final tagDetails = await MetadataService.getTagDetails(file.path);
               file.metadata = metadata;
-              _applyTagArtists(file, tagArtists);
+              _applyTagArtists(file, tagDetails?.artists);
+              _applyExtendedDetails(file, tagDetails);
               file.status = ProcessingStatus.success;
             } else {
               file.status = ProcessingStatus.error;
@@ -426,6 +473,23 @@ class AudioProvider extends ChangeNotifier {
     file.tagAlbumArtist = _normalizeNullableText(
       artists?.albumArtist ?? fallbackAlbumArtist,
     );
+  }
+
+  void _applyExtendedDetails(AudioFile file, ExtendedTagDetails? details) {
+    if (details == null) return;
+    file.discNumber = details.discNumber;
+    file.discTotal = details.discTotal;
+    file.bpm = details.bpm;
+    file.lyrics = _normalizeNullableText(details.lyrics);
+    file.composer = _normalizeNullableText(details.composer);
+    file.lyricist = _normalizeNullableText(details.lyricist);
+    file.publisher = _normalizeNullableText(details.publisher);
+    if (file.comment == null || file.comment!.isEmpty) {
+      file.comment = _normalizeNullableText(details.comment);
+    }
+    if (details.customTags.isNotEmpty) {
+      file.customTags = Map<String, String>.from(details.customTags);
+    }
   }
 
   int? _parseInt(String value) {
