@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -10,6 +11,7 @@ class AppConfigs {
   final bool sortAscending;
   final String pattern;
   final FileFilter filter;
+  final List<String> allowedArtistSeparators;
   final String artistSeparator;
   final FileAddMode singleFileAddMode;
   final FileAddMode directoryAddMode;
@@ -34,6 +36,7 @@ class AppConfigs {
     required this.sortAscending,
     required this.pattern,
     required this.filter,
+    required this.allowedArtistSeparators,
     required this.artistSeparator,
     required this.singleFileAddMode,
     required this.directoryAddMode,
@@ -60,6 +63,7 @@ class AppConfigs {
       sortAscending: AppConstants.defaultSortAscending,
       pattern: AppConstants.defaultNamingPattern,
       filter: AppConstants.defaultFileFilter,
+      allowedArtistSeparators: AppConstants.defaultAllowedArtistSeparators,
       artistSeparator: AppConstants.defaultArtistSeparator,
       singleFileAddMode: AppConstants.defaultSingleFileAddMode,
       directoryAddMode: AppConstants.defaultDirectoryAddMode,
@@ -87,7 +91,12 @@ class AppConfigs {
     final sortAscendingRaw = json['sortAscending'];
     final pattern = json['pattern'];
     final filterRaw = json['filter'];
-    final artistSeparator = json['artistSeparator'];
+    final allowedArtistSeparatorsRaw = json['allowedArtistSeparators'];
+    final artistSeparatorRaw = json['artistSeparator'];
+    final allowedArtistSeparators = _parseAllowedArtistSeparators(
+      allowedArtistSeparatorsRaw,
+      legacySeparator: artistSeparatorRaw,
+    );
     final singleFileAddModeRaw = json['singleFileAddMode'];
     final directoryAddModeRaw = json['directoryAddMode'];
     final sidebarExpandedRaw = json['sidebarExpanded'];
@@ -115,7 +124,8 @@ class AppConfigs {
           ? pattern
           : AppConstants.defaultNamingPattern,
       filter: _parseFilter(filterRaw),
-      artistSeparator: _parseArtistSeparator(artistSeparator),
+      allowedArtistSeparators: allowedArtistSeparators,
+      artistSeparator: allowedArtistSeparators.first,
       singleFileAddMode: _parseFileAddMode(
         singleFileAddModeRaw,
         AppConstants.defaultSingleFileAddMode,
@@ -169,6 +179,7 @@ class AppConfigs {
       'sortAscending': sortAscending,
       'pattern': pattern,
       'filter': filter.name,
+      'allowedArtistSeparators': allowedArtistSeparators,
       'artistSeparator': artistSeparator,
       'singleFileAddMode': singleFileAddMode.name,
       'directoryAddMode': directoryAddMode.name,
@@ -272,11 +283,19 @@ class AppConfigs {
     return fallback;
   }
 
-  static String _parseArtistSeparator(Object? raw) {
-    if (raw is String && AppConstants.isValidArtistSeparator(raw)) {
-      return raw;
+  static List<String> _parseAllowedArtistSeparators(
+    Object? raw, {
+    Object? legacySeparator,
+  }) {
+    if (raw is List) {
+      final parsed = raw.whereType<String>().toList();
+      return AppConstants.sanitizeAllowedArtistSeparators(parsed);
     }
-    return AppConstants.defaultArtistSeparator;
+    if (legacySeparator is String &&
+        AppConstants.isValidArtistSeparator(legacySeparator)) {
+      return [legacySeparator];
+    }
+    return AppConstants.defaultAllowedArtistSeparators;
   }
 
   static TranscodeOutputFormat _parseTranscodeOutputFormat(Object? raw) {
@@ -386,6 +405,7 @@ class AppConfigs {
         other.sortAscending == sortAscending &&
         other.pattern == pattern &&
         other.filter == filter &&
+        listEquals(other.allowedArtistSeparators, allowedArtistSeparators) &&
         other.artistSeparator == artistSeparator &&
         other.singleFileAddMode == singleFileAddMode &&
         other.directoryAddMode == directoryAddMode &&
@@ -412,6 +432,7 @@ class AppConfigs {
     sortAscending,
     pattern,
     filter,
+    Object.hashAll(allowedArtistSeparators),
     artistSeparator,
     singleFileAddMode,
     directoryAddMode,

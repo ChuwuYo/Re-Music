@@ -147,4 +147,49 @@ void main() {
       );
     });
   });
+
+  group('AppConfigs allowedArtistSeparators', () {
+    test('reads allowedArtistSeparators from json', () {
+      final config = AppConfigs.fromJson({
+        'allowedArtistSeparators': [';', '、'],
+      });
+      expect(config.allowedArtistSeparators, [';', '、']);
+      expect(config.artistSeparator, ';');
+    });
+
+    test('migrates legacy artistSeparator to allowedArtistSeparators', () {
+      final config = AppConfigs.fromJson({'artistSeparator': '·'});
+      expect(config.allowedArtistSeparators, ['·']);
+      expect(config.artistSeparator, '·');
+    });
+
+    test('falls back to default when empty or invalid', () {
+      final config = AppConfigs.fromJson({
+        'allowedArtistSeparators': ['invalid', '/'],
+      });
+      expect(
+        config.allowedArtistSeparators,
+        AppConstants.defaultAllowedArtistSeparators,
+      );
+      expect(config.artistSeparator, AppConstants.defaultArtistSeparator);
+
+      final emptyConfig = AppConfigs.fromJson({
+        'allowedArtistSeparators': <String>[],
+      });
+      expect(
+        emptyConfig.allowedArtistSeparators,
+        AppConstants.defaultAllowedArtistSeparators,
+      );
+      expect(emptyConfig.artistSeparator, AppConstants.defaultArtistSeparator);
+    });
+
+    test('serializes allowedArtistSeparators and artistSeparator', () {
+      final config = AppConfigs.fromJson({
+        'allowedArtistSeparators': ['_', ';', '、'],
+      });
+      final json = config.toJson();
+      expect(json['allowedArtistSeparators'], ['_', ';', '、']);
+      expect(json['artistSeparator'], '_');
+    });
+  });
 }

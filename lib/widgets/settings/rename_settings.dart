@@ -144,10 +144,12 @@ class _ArtistSeparatorSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final selectedSeparator = context.select<AudioProvider, String>(
-      (provider) => provider.artistSeparator,
+    final allowedSeparators = context.select<AudioProvider, List<String>>(
+      (provider) => provider.allowedArtistSeparators,
     );
-    final setArtistSeparator = context.read<AudioProvider>().setArtistSeparator;
+    final toggleArtistSeparator = context
+        .read<AudioProvider>()
+        .toggleArtistSeparator;
     final scheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -165,12 +167,12 @@ class _ArtistSeparatorSelector extends StatelessWidget {
           spacing: AppConstants.spacingSmall,
           runSpacing: AppConstants.spacingSmall,
           children: AppConstants.artistSeparatorOptions.map((sep) {
-            final isSelected = selectedSeparator == sep;
+            final isSelected = allowedSeparators.contains(sep);
             return SizedBox(
               width: AppConstants.artistSeparatorOptionWidth,
               child: SelectableCard(
                 isSelected: isSelected,
-                onTap: () => setArtistSeparator(sep),
+                onTap: () => toggleArtistSeparator(sep),
                 child: Center(
                   child: Text(
                     sep,

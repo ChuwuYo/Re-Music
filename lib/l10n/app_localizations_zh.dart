@@ -197,6 +197,63 @@ class AppLocalizationsZh extends AppLocalizations {
   String get metadataComment => '注释';
 
   @override
+  String get metadataPrimaryTitle => '主要信息';
+
+  @override
+  String get metadataPrimarySubtitle => '核心曲目与专辑信息';
+
+  @override
+  String get metadataExtendedTitle => '其他项';
+
+  @override
+  String get metadataExtendedSubtitle => '光盘编号与节拍 (BPM)';
+
+  @override
+  String get metadataDiscNumber => '光盘号';
+
+  @override
+  String get metadataDiscTotal => '总光盘数';
+
+  @override
+  String get metadataComposer => '作曲';
+
+  @override
+  String get metadataLyricist => '作词';
+
+  @override
+  String get metadataBpm => 'BPM (节拍)';
+
+  @override
+  String get metadataPublisher => '发行方';
+
+  @override
+  String get metadataLyrics => '歌词';
+
+  @override
+  String get customTagsTitle => '自定义标签';
+
+  @override
+  String get customTagsSubtitle => '支持自定义键值对元数据';
+
+  @override
+  String get addCustomTag => '添加自定义标签';
+
+  @override
+  String get customTagKey => '标签名称 (Key)';
+
+  @override
+  String get customTagValue => '内容值 (Value)';
+
+  @override
+  String get deleteCustomTag => '删除标签';
+
+  @override
+  String get expandEditor => '展开编辑';
+
+  @override
+  String get viewFullContent => '查看完整内容';
+
+  @override
   String get apply => '应用';
 
   @override

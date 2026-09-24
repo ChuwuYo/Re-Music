@@ -197,6 +197,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get metadataComment => 'Comment';
 
   @override
+  String get metadataPrimaryTitle => 'Primary Info';
+
+  @override
+  String get metadataPrimarySubtitle => 'Core track and album information';
+
+  @override
+  String get metadataExtendedTitle => 'Other Fields';
+
+  @override
+  String get metadataExtendedSubtitle => 'Disc numbers and BPM';
+
+  @override
+  String get metadataDiscNumber => 'Disc No.';
+
+  @override
+  String get metadataDiscTotal => 'Total discs';
+
+  @override
+  String get metadataComposer => 'Composer';
+
+  @override
+  String get metadataLyricist => 'Lyricist';
+
+  @override
+  String get metadataBpm => 'BPM';
+
+  @override
+  String get metadataPublisher => 'Publisher';
+
+  @override
+  String get metadataLyrics => 'Lyrics';
+
+  @override
+  String get customTagsTitle => 'Custom Tags';
+
+  @override
+  String get customTagsSubtitle => 'Supports custom key-value pairs';
+
+  @override
+  String get addCustomTag => 'Add Custom Tag';
+
+  @override
+  String get customTagKey => 'Tag Name (Key)';
+
+  @override
+  String get customTagValue => 'Value';
+
+  @override
+  String get deleteCustomTag => 'Delete tag';
+
+  @override
+  String get expandEditor => 'Expand Editor';
+
+  @override
+  String get viewFullContent => 'View full content';
+
+  @override
   String get apply => 'Apply';
 
   @override

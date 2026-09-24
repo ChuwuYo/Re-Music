@@ -81,7 +81,7 @@ class AppConstants {
   static const ThemeMode defaultThemeMode = ThemeMode.system;
 
   /// 默认主题色相（范围 0-360）
-  static const int defaultThemeHue = 180;
+  static const int defaultThemeHue = 80;
 
   /// 主题色相范围
   static const int themeHueMin = 0;
@@ -116,14 +116,53 @@ class AppConstants {
   /// 默认艺术家分隔符（多个艺术家时使用什么符号分割）
   static const String defaultArtistSeparator = '_';
 
+  /// 内部展示使用的艺术家分隔符
+  static const String internalArtistDisplaySeparator = '; ';
+
+  /// 识别多艺术家输入时使用的业务分隔规则
+  static const List<String> artistSplitPatternParts = [
+    r'\u0000+',
+    r'\r?\n+',
+    r'\s*[;；/／·、]\s*',
+    r'\s*_\s*',
+  ];
+
+  /// 结构化艺术家结果中的 key
+  static const String tagArtistTrackKey = 'trackArtist';
+  static const String tagArtistAlbumKey = 'albumArtist';
+
+  /// 常用元数据字段名
+  static const String normalizedAlbumArtistMetadataKey = 'albumartist';
+  static const String mp3TrackArtistFrameId = 'TPE1';
+  static const String mp3AlbumArtistFrameId = 'TPE2';
+  static const String vorbisTrackArtistCommentKey = 'ARTIST';
+  static const String vorbisAlbumArtistCommentKey = 'ALBUMARTIST';
+
   /// 可选的艺术家分隔符列表
   static const List<String> artistSeparatorOptions = ['_', ';', ',', '·', '、'];
+
+  /// 默认允许的艺术家分隔符列表
+  static const List<String> defaultAllowedArtistSeparators = ['_'];
 
   /// 校验艺术家分隔符是否可用于文件名
   static bool isValidArtistSeparator(String separator) {
     return separator.isNotEmpty &&
         artistSeparatorOptions.contains(separator) &&
         !invalidFilenameChars.hasMatch(separator);
+  }
+
+  /// 过滤并返回合法的艺术家分隔符列表，保持选项定义顺序，保证至少包含一个有效符号
+  static List<String> sanitizeAllowedArtistSeparators(
+    Iterable<String>? separators,
+  ) {
+    if (separators == null) {
+      return List<String>.from(defaultAllowedArtistSeparators);
+    }
+    final validSet = separators.where(isValidArtistSeparator).toSet();
+    final ordered = artistSeparatorOptions.where(validSet.contains).toList();
+    return ordered.isEmpty
+        ? List<String>.from(defaultAllowedArtistSeparators)
+        : ordered;
   }
 
   /// 默认文件添加模式
@@ -243,9 +282,15 @@ class AppConstants {
   /// 页面切换动画横向位移量（AnimatedSwitcher slide offset）
   static const double pageTransitionSlideOffset = 0.03;
 
-  /// 对话框相关常量
+  /// 通用对话框相关常量
   static const double dialogMaxWidth = 720.0;
   static const double dialogMaxHeight = 640.0;
+
+  /// 元数据编辑对话框尺寸约束
+  /// 当窗口处于最小限制 900x760 时，配合左右各 24px 的 insetPadding（可用宽度 852px），
+  /// 对话框会自动响应式收缩适应视口；在较宽窗口下最大限制为 860px 以保证双栏排版最佳阅读体验。
+  static const double metadataDialogMaxWidth = 860.0;
+  static const double metadataDialogMaxHeight = 700.0;
   static const double dialogPadding = 20.0;
   static const double dialogHorizontalPadding = 24.0;
   static const double dialogVerticalPadding = 24.0;
@@ -272,10 +317,14 @@ class AppConstants {
   static const double themeHueSliderBorderAlpha = 0.6;
   static const double themeHueThumbFillAlpha = 0.78;
   static const double themeHueThumbStrokeAlpha = 0.18;
+  static const double bannerErrorBackgroundAlpha = 0.12;
+  static const double bannerErrorBorderAlpha = 0.35;
+  static const double bannerErrorButtonBorderAlpha = 0.5;
 
   /// 图标相关常量
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 18.0;
+  static const double iconSizeNotice = 20.0;
   static const double iconSizeLarge = 28.0;
   static const double iconSizeExtraLarge = 72.0;
   static const double iconSizeHuge = 80.0;

@@ -458,6 +458,120 @@ abstract class AppLocalizations {
   /// **'Comment'**
   String get metadataComment;
 
+  /// No description provided for @metadataPrimaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Info'**
+  String get metadataPrimaryTitle;
+
+  /// No description provided for @metadataPrimarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Core track and album information'**
+  String get metadataPrimarySubtitle;
+
+  /// No description provided for @metadataExtendedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Fields'**
+  String get metadataExtendedTitle;
+
+  /// No description provided for @metadataExtendedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disc numbers and BPM'**
+  String get metadataExtendedSubtitle;
+
+  /// No description provided for @metadataDiscNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Disc No.'**
+  String get metadataDiscNumber;
+
+  /// No description provided for @metadataDiscTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total discs'**
+  String get metadataDiscTotal;
+
+  /// No description provided for @metadataComposer.
+  ///
+  /// In en, this message translates to:
+  /// **'Composer'**
+  String get metadataComposer;
+
+  /// No description provided for @metadataLyricist.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyricist'**
+  String get metadataLyricist;
+
+  /// No description provided for @metadataBpm.
+  ///
+  /// In en, this message translates to:
+  /// **'BPM'**
+  String get metadataBpm;
+
+  /// No description provided for @metadataPublisher.
+  ///
+  /// In en, this message translates to:
+  /// **'Publisher'**
+  String get metadataPublisher;
+
+  /// No description provided for @metadataLyrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Lyrics'**
+  String get metadataLyrics;
+
+  /// No description provided for @customTagsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Tags'**
+  String get customTagsTitle;
+
+  /// No description provided for @customTagsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports custom key-value pairs'**
+  String get customTagsSubtitle;
+
+  /// No description provided for @addCustomTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Custom Tag'**
+  String get addCustomTag;
+
+  /// No description provided for @customTagKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag Name (Key)'**
+  String get customTagKey;
+
+  /// No description provided for @customTagValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get customTagValue;
+
+  /// No description provided for @deleteCustomTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete tag'**
+  String get deleteCustomTag;
+
+  /// No description provided for @expandEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand Editor'**
+  String get expandEditor;
+
+  /// No description provided for @viewFullContent.
+  ///
+  /// In en, this message translates to:
+  /// **'View full content'**
+  String get viewFullContent;
+
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:

@@ -1,6 +1,7 @@
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:path/path.dart' as p;
 import '../constants.dart';
+import '../services/artist_name_service.dart';
 
 class AudioFile {
   final String path;
@@ -11,6 +12,14 @@ class AudioFile {
   String? tagTrackArtist;
   String? tagAlbumArtist;
   String? comment;
+  int? discNumber;
+  int? discTotal;
+  double? bpm;
+  String? lyrics;
+  String? composer;
+  String? lyricist;
+  String? publisher;
+  Map<String, String> customTags;
   String? newFileName;
   ProcessingStatus status;
   String? errorMessage;
@@ -24,19 +33,33 @@ class AudioFile {
     this.tagTrackArtist,
     this.tagAlbumArtist,
     this.comment,
+    this.discNumber,
+    this.discTotal,
+    this.bpm,
+    this.lyrics,
+    this.composer,
+    this.lyricist,
+    this.publisher,
+    Map<String, String>? customTags,
     this.newFileName,
     this.status = ProcessingStatus.pending,
     this.errorMessage,
-  });
+  }) : customTags = customTags != null
+           ? Map<String, String>.from(customTags)
+           : {};
 
   String get originalFileName => p.basename(path);
 
   String get trackArtist {
-    final explicitTrackArtist = (tagTrackArtist ?? '').trim();
+    final explicitTrackArtist = ArtistNameService.normalizeArtists(
+      tagTrackArtist,
+    );
     if (explicitTrackArtist.isNotEmpty) return explicitTrackArtist;
 
-    final parsedArtist = (metadata?.artist ?? '').trim();
-    final explicitAlbumArtist = (tagAlbumArtist ?? '').trim();
+    final parsedArtist = ArtistNameService.normalizeArtists(metadata?.artist);
+    final explicitAlbumArtist = ArtistNameService.normalizeArtists(
+      tagAlbumArtist,
+    );
 
     if (explicitAlbumArtist.isNotEmpty && parsedArtist == explicitAlbumArtist) {
       return '';
@@ -45,11 +68,15 @@ class AudioFile {
   }
 
   String get albumArtist {
-    final explicitAlbumArtist = (tagAlbumArtist ?? '').trim();
+    final explicitAlbumArtist = ArtistNameService.normalizeArtists(
+      tagAlbumArtist,
+    );
     if (explicitAlbumArtist.isNotEmpty) return explicitAlbumArtist;
 
-    final parsedArtist = (metadata?.artist ?? '').trim();
-    final explicitTrackArtist = (tagTrackArtist ?? '').trim();
+    final parsedArtist = ArtistNameService.normalizeArtists(metadata?.artist);
+    final explicitTrackArtist = ArtistNameService.normalizeArtists(
+      tagTrackArtist,
+    );
     if (explicitTrackArtist.isNotEmpty &&
         parsedArtist.isNotEmpty &&
         parsedArtist != explicitTrackArtist) {
@@ -60,7 +87,8 @@ class AudioFile {
 
   String get performers {
     final list = metadata?.performers ?? const <String>[];
-    return list.map((s) => s.trim()).where((s) => s.isNotEmpty).join(', ');
+    final merged = ArtistNameService.mergeArtistSources(rawValues: list);
+    return ArtistNameService.joinArtists(merged);
   }
 
   /// Backward compatibility for existing UI/sort logic.
