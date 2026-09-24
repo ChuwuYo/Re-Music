@@ -12,6 +12,10 @@
 
 name: Reuse ffmpeg.zip on Release
 
+permissions:
+  contents: write  # needed for uploading assets
+
+
 on:
   release:
     types: [published]
