@@ -145,6 +145,56 @@ void main() {
     }
   });
 
+  test(
+    'formatNewFileName preserves current name when matching any allowed separator',
+    () {
+      // 1. Matches ';'
+      final nameWithSemicolon = MetadataService.formatNewFileName(
+        artist: 'Artist A; Artist B',
+        title: 'Song',
+        extension: '.mp3',
+        pattern: '{artist} - {title}',
+        unknownArtist: 'Unknown artist',
+        unknownTitle: 'Unknown title',
+        unknownAlbum: 'Unknown album',
+        untitledTrack: 'Untitled track',
+        allowedArtistSeparators: ['_', ';', '、'],
+        currentFileName: 'Artist A;Artist B - Song.mp3',
+      );
+      expect(nameWithSemicolon, 'Artist A;Artist B - Song.mp3');
+
+      // 2. Matches '、'
+      final nameWithDunhao = MetadataService.formatNewFileName(
+        artist: 'Artist A; Artist B',
+        title: 'Song',
+        extension: '.mp3',
+        pattern: '{artist} - {title}',
+        unknownArtist: 'Unknown artist',
+        unknownTitle: 'Unknown title',
+        unknownAlbum: 'Unknown album',
+        untitledTrack: 'Untitled track',
+        allowedArtistSeparators: ['_', ';', '、'],
+        currentFileName: 'Artist A、Artist B - Song.mp3',
+      );
+      expect(nameWithDunhao, 'Artist A、Artist B - Song.mp3');
+
+      // 3. Does not match any allowed separator (e.g. used '/'), falls back to primary allowed separator '_'
+      final nameNeedsRename = MetadataService.formatNewFileName(
+        artist: 'Artist A; Artist B',
+        title: 'Song',
+        extension: '.mp3',
+        pattern: '{artist} - {title}',
+        unknownArtist: 'Unknown artist',
+        unknownTitle: 'Unknown title',
+        unknownAlbum: 'Unknown album',
+        untitledTrack: 'Untitled track',
+        allowedArtistSeparators: ['_', ';', '、'],
+        currentFileName: 'Artist A/Artist B - Song.mp3',
+      );
+      expect(nameNeedsRename, 'Artist A_Artist B - Song.mp3');
+    },
+  );
+
   test('AudioFile normalizes supported artist delimiters', () {
     final file = AudioFile(
       path: 'demo.mp3',

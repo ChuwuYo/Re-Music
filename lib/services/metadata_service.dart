@@ -253,9 +253,10 @@ class MetadataService {
     required String unknownAlbum,
     required String untitledTrack,
     String artistSeparator = AppConstants.defaultArtistSeparator,
+    Iterable<String>? allowedArtistSeparators,
+    String? currentFileName,
     int? index,
   }) {
-    String baseName;
     final indexStr = index != null
         ? index.toString().padLeft(AppConstants.numberPaddingLength, '0')
         : '';
@@ -273,63 +274,97 @@ class MetadataService {
     final cleanTitle = cleanValue(title);
     final cleanAlbum = cleanValue(album ?? '');
     final cleanTrack = cleanValue(track ?? '');
-    final safeArtistSeparator =
-        AppConstants.isValidArtistSeparator(artistSeparator)
-        ? artistSeparator
-        : AppConstants.defaultArtistSeparator;
-
-    final artistValue = ArtistNameService.joinArtists(
-      ArtistNameService.splitArtists(artist).map(cleanValue),
-      separator: safeArtistSeparator,
-      fallback: unknownArtist,
-    );
-    final albumArtistValue = ArtistNameService.joinArtists(
-      ArtistNameService.splitArtists(albumArtist).map(cleanValue),
-      separator: safeArtistSeparator,
-      fallback: unknownArtist,
-    );
     final titleValue = cleanTitle.isEmpty ? unknownTitle : cleanTitle;
     final albumValue = cleanAlbum.isEmpty ? unknownAlbum : cleanAlbum;
     final trackValue = cleanTrack.isEmpty ? indexStr : cleanTrack;
+    final ext = extension.startsWith('.') ? extension : '.$extension';
 
-    if (pattern.contains('{')) {
-      baseName = pattern
-          .replaceAll('{artist}', artistValue)
-          .replaceAll('{albumArtist}', albumArtistValue)
-          .replaceAll('{title}', titleValue)
-          .replaceAll('{album}', albumValue)
-          .replaceAll('{track}', trackValue)
-          .replaceAll('{index}', indexStr);
-    } else {
-      switch (pattern) {
-        case 'title-artist':
-          baseName = '$titleValue - $artistValue';
-          break;
-        case 'indexed-artist-title':
-          baseName = '$indexStr. $artistValue - $titleValue';
-          break;
-        case 'indexed-title-artist':
-          baseName = '$indexStr. $titleValue - $artistValue';
-          break;
-        case 'artist-title':
-        default:
-          baseName = '$artistValue - $titleValue';
-          break;
+    final artistParts = ArtistNameService.splitArtists(
+      artist,
+    ).map(cleanValue).toList();
+    final albumArtistParts = ArtistNameService.splitArtists(
+      albumArtist,
+    ).map(cleanValue).toList();
+
+    String buildWithSeparator(String sep) {
+      final safeArtistSeparator = AppConstants.isValidArtistSeparator(sep)
+          ? sep
+          : AppConstants.defaultArtistSeparator;
+
+      final artistValue = ArtistNameService.joinArtists(
+        artistParts,
+        separator: safeArtistSeparator,
+        fallback: unknownArtist,
+      );
+      final albumArtistValue = ArtistNameService.joinArtists(
+        albumArtistParts,
+        separator: safeArtistSeparator,
+        fallback: unknownArtist,
+      );
+
+      String baseName;
+      if (pattern.contains('{')) {
+        baseName = pattern
+            .replaceAll('{artist}', artistValue)
+            .replaceAll('{albumArtist}', albumArtistValue)
+            .replaceAll('{title}', titleValue)
+            .replaceAll('{album}', albumValue)
+            .replaceAll('{track}', trackValue)
+            .replaceAll('{index}', indexStr);
+      } else {
+        switch (pattern) {
+          case 'title-artist':
+            baseName = '$titleValue - $artistValue';
+            break;
+          case 'indexed-artist-title':
+            baseName = '$indexStr. $artistValue - $titleValue';
+            break;
+          case 'indexed-title-artist':
+            baseName = '$indexStr. $titleValue - $artistValue';
+            break;
+          case 'artist-title':
+          default:
+            baseName = '$artistValue - $titleValue';
+            break;
+        }
+      }
+
+      baseName = baseName.trim();
+      if (baseName.isEmpty) {
+        baseName = cleanTitle.isNotEmpty
+            ? cleanTitle
+            : (cleanArtist.isNotEmpty
+                  ? cleanArtist
+                  : (cleanAlbumArtist.isNotEmpty
+                        ? cleanAlbumArtist
+                        : untitledTrack));
+      }
+
+      return '$baseName$ext';
+    }
+
+    final candidateSeparators =
+        allowedArtistSeparators != null && allowedArtistSeparators.isNotEmpty
+        ? AppConstants.sanitizeAllowedArtistSeparators(allowedArtistSeparators)
+        : [
+            AppConstants.isValidArtistSeparator(artistSeparator)
+                ? artistSeparator
+                : AppConstants.defaultArtistSeparator,
+          ];
+
+    final primaryName = buildWithSeparator(candidateSeparators.first);
+    if (currentFileName != null) {
+      if (currentFileName == primaryName) {
+        return primaryName;
+      }
+      for (final sep in candidateSeparators.skip(1)) {
+        final candidate = buildWithSeparator(sep);
+        if (currentFileName == candidate) {
+          return candidate;
+        }
       }
     }
 
-    baseName = baseName.trim();
-    if (baseName.isEmpty) {
-      baseName = cleanTitle.isNotEmpty
-          ? cleanTitle
-          : (cleanArtist.isNotEmpty
-                ? cleanArtist
-                : (cleanAlbumArtist.isNotEmpty
-                      ? cleanAlbumArtist
-                      : untitledTrack));
-    }
-
-    final ext = extension.startsWith('.') ? extension : '.$extension';
-    return '$baseName$ext';
+    return primaryName;
   }
 }

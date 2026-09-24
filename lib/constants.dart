@@ -141,11 +141,28 @@ class AppConstants {
   /// 可选的艺术家分隔符列表
   static const List<String> artistSeparatorOptions = ['_', ';', ',', '·', '、'];
 
+  /// 默认允许的艺术家分隔符列表
+  static const List<String> defaultAllowedArtistSeparators = ['_'];
+
   /// 校验艺术家分隔符是否可用于文件名
   static bool isValidArtistSeparator(String separator) {
     return separator.isNotEmpty &&
         artistSeparatorOptions.contains(separator) &&
         !invalidFilenameChars.hasMatch(separator);
+  }
+
+  /// 过滤并返回合法的艺术家分隔符列表，保持选项定义顺序，保证至少包含一个有效符号
+  static List<String> sanitizeAllowedArtistSeparators(
+    Iterable<String>? separators,
+  ) {
+    if (separators == null) {
+      return List<String>.from(defaultAllowedArtistSeparators);
+    }
+    final validSet = separators.where(isValidArtistSeparator).toSet();
+    final ordered = artistSeparatorOptions.where(validSet.contains).toList();
+    return ordered.isEmpty
+        ? List<String>.from(defaultAllowedArtistSeparators)
+        : ordered;
   }
 
   /// 默认文件添加模式

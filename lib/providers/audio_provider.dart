@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:audiotags/audiotags.dart' as at;
@@ -72,7 +72,9 @@ class AudioProvider extends ChangeNotifier {
   String _unknownTitle = AppConstants.defaultUnknownTitle;
   String _unknownAlbum = AppConstants.defaultUnknownAlbum;
   String _untitledTrack = AppConstants.defaultUntitledTrack;
-  String _artistSeparator = AppConstants.defaultArtistSeparator;
+  List<String> _allowedArtistSeparators = List.from(
+    AppConstants.defaultAllowedArtistSeparators,
+  );
   FileAddMode _singleFileAddMode = AppConstants.defaultSingleFileAddMode;
   FileAddMode _directoryAddMode = AppConstants.defaultDirectoryAddMode;
 
@@ -97,19 +99,36 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String get artistSeparator => _artistSeparator;
+  List<String> get allowedArtistSeparators => _allowedArtistSeparators;
+
+  String get artistSeparator => _allowedArtistSeparators.first;
 
   FileAddMode get singleFileAddMode => _singleFileAddMode;
   FileAddMode get directoryAddMode => _directoryAddMode;
 
-  void setArtistSeparator(String separator) {
-    final nextSeparator = AppConstants.isValidArtistSeparator(separator)
-        ? separator
-        : AppConstants.defaultArtistSeparator;
-    if (_artistSeparator == nextSeparator) return;
-    _artistSeparator = nextSeparator;
+  void setAllowedArtistSeparators(Iterable<String> separators) {
+    final sanitized = AppConstants.sanitizeAllowedArtistSeparators(separators);
+    if (listEquals(_allowedArtistSeparators, sanitized)) return;
+    _allowedArtistSeparators = sanitized;
     _updateNewFileNames();
     notifyListeners();
+  }
+
+  void toggleArtistSeparator(String separator) {
+    if (!AppConstants.isValidArtistSeparator(separator)) return;
+    final current = List<String>.from(_allowedArtistSeparators);
+    if (current.contains(separator)) {
+      if (current.length <= 1) return;
+      current.remove(separator);
+    } else {
+      current.add(separator);
+    }
+    setAllowedArtistSeparators(current);
+  }
+
+  void setArtistSeparator(String separator) {
+    if (!AppConstants.isValidArtistSeparator(separator)) return;
+    setAllowedArtistSeparators([separator]);
   }
 
   void setSingleFileAddMode(FileAddMode mode) {
@@ -169,7 +188,9 @@ class AudioProvider extends ChangeNotifier {
           unknownTitle: _unknownTitle,
           unknownAlbum: _unknownAlbum,
           untitledTrack: _untitledTrack,
-          artistSeparator: _artistSeparator,
+          artistSeparator: artistSeparator,
+          allowedArtistSeparators: _allowedArtistSeparators,
+          currentFileName: file.originalFileName,
           index: i + 1,
         );
       }
