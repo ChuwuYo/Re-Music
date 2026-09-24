@@ -1,0 +1,74 @@
+# Reuse ffmpeg.zip on Release
+
+# This workflow automatically copies the most recent `ffmpeg.zip`
+# asset from a previous release (if any) to the newly published release.
+# It works for releases created via the GitHub UI or via `git tag`/`git push`.
+#
+# Enhancements:
+# • Uses the official `actions/upload-release-asset` action instead of raw curl.
+# • Prints useful debug information.
+# • Safely skips processing when no prior `ffmpeg.zip` exists.
+# • Runs on GitHub‑hosted `ubuntu-latest` (which already includes the `gh` CLI).
+
+name: Reuse ffmpeg.zip on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  reuse-ffmpeg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (needed for actions)
+        uses: actions/checkout@v4
+
+      - name: Determine current release ID
+        id: current
+        run: |
+          echo "Current release ID: $(jq -r '.release.id' "$GITHUB_EVENT_PATH")"
+          echo "release_id=$(jq -r '.release.id' "$GITHUB_EVENT_PATH")" >> $GITHUB_OUTPUT
+
+      - name: Find previous release that contains ffmpeg.zip
+        id: previous
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List releases, exclude the current one, and find the first with ffmpeg.zip
+          PREV_RELEASE=$(gh api repos/${{ github.repository }}/releases \
+            --jq ".[] | select(.id != ${{ steps.current.outputs.release_id }} and (.assets[]?.name == \"ffmpeg.zip\")) | .id" \
+            | head -n1)
+          if [ -z "$PREV_RELEASE" ]; then
+            echo "No previous release with ffmpeg.zip found. Skipping further steps."
+            echo "found=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "Found previous release ID: $PREV_RELEASE"
+          echo "found=true" >> $GITHUB_OUTPUT
+          echo "prev_id=$PREV_RELEASE" >> $GITHUB_OUTPUT
+
+      - name: Download ffmpeg.zip from previous release
+        if: steps.previous.outputs.found == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DOWNLOAD_URL=$(gh api repos/${{ github.repository }}/releases/${{ steps.previous.outputs.prev_id }} \
+            --jq ".assets[] | select(.name == \"ffmpeg.zip\") | .browser_download_url")
+          echo "Downloading ffmpeg.zip from $DOWNLOAD_URL"
+          curl -L -H "Authorization: token $GITHUB_TOKEN" -o ffmpeg.zip "$DOWNLOAD_URL"
+
+      - name: Upload ffmpeg.zip to the new release
+        if: steps.previous.outputs.found == 'true'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./ffmpeg.zip
+          asset_name: ffmpeg.zip
+          asset_content_type: application/zip
+
+      - name: Final debug output
+        run: |
+          echo "--- Workflow completed ---"
+          echo "Current release: ${{ steps.current.outputs.release_id }}"
+          echo "Previous release with ffmpeg: ${{ steps.previous.outputs.prev_id }}"
+          echo "Was ffmpeg copied? ${{ steps.previous.outputs.found }}"
