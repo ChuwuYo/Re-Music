@@ -2,23 +2,24 @@
 
 # This workflow automatically copies the most recent `ffmpeg.zip`
 # asset from a previous release (if any) to the newly published release.
-# It works for releases created via the GitHub UI or via `git tag`/`git push`.
-#
+# It works for releases created via the GitHub UI, via `git tag`/`git push`,
+# and also when an existing release is edited (e.g., tag changed) or
+# a draft is published again.
+
 # Enhancements:
-# • Uses the official `actions/upload-release-asset` action instead of raw curl.
+# • Uses the official `actions/upload-release-asset` action.
 # • Prints useful debug information.
 # • Safely skips processing when no prior `ffmpeg.zip` exists.
-# • Runs on GitHub‑hosted `ubuntu-latest` (which already includes the `gh` CLI).
+# • Runs on GitHub‑hosted `ubuntu-latest` (includes the `gh` CLI).
 
 name: Reuse ffmpeg.zip on Release
 
 permissions:
   contents: write  # needed for uploading assets
 
-
 on:
   release:
-    types: [published]
+    types: [published, edited, released]   # trigger on publish, edit, and re‑publish
 
 jobs:
   reuse-ffmpeg:
@@ -38,16 +39,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # List releases, exclude the current one, and find the first with ffmpeg.zip
           PREV_RELEASE=$(gh api repos/${{ github.repository }}/releases \
             --jq ".[] | select(.id != ${{ steps.current.outputs.release_id }} and (.assets[]?.name == \"ffmpeg.zip\")) | .id" \
             | head -n1)
           if [ -z "$PREV_RELEASE" ]; then
-            echo "No previous release with ffmpeg.zip found. Skipping further steps."
             echo "found=false" >> $GITHUB_OUTPUT
+            echo "No previous release with ffmpeg.zip found. Skipping further steps."
             exit 0
           fi
-          echo "Found previous release ID: $PREV_RELEASE"
           echo "found=true" >> $GITHUB_OUTPUT
           echo "prev_id=$PREV_RELEASE" >> $GITHUB_OUTPUT
 
