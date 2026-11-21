@@ -147,10 +147,15 @@ class _ArtistSeparatorSelector extends StatelessWidget {
     final allowedSeparators = context.select<AudioProvider, List<String>>(
       (provider) => provider.allowedArtistSeparators,
     );
+    final activeSeparator = context.select<AudioProvider, String>(
+      (provider) => provider.artistSeparator,
+    );
     final toggleArtistSeparator = context
         .read<AudioProvider>()
         .toggleArtistSeparator;
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isLastOne = allowedSeparators.length == 1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,16 +163,16 @@ class _ArtistSeparatorSelector extends StatelessWidget {
       children: [
         Text(
           l10n.artistSeparator,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: AppConstants.spacingSmall),
         Text(
           l10n.artistSeparatorSubtitle,
-          style: Theme.of(
-            context,
-          ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: AppConstants.spacingMediumSmall),
         Wrap(
@@ -175,25 +180,40 @@ class _ArtistSeparatorSelector extends StatelessWidget {
           runSpacing: AppConstants.spacingSmall,
           children: AppConstants.artistSeparatorOptions.map((sep) {
             final isSelected = allowedSeparators.contains(sep);
-            return SizedBox(
-              width: AppConstants.artistSeparatorOptionWidth,
-              child: SelectableCard(
-                isSelected: isSelected,
-                onTap: () => toggleArtistSeparator(sep),
-                child: Center(
-                  child: Text(
-                    sep,
-                    style: TextStyle(
-                      color: isSelected ? scheme.primary : scheme.onSurface,
-                      fontWeight: isSelected
-                          ? FontWeight.w500
-                          : FontWeight.normal,
-                    ),
+            final isActive = isSelected && sep == activeSeparator;
+            final isLocked = isLastOne && isSelected;
+            final card = SelectableCard(
+              isSelected: isSelected,
+              isActive: isActive,
+              hint: isLocked ? l10n.artistSeparatorKeepOne : null,
+              onTap: () => toggleArtistSeparator(sep),
+              child: Center(
+                child: Text(
+                  sep,
+                  style: TextStyle(
+                    color: isSelected ? scheme.primary : scheme.onSurface,
+                    fontWeight: isSelected
+                        ? FontWeight.w500
+                        : FontWeight.normal,
                   ),
                 ),
               ),
             );
+            return SizedBox(
+              width: AppConstants.artistSeparatorOptionWidth,
+              child: isLocked
+                  ? Tooltip(message: l10n.artistSeparatorKeepOne, child: card)
+                  : card,
+            );
           }).toList(),
+        ),
+        const SizedBox(height: AppConstants.spacingSmall),
+        Text(
+          l10n.artistSeparatorActive(activeSeparator),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.primary,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ],
     );

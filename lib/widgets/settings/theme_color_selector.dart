@@ -69,6 +69,10 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
 
   void _onHueFocusChanged() {
     if (_hueFocusNode.hasFocus || !mounted) return;
+    final currentHue = ThemeColorService.normalizeHue(
+      _themeController.themeHue,
+    );
+    if (_hueController.text == currentHue.toString()) return;
     final l10n = AppLocalizations.of(context);
     if (l10n == null) return;
     _applyHueInput(l10n, fromBlur: true);
@@ -143,31 +147,36 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
             SizedBox(
               width: AppConstants.themeHueInputWidth,
               height: AppConstants.themeHueControlHeight,
-              child: Semantics(
-                label: l10n.themeHueLabel,
-                child: TextField(
-                  controller: _hueController,
-                  focusNode: _hueFocusNode,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  textInputAction: TextInputAction.done,
-                  textAlign: TextAlign.center,
-                  textAlignVertical: TextAlignVertical.center,
-                  style: theme.textTheme.bodyMedium,
-                  onSubmitted: (_) => _applyHueInput(l10n),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.zero,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppConstants.borderRadiusMedium,
+              child: MergeSemantics(
+                child: Semantics(
+                  label: l10n.themeHueLabel,
+                  child: TextField(
+                    controller: _hueController,
+                    focusNode: _hueFocusNode,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    textInputAction: TextInputAction.done,
+                    textAlign: TextAlign.center,
+                    textAlignVertical: TextAlignVertical.center,
+                    style: theme.textTheme.bodyMedium,
+                    onSubmitted: (_) => _applyHueInput(l10n),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.borderRadiusMedium,
+                        ),
+                        borderSide: BorderSide(color: scheme.outlineVariant),
                       ),
-                      borderSide: BorderSide(color: scheme.outlineVariant),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppConstants.borderRadiusMedium,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.borderRadiusMedium,
+                        ),
+                        borderSide: BorderSide(
+                          color: scheme.primary,
+                          width: 1.5,
+                        ),
                       ),
-                      borderSide: BorderSide(color: scheme.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -197,11 +206,15 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
           ],
         ),
         if (_hueErrorText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: AppConstants.spacingSmall),
-            child: Text(
-              _hueErrorText!,
-              style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
+          Semantics(
+            container: true,
+            liveRegion: true,
+            child: Padding(
+              padding: const EdgeInsets.only(top: AppConstants.spacingSmall),
+              child: Text(
+                _hueErrorText!,
+                style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
+              ),
             ),
           ),
         const SizedBox(height: AppConstants.spacingMedium),

@@ -131,7 +131,16 @@
   "addModeAppend": "叠加到列表",
   "addModeReplace": "替换现有列表",
   "artistSeparator": "艺术家分隔符",
-  "artistSeparatorSubtitle": "用于拆分标签中的多位艺术家；第一个选中的符号用于生成文件名。",
+  "artistSeparatorSubtitle": "用于拆分标签中的多位艺术家。按显示顺序生效，最靠前选中的符号用于生成文件名；想换请先取消它。",
+  "artistSeparatorActive": "用于生成文件名：{separator}",
+  "@artistSeparatorActive": {
+    "placeholders": {
+      "separator": {
+        "type": "String"
+      }
+    }
+  },
+  "artistSeparatorKeepOne": "至少需要保留一个分隔符",
   "navTranscode": "转码",
   "transcodeTitle": "转码",
   "transcodeStart": "开始转码",

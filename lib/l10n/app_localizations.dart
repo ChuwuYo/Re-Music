@@ -701,8 +701,20 @@ abstract class AppLocalizations {
   /// No description provided for @artistSeparatorSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Splits multiple artists in tags; the first selected symbol is used in filenames.'**
+  /// **'Splits multiple artists in tags. Symbols apply in the order shown; the leftmost selected one is used in filenames. Deselect it to use another.'**
   String get artistSeparatorSubtitle;
+
+  /// No description provided for @artistSeparatorActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Used in filenames: {separator}'**
+  String artistSeparatorActive(String separator);
+
+  /// No description provided for @artistSeparatorKeepOne.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one separator must stay selected'**
+  String get artistSeparatorKeepOne;
 
   /// No description provided for @navTranscode.
   ///

@@ -320,7 +320,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get artistSeparatorSubtitle =>
-      'Splits multiple artists in tags; the first selected symbol is used in filenames.';
+      'Splits multiple artists in tags. Symbols apply in the order shown; the leftmost selected one is used in filenames. Deselect it to use another.';
+
+  @override
+  String artistSeparatorActive(String separator) {
+    return 'Used in filenames: $separator';
+  }
+
+  @override
+  String get artistSeparatorKeepOne =>
+      'At least one separator must stay selected';
 
   @override
   String get navTranscode => 'Transcode';

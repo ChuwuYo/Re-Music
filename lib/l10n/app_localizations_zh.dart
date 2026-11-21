@@ -319,7 +319,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artistSeparator => '艺术家分隔符';
 
   @override
-  String get artistSeparatorSubtitle => '用于拆分标签中的多位艺术家；第一个选中的符号用于生成文件名。';
+  String get artistSeparatorSubtitle =>
+      '用于拆分标签中的多位艺术家。按显示顺序生效，最靠前选中的符号用于生成文件名；想换请先取消它。';
+
+  @override
+  String artistSeparatorActive(String separator) {
+    return '用于生成文件名：$separator';
+  }
+
+  @override
+  String get artistSeparatorKeepOne => '至少需要保留一个分隔符';
 
   @override
   String get navTranscode => '转码';

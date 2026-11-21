@@ -131,7 +131,16 @@
   "addModeAppend": "Append to list",
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
-  "artistSeparatorSubtitle": "Splits multiple artists in tags; the first selected symbol is used in filenames.",
+  "artistSeparatorSubtitle": "Splits multiple artists in tags. Symbols apply in the order shown; the leftmost selected one is used in filenames. Deselect it to use another.",
+  "artistSeparatorActive": "Used in filenames: {separator}",
+  "@artistSeparatorActive": {
+    "placeholders": {
+      "separator": {
+        "type": "String"
+      }
+    }
+  },
+  "artistSeparatorKeepOne": "At least one separator must stay selected",
   "navTranscode": "Transcode",
   "transcodeTitle": "Transcode",
   "transcodeStart": "Start transcode",
