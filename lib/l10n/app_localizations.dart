@@ -602,6 +602,12 @@ abstract class AppLocalizations {
   /// **'Please enter a valid number'**
   String get invalidNumber;
 
+  /// No description provided for @invalidHueRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a hue between {min} and {max}'**
+  String invalidHueRange(int min, int max);
+
   /// No description provided for @sortAscending.
   ///
   /// In en, this message translates to:
@@ -692,6 +698,12 @@ abstract class AppLocalizations {
   /// **'Artist separator'**
   String get artistSeparator;
 
+  /// No description provided for @artistSeparatorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Splits multiple artists in tags; the first selected symbol is used in filenames.'**
+  String get artistSeparatorSubtitle;
+
   /// No description provided for @navTranscode.
   ///
   /// In en, this message translates to:
@@ -763,6 +775,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Convert files that only need a format change'**
   String get transcodeAllowFormatOnly;
+
+  /// No description provided for @transcodeAllowFormatOnlySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Also converts tracks needing only a container/format change, without re-encoding audio.'**
+  String get transcodeAllowFormatOnlySubtitle;
 
   /// No description provided for @transcodeEnableDither.
   ///

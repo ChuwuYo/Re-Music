@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:remusic/constants.dart';
@@ -32,6 +33,41 @@ void main() {
       final json = config.toJson();
       expect(json['themeHue'], config.themeHue);
       expect(json.containsKey('seedColor'), isFalse);
+    });
+  });
+
+  group('AppConfigs theme mode and file add modes', () {
+    test('reads and serializes themeMode and add modes', () {
+      final config = AppConfigs.fromJson({
+        'themeMode': 'dark',
+        'singleFileAddMode': 'replace',
+        'directoryAddMode': 'append',
+      });
+
+      expect(config.themeMode, ThemeMode.dark);
+      expect(config.singleFileAddMode, FileAddMode.replace);
+      expect(config.directoryAddMode, FileAddMode.append);
+
+      final json = config.toJson();
+      expect(json['themeMode'], 'dark');
+      expect(json['singleFileAddMode'], 'replace');
+      expect(json['directoryAddMode'], 'append');
+    });
+
+    test('falls back to defaults for missing or invalid values', () {
+      final missing = AppConfigs.fromJson({});
+      expect(missing.themeMode, AppConstants.defaultThemeMode);
+      expect(missing.singleFileAddMode, AppConstants.defaultSingleFileAddMode);
+      expect(missing.directoryAddMode, AppConstants.defaultDirectoryAddMode);
+
+      final invalid = AppConfigs.fromJson({
+        'themeMode': 'neon',
+        'singleFileAddMode': 'merge',
+        'directoryAddMode': 42,
+      });
+      expect(invalid.themeMode, AppConstants.defaultThemeMode);
+      expect(invalid.singleFileAddMode, AppConstants.defaultSingleFileAddMode);
+      expect(invalid.directoryAddMode, AppConstants.defaultDirectoryAddMode);
     });
   });
 

@@ -269,6 +269,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get invalidNumber => '请输入有效的数字';
 
   @override
+  String invalidHueRange(int min, int max) {
+    return '请输入 $min 到 $max 之间的色相值';
+  }
+
+  @override
   String get sortAscending => '升序';
 
   @override
@@ -314,6 +319,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get artistSeparator => '艺术家分隔符';
 
   @override
+  String get artistSeparatorSubtitle => '用于拆分标签中的多位艺术家；第一个选中的符号用于生成文件名。';
+
+  @override
   String get navTranscode => '转码';
 
   @override
@@ -354,6 +362,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transcodeAllowFormatOnly => '也转换仅需换格式的文件';
+
+  @override
+  String get transcodeAllowFormatOnlySubtitle => '同时转换仅需更换容器或格式、无需重新编码音频的曲目。';
 
   @override
   String get transcodeEnableDither => '启用三角概率密度抖动';

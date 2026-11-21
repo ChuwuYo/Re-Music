@@ -269,6 +269,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidNumber => 'Please enter a valid number';
 
   @override
+  String invalidHueRange(int min, int max) {
+    return 'Enter a hue between $min and $max';
+  }
+
+  @override
   String get sortAscending => 'Ascending';
 
   @override
@@ -314,6 +319,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get artistSeparator => 'Artist separator';
 
   @override
+  String get artistSeparatorSubtitle =>
+      'Splits multiple artists in tags; the first selected symbol is used in filenames.';
+
+  @override
   String get navTranscode => 'Transcode';
 
   @override
@@ -356,6 +365,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get transcodeAllowFormatOnly =>
       'Convert files that only need a format change';
+
+  @override
+  String get transcodeAllowFormatOnlySubtitle =>
+      'Also converts tracks needing only a container/format change, without re-encoding audio.';
 
   @override
   String get transcodeEnableDither => 'Enable triangular dither';

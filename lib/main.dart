@@ -153,7 +153,8 @@ class MyApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       locale: locale,
-      themeAnimationDuration: isHuePreviewing
+      themeAnimationDuration:
+          isHuePreviewing || MediaQuery.disableAnimationsOf(context)
           ? Duration.zero
           : AppConstants.defaultAnimationDuration,
       themeAnimationCurve: Curves.easeInOut,

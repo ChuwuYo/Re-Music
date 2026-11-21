@@ -6,7 +6,6 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/theme_provider.dart';
 import '../../services/theme_color_service.dart';
-import '../common/remusic_snack_bar.dart';
 
 class ThemeColorSelector extends StatefulWidget {
   const ThemeColorSelector({super.key});
@@ -22,6 +21,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
   late double _sliderHue;
 
   bool _isDragging = false;
+  String? _hueErrorText;
 
   @override
   void initState() {
@@ -32,12 +32,14 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     _sliderHue = initialHue.toDouble();
     _hueController = TextEditingController(text: initialHue.toString());
     _hueFocusNode = FocusNode();
+    _hueFocusNode.addListener(_onHueFocusChanged);
   }
 
   @override
   void dispose() {
     _themeController.removeListener(_onControllerHueChanged);
     _themeController.disposeHuePreview();
+    _hueFocusNode.removeListener(_onHueFocusChanged);
     _hueController.dispose();
     _hueFocusNode.dispose();
     super.dispose();
@@ -65,44 +67,40 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
     );
   }
 
-  void _showHueSnackBar(String message) {
-    ReMusicSnackBar.showFloating(
-      context,
-      message: message,
-      duration: AppConstants.snackBarDefaultDuration,
-      showCloseIcon: true,
-      clearPrevious: true,
-      adaptiveHorizontalMargin: true,
-    );
+  void _onHueFocusChanged() {
+    if (_hueFocusNode.hasFocus || !mounted) return;
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return;
+    _applyHueInput(l10n, fromBlur: true);
   }
 
-  void _applyHueInput(AppLocalizations l10n) {
-    final rawText = _hueController.text.trim();
-    final parsed = int.tryParse(rawText);
-    if (parsed == null) {
-      _showHueSnackBar(l10n.invalidNumber);
-      _syncHueText(_themeController.themeHue, force: true);
+  void _applyHueInput(AppLocalizations l10n, {bool fromBlur = false}) {
+    final result = _themeController.parseHueInput(_hueController.text);
+    if (result.status != HueInputStatus.valid) {
+      final message = result.status == HueInputStatus.invalidNumber
+          ? l10n.invalidNumber
+          : l10n.invalidHueRange(
+              AppConstants.themeHueMin,
+              AppConstants.themeHueMax,
+            );
+      if (fromBlur) {
+        setState(() => _hueErrorText = null);
+        _syncHueText(_themeController.themeHue, force: true);
+      } else {
+        setState(() => _hueErrorText = message);
+      }
       return;
     }
 
-    if (parsed < AppConstants.themeHueMin ||
-        parsed > AppConstants.themeHueMax) {
-      _showHueSnackBar(
-        '${l10n.invalidNumber} '
-        '(${AppConstants.themeHueMin}-${AppConstants.themeHueMax})',
-      );
-      _syncHueText(_themeController.themeHue, force: true);
-      return;
-    }
-
-    final normalizedHue = ThemeColorService.normalizeHue(parsed);
+    final hue = result.hue!;
     setState(() {
       _isDragging = false;
-      _sliderHue = normalizedHue.toDouble();
+      _sliderHue = hue.toDouble();
+      _hueErrorText = null;
     });
-    _themeController.commitHuePreview(normalizedHue);
-    _syncHueText(normalizedHue, force: true);
-    _hueFocusNode.unfocus();
+    _themeController.commitHuePreview(hue);
+    _syncHueText(hue, force: true);
+    if (!fromBlur) _hueFocusNode.unfocus();
   }
 
   @override
@@ -145,29 +143,32 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
             SizedBox(
               width: AppConstants.themeHueInputWidth,
               height: AppConstants.themeHueControlHeight,
-              child: TextField(
-                controller: _hueController,
-                focusNode: _hueFocusNode,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                textInputAction: TextInputAction.done,
-                textAlign: TextAlign.center,
-                textAlignVertical: TextAlignVertical.center,
-                style: theme.textTheme.bodyMedium,
-                onSubmitted: (_) => _applyHueInput(l10n),
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.zero,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadiusMedium,
+              child: Semantics(
+                label: l10n.themeHueLabel,
+                child: TextField(
+                  controller: _hueController,
+                  focusNode: _hueFocusNode,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textInputAction: TextInputAction.done,
+                  textAlign: TextAlign.center,
+                  textAlignVertical: TextAlignVertical.center,
+                  style: theme.textTheme.bodyMedium,
+                  onSubmitted: (_) => _applyHueInput(l10n),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.borderRadiusMedium,
+                      ),
+                      borderSide: BorderSide(color: scheme.outlineVariant),
                     ),
-                    borderSide: BorderSide(color: scheme.outlineVariant),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadiusMedium,
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppConstants.borderRadiusMedium,
+                      ),
+                      borderSide: BorderSide(color: scheme.primary, width: 1.5),
                     ),
-                    borderSide: BorderSide(color: scheme.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -190,11 +191,19 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
                   textStyle: theme.textTheme.bodyMedium,
                 ),
                 onPressed: () => _applyHueInput(l10n),
-                child: Text(l10n.confirm),
+                child: Text(l10n.apply),
               ),
             ),
           ],
         ),
+        if (_hueErrorText != null)
+          Padding(
+            padding: const EdgeInsets.only(top: AppConstants.spacingSmall),
+            child: Text(
+              _hueErrorText!,
+              style: theme.textTheme.bodySmall?.copyWith(color: scheme.error),
+            ),
+          ),
         const SizedBox(height: AppConstants.spacingMedium),
         RepaintBoundary(
           child: ClipRRect(
@@ -227,6 +236,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
                     min: AppConstants.themeHueMin.toDouble(),
                     max: AppConstants.themeHueMax.toDouble(),
                     value: clampedSliderHue,
+                    label: l10n.themeHueLabel,
                     onChangeStart: (_) {
                       setState(() {
                         _isDragging = true;
@@ -236,6 +246,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
                     onChanged: (value) {
                       setState(() {
                         _sliderHue = value;
+                        _hueErrorText = null;
                       });
                       final hue = ThemeColorService.normalizeHue(value.round());
                       _syncHueText(hue);
@@ -246,6 +257,7 @@ class _ThemeColorSelectorState extends State<ThemeColorSelector> {
                       setState(() {
                         _isDragging = false;
                         _sliderHue = hue.toDouble();
+                        _hueErrorText = null;
                       });
                       _themeController.commitHuePreview(hue);
                       _syncHueText(hue, force: true);

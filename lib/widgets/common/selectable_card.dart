@@ -23,21 +23,25 @@ class SelectableCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
-        child: Ink(
-          padding: const EdgeInsets.all(AppConstants.spacingMediumSmall),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? scheme.primary.withValues(alpha: 0.12)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadiusMedium,
+        child: Semantics(
+          selected: isSelected,
+          button: true,
+          child: Ink(
+            padding: const EdgeInsets.all(AppConstants.spacingMediumSmall),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? scheme.primary.withValues(alpha: 0.12)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(
+                AppConstants.borderRadiusMedium,
+              ),
+              border: Border.all(
+                color: isSelected ? scheme.primary : scheme.outlineVariant,
+                width: 1,
+              ),
             ),
-            border: Border.all(
-              color: isSelected ? scheme.primary : scheme.outlineVariant,
-              width: 1,
-            ),
+            child: child,
           ),
-          child: child,
         ),
       ),
     );

@@ -4,6 +4,15 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../services/theme_color_service.dart';
 
+enum HueInputStatus { valid, invalidNumber, outOfRange }
+
+class HueParseResult {
+  const HueParseResult({required this.status, this.hue});
+
+  final HueInputStatus status;
+  final int? hue;
+}
+
 class ThemeController extends ChangeNotifier {
   ThemeMode _themeMode = AppConstants.defaultThemeMode;
   int _themeHue = AppConstants.defaultThemeHue;
@@ -45,10 +54,19 @@ class ThemeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  int? parseHueInput(String rawText) {
+  HueParseResult parseHueInput(String rawText) {
     final parsed = int.tryParse(rawText.trim());
-    if (parsed == null) return null;
-    return ThemeColorService.normalizeHue(parsed);
+    if (parsed == null) {
+      return const HueParseResult(status: HueInputStatus.invalidNumber);
+    }
+    if (parsed < AppConstants.themeHueMin ||
+        parsed > AppConstants.themeHueMax) {
+      return const HueParseResult(status: HueInputStatus.outOfRange);
+    }
+    return HueParseResult(
+      status: HueInputStatus.valid,
+      hue: ThemeColorService.normalizeHue(parsed),
+    );
   }
 
   void setHuePreviewing(bool value) {

@@ -105,6 +105,17 @@
   "cancel": "取消",
   "close": "关闭",
   "invalidNumber": "请输入有效的数字",
+  "invalidHueRange": "请输入 {min} 到 {max} 之间的色相值",
+  "@invalidHueRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "sortAscending": "升序",
   "sortDescending": "降序",
   "sidebarExpand": "展开侧边栏",
@@ -120,6 +131,7 @@
   "addModeAppend": "叠加到列表",
   "addModeReplace": "替换现有列表",
   "artistSeparator": "艺术家分隔符",
+  "artistSeparatorSubtitle": "用于拆分标签中的多位艺术家；第一个选中的符号用于生成文件名。",
   "navTranscode": "转码",
   "transcodeTitle": "转码",
   "transcodeStart": "开始转码",
@@ -153,6 +165,7 @@
   "transcodePreset": "无损规格",
   "transcodeMp3Bitrate": "MP3 比特率",
   "transcodeAllowFormatOnly": "也转换仅需换格式的文件",
+  "transcodeAllowFormatOnlySubtitle": "同时转换仅需更换容器或格式、无需重新编码音频的曲目。",
   "transcodeEnableDither": "启用三角概率密度抖动",
   "transcodeEnableDitherSubtitle": "降低位深时减少量化噪声",
   "transcodeConcurrency": "并发数",

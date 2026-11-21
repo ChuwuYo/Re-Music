@@ -162,6 +162,13 @@ class _ArtistSeparatorSelector extends StatelessWidget {
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
         ),
+        const SizedBox(height: AppConstants.spacingSmall),
+        Text(
+          l10n.artistSeparatorSubtitle,
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+        ),
         const SizedBox(height: AppConstants.spacingMediumSmall),
         Wrap(
           spacing: AppConstants.spacingSmall,

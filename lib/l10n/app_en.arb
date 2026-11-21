@@ -105,6 +105,17 @@
   "cancel": "Cancel",
   "close": "Close",
   "invalidNumber": "Please enter a valid number",
+  "invalidHueRange": "Enter a hue between {min} and {max}",
+  "@invalidHueRange": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
   "sortAscending": "Ascending",
   "sortDescending": "Descending",
   "sidebarExpand": "Expand sidebar",
@@ -120,6 +131,7 @@
   "addModeAppend": "Append to list",
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
+  "artistSeparatorSubtitle": "Splits multiple artists in tags; the first selected symbol is used in filenames.",
   "navTranscode": "Transcode",
   "transcodeTitle": "Transcode",
   "transcodeStart": "Start transcode",
@@ -153,6 +165,7 @@
   "transcodePreset": "Lossless preset",
   "transcodeMp3Bitrate": "MP3 bitrate",
   "transcodeAllowFormatOnly": "Convert files that only need a format change",
+  "transcodeAllowFormatOnlySubtitle": "Also converts tracks needing only a container/format change, without re-encoding audio.",
   "transcodeEnableDither": "Enable triangular dither",
   "transcodeEnableDitherSubtitle": "Reduces quantization noise when lowering bit depth",
   "transcodeConcurrency": "Concurrency",

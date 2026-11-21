@@ -17,6 +17,7 @@ class TranscodeSettings extends StatelessWidget {
         SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(l10n.transcodeAllowFormatOnly),
+          subtitle: Text(l10n.transcodeAllowFormatOnlySubtitle),
           value: provider.allowFormatOnlyConversion,
           onChanged: context
               .read<TranscodeProvider>()
