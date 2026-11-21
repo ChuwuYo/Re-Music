@@ -127,6 +127,14 @@ flutter pub outdated
 flutter gen-l10n
 ```
 
+#### Agent Skills
+
+The skills in `.agents/skills/` come from [flutter/agent-plugins](https://github.com/flutter/agent-plugins) (pinned in `skills-lock.json`). To update them:
+
+```bash
+npx skills update
+```
+
 ### Build and Release
 
 #### 1. Automated Build (Recommended)

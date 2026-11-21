@@ -127,6 +127,14 @@ flutter pub outdated
 flutter gen-l10n
 ```
 
+#### Agent Skills
+
+`.agents/skills/` 中的技能来自 [flutter/agent-plugins](https://github.com/flutter/agent-plugins)（版本锁定在 `skills-lock.json`）。更新命令：
+
+```bash
+npx skills update
+```
+
 ### 构建发布 (Build)
 
 #### 1. 使用自动化脚本构建 (推荐)
