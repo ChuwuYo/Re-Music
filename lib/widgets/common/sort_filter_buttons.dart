@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'menu_check_icon.dart';
 import 'smart_menu_anchor.dart';
 
 /// A generic menu option for filter or sort menus.
@@ -43,9 +44,9 @@ class FilterMenuButton<T> extends StatelessWidget {
           .map(
             (option) => MenuItemButton(
               onPressed: () => onSelected(option.value),
-              leadingIcon: currentValue == option.value
-                  ? const Icon(Icons.check)
-                  : const SizedBox(width: 24),
+              leadingIcon: MenuCheckIcon(
+                selected: currentValue == option.value,
+              ),
               child: Text(option.label),
             ),
           )
@@ -79,9 +80,9 @@ class SortMenuButton extends StatelessWidget {
           .map(
             (option) => MenuItemButton(
               onPressed: () => onSelected(option.value),
-              leadingIcon: currentCriteria == option.value
-                  ? const Icon(Icons.check)
-                  : const SizedBox(width: 24),
+              leadingIcon: MenuCheckIcon(
+                selected: currentCriteria == option.value,
+              ),
               child: Text(option.label),
             ),
           )

@@ -337,6 +337,7 @@ class AppConstants {
   static const double iconSizeSmall = 16.0;
   static const double iconSizeMedium = 18.0;
   static const double iconSizeNotice = 20.0;
+  static const double iconSizeDefault = 24.0;
   static const double iconSizeLarge = 28.0;
   static const double iconSizeExtraLarge = 72.0;
   static const double iconSizeHuge = 80.0;

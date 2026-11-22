@@ -8,6 +8,7 @@ import '../../providers/locale_provider.dart';
 import '../../providers/navigation_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/transcode_provider.dart';
+import 'menu_check_icon.dart';
 
 /// 左侧竖向工具栏：支持展开（图标+文字）和收起（仅图标）两种状态。
 /// 窗口宽度小于 [AppConstants.sidebarAutoCollapseWidth] 时自动收起。
@@ -144,29 +145,29 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       MenuItemButton(
                         onPressed: () =>
                             context.read<LocaleController>().setLocale(null),
-                        leadingIcon: localeController.locale == null
-                            ? const Icon(Icons.check)
-                            : const SizedBox(width: 24),
+                        leadingIcon: MenuCheckIcon(
+                          selected: localeController.locale == null,
+                        ),
                         child: Text(l10n.followSystem),
                       ),
                       MenuItemButton(
                         onPressed: () => context
                             .read<LocaleController>()
                             .setLocale(const Locale('zh')),
-                        leadingIcon:
-                            localeController.locale?.languageCode == 'zh'
-                            ? const Icon(Icons.check)
-                            : const SizedBox(width: 24),
+                        leadingIcon: MenuCheckIcon(
+                          selected:
+                              localeController.locale?.languageCode == 'zh',
+                        ),
                         child: Text(l10n.chinese),
                       ),
                       MenuItemButton(
                         onPressed: () => context
                             .read<LocaleController>()
                             .setLocale(const Locale('en')),
-                        leadingIcon:
-                            localeController.locale?.languageCode == 'en'
-                            ? const Icon(Icons.check)
-                            : const SizedBox(width: 24),
+                        leadingIcon: MenuCheckIcon(
+                          selected:
+                              localeController.locale?.languageCode == 'en',
+                        ),
                         child: Text(l10n.english),
                       ),
                     ],
