@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/transcode_provider.dart';
 import '../../services/file_service.dart';
 import '../common/app_dropdown_menu.dart';
+import '../common/file_import_buttons.dart';
 import '../common/number_setting_field.dart';
 import '../common/remusic_snack_bar.dart';
 import '../common/sort_filter_buttons.dart';
@@ -205,26 +206,11 @@ class TranscodeControlPanel extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Wrap(
-                    spacing: AppConstants.spacingSmall,
-                    runSpacing: AppConstants.spacingSmall,
-                    children: [
-                      FilledButton.tonalIcon(
-                        onPressed:
-                            controlsLocked || provider.binaryError != null
-                            ? null
-                            : handleAddFiles,
-                        icon: const Icon(Icons.audio_file),
-                        label: Text(l10n.addFiles),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed:
-                            controlsLocked || provider.binaryError != null
-                            ? null
-                            : handleScanDirectory,
-                        icon: const Icon(Icons.create_new_folder),
-                        label: Text(l10n.scanDirectory),
-                      ),
+                  child: FileImportButtonGroup(
+                    enabled: !controlsLocked && provider.binaryError == null,
+                    onAddFiles: handleAddFiles,
+                    onScanDirectory: handleScanDirectory,
+                    extraActions: [
                       if (outputMode == TranscodeOutputMode.outputDirectory)
                         OutlinedButton.icon(
                           onPressed: controlsLocked

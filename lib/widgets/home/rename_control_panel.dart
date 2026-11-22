@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../services/file_service.dart';
 import '../common/app_dropdown_menu.dart';
+import '../common/file_import_buttons.dart';
 import '../common/sort_filter_buttons.dart';
 import '../../constants.dart';
 
@@ -82,34 +83,22 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
             Row(
               children: [
                 Expanded(
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      FilledButton.tonalIcon(
-                        onPressed: () async {
-                          final provider = context.read<AudioProvider>();
-                          final paths = await FileService.pickFiles();
-                          if (!mounted) return;
-                          if (paths.isEmpty) return;
-                          await provider.addSingleFiles(paths);
-                        },
-                        icon: const Icon(Icons.audio_file),
-                        label: Text(l10n.addFiles),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: () async {
-                          final provider = context.read<AudioProvider>();
-                          final path = await FileService.pickDirectory();
-                          if (path == null) return;
-                          final files = await FileService.scanDirectory(path);
-                          if (!mounted) return;
-                          await provider.addDirectoryFiles(files);
-                        },
-                        icon: const Icon(Icons.create_new_folder),
-                        label: Text(l10n.scanDirectory),
-                      ),
-                    ],
+                  child: FileImportButtonGroup(
+                    onAddFiles: () async {
+                      final provider = context.read<AudioProvider>();
+                      final paths = await FileService.pickFiles();
+                      if (!mounted) return;
+                      if (paths.isEmpty) return;
+                      await provider.addSingleFiles(paths);
+                    },
+                    onScanDirectory: () async {
+                      final provider = context.read<AudioProvider>();
+                      final path = await FileService.pickDirectory();
+                      if (path == null) return;
+                      final files = await FileService.scanDirectory(path);
+                      if (!mounted) return;
+                      await provider.addDirectoryFiles(files);
+                    },
                   ),
                 ),
                 _FilterMenu(),
