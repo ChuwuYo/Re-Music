@@ -320,7 +320,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get artistSeparatorSubtitle =>
-      '用于拆分标签中的多位艺术家。按显示顺序生效，最靠前选中的符号用于生成文件名；想换请先取消它。';
+      '用于拆分标签中的多位艺术家。当前符号生成新文件名；其余选中符号用于识别已有文件名并保留不改。点击符号设为当前，再点取消。';
 
   @override
   String artistSeparatorActive(String separator) {

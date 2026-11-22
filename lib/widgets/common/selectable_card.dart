@@ -31,12 +31,10 @@ class SelectableCard extends StatelessWidget {
           selected: isSelected,
           button: true,
           hint: hint,
-          child: Ink(
-            padding: const EdgeInsets.all(AppConstants.spacingMediumSmall),
+          // 描边走 foreground：视觉上加宽，但不参与尺寸计算，避免选中态挤动布局。
+          child: DecoratedBox(
+            position: DecorationPosition.foreground,
             decoration: BoxDecoration(
-              color: isSelected
-                  ? scheme.primary.withValues(alpha: isActive ? 0.22 : 0.12)
-                  : Colors.transparent,
               borderRadius: BorderRadius.circular(
                 AppConstants.borderRadiusMedium,
               ),
@@ -45,7 +43,18 @@ class SelectableCard extends StatelessWidget {
                 width: isActive ? 2 : 1,
               ),
             ),
-            child: child,
+            child: Ink(
+              padding: const EdgeInsets.all(AppConstants.spacingMediumSmall),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? scheme.primary.withValues(alpha: isActive ? 0.22 : 0.12)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(
+                  AppConstants.borderRadiusMedium,
+                ),
+              ),
+              child: child,
+            ),
           ),
         ),
       ),

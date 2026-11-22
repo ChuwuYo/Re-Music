@@ -119,11 +119,18 @@ class AudioProvider extends ChangeNotifier {
   void toggleArtistSeparator(String separator) {
     if (!AppConstants.isValidArtistSeparator(separator)) return;
     final current = List<String>.from(_allowedArtistSeparators);
-    if (current.contains(separator)) {
+    final index = current.indexOf(separator);
+    if (index == 0) {
+      // 点当前分隔符：至少一个时取消，把下一个提升为当前。
       if (current.length <= 1) return;
-      current.remove(separator);
+      current.removeAt(0);
+    } else if (index > 0) {
+      // 点已选中但非当前：提升为当前。
+      current.removeAt(index);
+      current.insert(0, separator);
     } else {
-      current.add(separator);
+      // 点未选中：加入并设为当前。
+      current.insert(0, separator);
     }
     setAllowedArtistSeparators(current);
   }

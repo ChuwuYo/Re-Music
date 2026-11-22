@@ -151,15 +151,21 @@ class AppConstants {
         !invalidFilenameChars.hasMatch(separator);
   }
 
-  /// 过滤并返回合法的艺术家分隔符列表，保持选项定义顺序，保证至少包含一个有效符号
+  /// 过滤并返回合法的艺术家分隔符列表，保持传入顺序，保证至少包含一个有效符号。
+  /// 首项即当前用于生成文件名的分隔符，顺序由用户点选决定。
   static List<String> sanitizeAllowedArtistSeparators(
     Iterable<String>? separators,
   ) {
     if (separators == null) {
       return List<String>.from(defaultAllowedArtistSeparators);
     }
-    final validSet = separators.where(isValidArtistSeparator).toSet();
-    final ordered = artistSeparatorOptions.where(validSet.contains).toList();
+    final seen = <String>{};
+    final ordered = <String>[];
+    for (final separator in separators) {
+      if (isValidArtistSeparator(separator) && seen.add(separator)) {
+        ordered.add(separator);
+      }
+    }
     return ordered.isEmpty
         ? List<String>.from(defaultAllowedArtistSeparators)
         : ordered;

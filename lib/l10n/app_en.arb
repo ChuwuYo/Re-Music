@@ -131,7 +131,7 @@
   "addModeAppend": "Append to list",
   "addModeReplace": "Replace existing list",
   "artistSeparator": "Artist separator",
-  "artistSeparatorSubtitle": "Splits multiple artists in tags. Symbols apply in the order shown; the leftmost selected one is used in filenames. Deselect it to use another.",
+  "artistSeparatorSubtitle": "Splits multiple artists in tags. The active symbol generates new filenames; other selected symbols keep existing filenames that already use them. Tap a symbol to make it active, tap again to remove it.",
   "artistSeparatorActive": "Used in filenames: {separator}",
   "@artistSeparatorActive": {
     "placeholders": {

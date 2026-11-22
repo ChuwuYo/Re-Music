@@ -320,7 +320,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get artistSeparatorSubtitle =>
-      'Splits multiple artists in tags. Symbols apply in the order shown; the leftmost selected one is used in filenames. Deselect it to use another.';
+      'Splits multiple artists in tags. The active symbol generates new filenames; other selected symbols keep existing filenames that already use them. Tap a symbol to make it active, tap again to remove it.';
 
   @override
   String artistSeparatorActive(String separator) {
