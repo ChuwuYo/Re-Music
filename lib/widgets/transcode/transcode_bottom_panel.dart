@@ -5,6 +5,7 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/transcode_provider.dart';
 import '../common/floating_panel_surface.dart';
+import '../common/floating_progress_panel.dart';
 import '../common/remusic_snack_bar.dart';
 
 class TranscodeBottomPanel extends StatelessWidget {
@@ -39,35 +40,9 @@ class TranscodeBottomPanel extends StatelessWidget {
     return Consumer<TranscodeProvider>(
       builder: (context, provider, child) {
         if (provider.isBusy) {
-          return FloatingPanelSurface(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spacingMedium,
-                vertical: AppConstants.spacingMediumSmall,
-              ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppConstants.progressPanelMaxWidth,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.transcodeProgress((provider.progress * 100).round()),
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: AppConstants.spacingSmall),
-                    LinearProgressIndicator(
-                      value: provider.progress <= 0 ? null : provider.progress,
-                      borderRadius: BorderRadius.circular(
-                        AppConstants.progressBorderRadius,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          return FloatingProgressPanel(
+            label: l10n.transcodeProgress((provider.progress * 100).round()),
+            progress: provider.progress <= 0 ? null : provider.progress,
           );
         }
 

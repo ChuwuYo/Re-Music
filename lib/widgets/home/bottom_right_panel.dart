@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../constants.dart';
 import '../common/floating_panel_surface.dart';
+import '../common/floating_progress_panel.dart';
 import '../common/remusic_snack_bar.dart';
 
 class BottomRightPanel extends StatelessWidget {
@@ -31,37 +32,9 @@ class BottomRightPanel extends StatelessWidget {
     return Consumer<AudioProvider>(
       builder: (context, provider, child) {
         if (provider.isProcessing) {
-          return FloatingPanelSurface(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.spacingMedium,
-                vertical: AppConstants.spacingMediumSmall,
-              ),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppConstants.progressPanelMaxWidth,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.processingProgress(
-                        (provider.progress * 100).round(),
-                      ),
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    const SizedBox(height: AppConstants.spacingSmall),
-                    LinearProgressIndicator(
-                      value: provider.progress,
-                      borderRadius: BorderRadius.circular(
-                        AppConstants.progressBorderRadius,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          return FloatingProgressPanel(
+            label: l10n.processingProgress((provider.progress * 100).round()),
+            progress: provider.progress,
           );
         }
 
