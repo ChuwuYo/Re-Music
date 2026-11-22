@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../constants.dart';
+import '../common/floating_panel_surface.dart';
 import '../common/remusic_snack_bar.dart';
 
 class BottomRightPanel extends StatelessWidget {
@@ -24,55 +25,14 @@ class BottomRightPanel extends StatelessWidget {
     );
   }
 
-  Widget _panelSurface(BuildContext context, Widget child) {
-    final scheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
-    final radius = BorderRadius.circular(AppConstants.borderRadiusLarge);
-    final shadow = scheme.shadow.withValues(
-      alpha: brightness == Brightness.dark ? 0.6 : 0.22,
-    );
-    final highlight = Colors.white.withValues(
-      alpha: brightness == Brightness.dark ? 0.0 : 0.6,
-    );
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: radius,
-        boxShadow: [
-          BoxShadow(
-            color: shadow,
-            blurRadius: AppConstants.shadowBlurRadius,
-            offset: Offset(0, AppConstants.shadowOffsetY),
-          ),
-          if (brightness != Brightness.dark)
-            BoxShadow(
-              color: highlight,
-              blurRadius: AppConstants.highlightBlurRadius,
-              offset: Offset(0, AppConstants.highlightOffsetY),
-            ),
-        ],
-      ),
-      child: Material(
-        type: MaterialType.card,
-        color: scheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: radius,
-          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
-        ),
-        child: child,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Consumer<AudioProvider>(
       builder: (context, provider, child) {
         if (provider.isProcessing) {
-          return _panelSurface(
-            context,
-            Padding(
+          return FloatingPanelSurface(
+            child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.spacingMedium,
                 vertical: AppConstants.spacingMediumSmall,
@@ -105,9 +65,8 @@ class BottomRightPanel extends StatelessWidget {
           );
         }
 
-        return _panelSurface(
-          context,
-          Padding(
+        return FloatingPanelSurface(
+          child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppConstants.spacingMedium,
               vertical: AppConstants.spacingMediumSmall,

@@ -283,6 +283,10 @@ class AppConstants {
   static const double shadowOffsetY = 8.0;
   static const double highlightBlurRadius = 12.0;
   static const double highlightOffsetY = -2.0;
+  static const double floatingPanelShadowDarkAlpha = 0.6;
+  static const double floatingPanelShadowLightAlpha = 0.22;
+  static const double floatingPanelHighlightAlpha = 0.6;
+  static const double floatingPanelBorderAlpha = 0.7;
 
   /// 主页文件列表底部留白（为 BottomRightPanel 悬浮面板预留空间）
   static const double homeListBottomPadding = 80.0;

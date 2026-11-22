@@ -84,36 +84,20 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Consumer<AudioProvider>(
-          builder: (context, provider, child) {
-            final listState = provider.listState;
-            final files = provider.files;
-            return CustomScrollView(
-              physics: listState == ListState.empty
-                  ? const NeverScrollableScrollPhysics()
-                  : null,
-              slivers: [
-                const SliverToBoxAdapter(child: RenameControlPanel()),
-                ListStateSliver(
-                  state: listState,
-                  empty: const EmptyState(),
-                  noMatch: const NoMatchState(),
-                  itemCount: files.length,
-                  itemBuilder: (context, index) =>
-                      FileListItem(file: files[index]),
-                ),
-              ],
-            );
-          },
-        ),
-        const Positioned(
-          right: 16,
-          bottom: 16,
-          child: SafeArea(child: BottomRightPanel()),
-        ),
-      ],
+    return Consumer<AudioProvider>(
+      child: const BottomRightPanel(),
+      builder: (context, provider, floatingPanel) {
+        final files = provider.files;
+        return ListPageScaffold(
+          listState: provider.listState,
+          controlPanel: const RenameControlPanel(),
+          empty: const EmptyState(),
+          noMatch: const NoMatchState(),
+          itemCount: files.length,
+          itemBuilder: (context, index) => FileListItem(file: files[index]),
+          floatingPanel: floatingPanel!,
+        );
+      },
     );
   }
 }

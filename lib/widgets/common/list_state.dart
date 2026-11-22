@@ -94,3 +94,53 @@ class ListStateSliver extends StatelessWidget {
     };
   }
 }
+
+/// 列表页通用骨架：控制面板 + 列表状态 + 悬浮底栏。
+class ListPageScaffold extends StatelessWidget {
+  const ListPageScaffold({
+    super.key,
+    required this.listState,
+    required this.controlPanel,
+    required this.empty,
+    required this.noMatch,
+    required this.itemCount,
+    required this.itemBuilder,
+    required this.floatingPanel,
+  });
+
+  final ListState listState;
+  final Widget controlPanel;
+  final Widget empty;
+  final Widget noMatch;
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
+  final Widget floatingPanel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CustomScrollView(
+          physics: listState == ListState.empty
+              ? const NeverScrollableScrollPhysics()
+              : null,
+          slivers: [
+            SliverToBoxAdapter(child: controlPanel),
+            ListStateSliver(
+              state: listState,
+              empty: empty,
+              noMatch: noMatch,
+              itemCount: itemCount,
+              itemBuilder: itemBuilder,
+            ),
+          ],
+        ),
+        Positioned(
+          right: AppConstants.spacingMedium,
+          bottom: AppConstants.spacingMedium,
+          child: SafeArea(child: floatingPanel),
+        ),
+      ],
+    );
+  }
+}
