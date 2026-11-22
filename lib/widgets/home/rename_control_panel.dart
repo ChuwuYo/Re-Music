@@ -5,6 +5,7 @@ import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../services/file_service.dart';
 import '../common/app_dropdown_menu.dart';
+import '../common/control_panel_card.dart';
 import '../common/file_import_buttons.dart';
 import '../common/sort_filter_buttons.dart';
 import '../../constants.dart';
@@ -72,84 +73,79 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Card(
-      margin: const EdgeInsets.all(16),
+    return ControlPanelCard(
       elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: FileImportButtonGroup(
-                    onAddFiles: () async {
-                      final provider = context.read<AudioProvider>();
-                      final paths = await FileService.pickFiles();
-                      if (!mounted) return;
-                      if (paths.isEmpty) return;
-                      await provider.addSingleFiles(paths);
-                    },
-                    onScanDirectory: () async {
-                      final provider = context.read<AudioProvider>();
-                      final path = await FileService.pickDirectory();
-                      if (path == null) return;
-                      final files = await FileService.scanDirectory(path);
-                      if (!mounted) return;
-                      await provider.addDirectoryFiles(files);
-                    },
-                  ),
-                ),
-                _FilterMenu(),
-                const SizedBox(width: AppConstants.spacingSmall),
-                _SortMenu(),
-                const SizedBox(width: AppConstants.spacingSmall),
-                _SortOrderButton(),
-              ],
-            ),
-            const SizedBox(height: 16),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final dropWidth = constraints.maxWidth;
-                return AppDropdownMenu<String>(
-                  width: dropWidth,
-                  controller: _patternController,
-                  label: Text(l10n.namingMode),
-                  hintText: l10n.namingModeHint('{artist}', '{title}'),
-                  leadingIcon: const Icon(Icons.edit_note),
-                  entries: [
-                    ...AudioProvider.predefinedPatterns.map((e) {
-                      final pattern = e['pattern']!;
-                      return DropdownMenuEntry<String>(
-                        value: pattern,
-                        label: _patternLabel(l10n, pattern),
-                        trailingIcon: Text(
-                          pattern,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                        ),
-                      );
-                    }),
-                    DropdownMenuEntry<String>(
-                      value: '',
-                      label: l10n.customPattern,
-                      enabled: false,
-                    ),
-                  ],
-                  onSelected: (value) {
-                    if (value != null && value.isNotEmpty) {
-                      _patternController.text = value;
-                      // setPattern is invoked by _patternController listener
-                    }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: FileImportButtonGroup(
+                  onAddFiles: () async {
+                    final provider = context.read<AudioProvider>();
+                    final paths = await FileService.pickFiles();
+                    if (!mounted) return;
+                    if (paths.isEmpty) return;
+                    await provider.addSingleFiles(paths);
                   },
-                );
-              },
-            ),
-          ],
-        ),
+                  onScanDirectory: () async {
+                    final provider = context.read<AudioProvider>();
+                    final path = await FileService.pickDirectory();
+                    if (path == null) return;
+                    final files = await FileService.scanDirectory(path);
+                    if (!mounted) return;
+                    await provider.addDirectoryFiles(files);
+                  },
+                ),
+              ),
+              _FilterMenu(),
+              const SizedBox(width: AppConstants.spacingSmall),
+              _SortMenu(),
+              const SizedBox(width: AppConstants.spacingSmall),
+              _SortOrderButton(),
+            ],
+          ),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final dropWidth = constraints.maxWidth;
+              return AppDropdownMenu<String>(
+                width: dropWidth,
+                controller: _patternController,
+                label: Text(l10n.namingMode),
+                hintText: l10n.namingModeHint('{artist}', '{title}'),
+                leadingIcon: const Icon(Icons.edit_note),
+                entries: [
+                  ...AudioProvider.predefinedPatterns.map((e) {
+                    final pattern = e['pattern']!;
+                    return DropdownMenuEntry<String>(
+                      value: pattern,
+                      label: _patternLabel(l10n, pattern),
+                      trailingIcon: Text(
+                        pattern,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
+                    );
+                  }),
+                  DropdownMenuEntry<String>(
+                    value: '',
+                    label: l10n.customPattern,
+                    enabled: false,
+                  ),
+                ],
+                onSelected: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    _patternController.text = value;
+                    // setPattern is invoked by _patternController listener
+                  }
+                },
+              );
+            },
+          ),
+        ],
       ),
     );
   }
