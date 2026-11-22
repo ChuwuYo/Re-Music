@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/audio_provider.dart';
 import '../providers/navigation_provider.dart';
 import '../widgets/common/left_sidebar.dart';
+import '../widgets/common/list_state.dart';
 import '../widgets/common/title_bar.dart';
 import '../widgets/home/bottom_right_panel.dart';
 import '../widgets/home/file_list_item.dart';
@@ -87,36 +88,22 @@ class _HomeContent extends StatelessWidget {
       children: [
         Consumer<AudioProvider>(
           builder: (context, provider, child) {
-            final hasAnyFiles = provider.totalFilesCount > 0;
+            final listState = provider.listState;
             final files = provider.files;
             return CustomScrollView(
-              physics: hasAnyFiles
-                  ? null
-                  : const NeverScrollableScrollPhysics(),
+              physics: listState == ListState.empty
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
               slivers: [
                 const SliverToBoxAdapter(child: RenameControlPanel()),
-                if (!hasAnyFiles)
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: EmptyState(),
-                  )
-                else if (files.isEmpty)
-                  const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: NoMatchState(),
-                  )
-                else
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      bottom: AppConstants.homeListBottomPadding,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) => FileListItem(file: files[index]),
-                        childCount: files.length,
-                      ),
-                    ),
-                  ),
+                ListStateSliver(
+                  state: listState,
+                  empty: const EmptyState(),
+                  noMatch: const NoMatchState(),
+                  itemCount: files.length,
+                  itemBuilder: (context, index) =>
+                      FileListItem(file: files[index]),
+                ),
               ],
             );
           },

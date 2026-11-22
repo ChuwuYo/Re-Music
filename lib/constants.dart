@@ -231,6 +231,13 @@ class AppConstants {
   static const double spacingLarge = 24.0;
   static const double spacingExtraLarge = 32.0;
 
+  /// 根据总数和可见数推导列表展示状态
+  static ListState resolveListState(int totalCount, int visibleCount) {
+    if (totalCount == 0) return ListState.empty;
+    if (visibleCount == 0) return ListState.noMatch;
+    return ListState.ready;
+  }
+
   /// 边框半径常量
   static const double borderRadiusSmall = 4.0;
   static const double borderRadiusMedium = 8.0;
@@ -351,6 +358,9 @@ enum ProcessingStatus { pending, success, error }
 
 /// 应用页面枚举
 enum AppPage { home, transcode, settings }
+
+/// 列表内容状态
+enum ListState { empty, noMatch, ready }
 
 /// 转码输出格式
 enum TranscodeOutputFormat { flac, wav, alac, mp3 }

@@ -59,6 +59,8 @@ class TranscodeProvider extends ChangeNotifier {
   TranscodeOutputMode get outputMode => _outputMode;
   int get concurrency => _concurrency;
   int get totalFilesCount => _items.length;
+  ListState get listState =>
+      AppConstants.resolveListState(totalFilesCount, displayItems.length);
   int get runnableCount => _items.where((item) => item.canRun).length;
   TranscodeItemFilter get filter => _filter;
   String get sortCriteria => _sortCriteria;

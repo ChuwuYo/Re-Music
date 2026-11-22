@@ -15,6 +15,8 @@ class AudioProvider extends ChangeNotifier {
   bool _sortAscending = AppConstants.defaultSortAscending;
 
   int get totalFilesCount => _files.length;
+  ListState get listState =>
+      AppConstants.resolveListState(totalFilesCount, files.length);
   bool get hasRenameCandidates {
     for (final file in _files) {
       if (file.status != ProcessingStatus.success) continue;
