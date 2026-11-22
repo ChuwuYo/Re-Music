@@ -224,6 +224,7 @@ class AppConstants {
   static const bool defaultSidebarExpanded = true;
 
   /// UI 间距常量
+  static const double spacingTiny = 2.0;
   static const double spacingExtraSmall = 4.0;
   static const double spacingSmall = 8.0;
   static const double spacingMediumSmall = 12.0;

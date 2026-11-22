@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
+import '../common/section_header.dart';
 import 'overflow_text_field.dart';
 
 /// Left-column primary metadata form section.
@@ -27,33 +28,16 @@ class MetadataPrimarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Icon(Icons.album_outlined, size: 20, color: colorScheme.primary),
-            const SizedBox(width: AppConstants.spacingSmall),
-            Text(
-              l10n.metadataPrimaryTitle,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
-              ),
-            ),
-          ],
+        SectionHeader(
+          icon: Icons.album_outlined,
+          color: Theme.of(context).colorScheme.primary,
+          title: l10n.metadataPrimaryTitle,
+          subtitle: l10n.metadataPrimarySubtitle,
         ),
-        const SizedBox(height: 2),
-        Text(
-          l10n.metadataPrimarySubtitle,
-          style: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: AppConstants.spacingMedium),
         OverflowTextField(
           controller: trackArtistController,
           label: l10n.metadataTrackArtist,
