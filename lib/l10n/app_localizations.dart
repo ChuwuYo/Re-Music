@@ -812,6 +812,18 @@ abstract class AppLocalizations {
   /// **'Concurrency'**
   String get transcodeConcurrency;
 
+  /// No description provided for @transcodeInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid value'**
+  String get transcodeInvalidNumber;
+
+  /// No description provided for @transcodeConcurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Concurrency ({from}-{to})'**
+  String transcodeConcurrencyLabel(Object from, Object to);
+
   /// No description provided for @transcodeKeepOriginal.
   ///
   /// In en, this message translates to:
@@ -1021,6 +1033,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to open FFmpeg folder'**
   String get transcodeOpenBinaryFolderFailed;
+
+  /// No description provided for @transcodeRefreshBinary.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh check'**
+  String get transcodeRefreshBinary;
+
+  /// No description provided for @transcodeRefreshBinarySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'FFmpeg binaries detected'**
+  String get transcodeRefreshBinarySuccess;
+
+  /// No description provided for @transcodeRefreshBinaryStillMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'FFmpeg binaries are still missing'**
+  String get transcodeRefreshBinaryStillMissing;
 
   /// No description provided for @transcodeShowAll.
   ///

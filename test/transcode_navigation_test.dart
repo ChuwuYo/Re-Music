@@ -41,6 +41,41 @@ void main() {
     expect(find.text('Transcode'), findsOneWidget);
     expect(find.text('FFmpeg binaries are missing'), findsOneWidget);
   });
+
+  testWidgets('refresh rechecks FFmpeg binaries and clears the error', (
+    WidgetTester tester,
+  ) async {
+    final binaryService = _ToggleBinaryService();
+    final transcodeProvider = TranscodeProvider(binaryService: binaryService);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: AudioProvider()),
+          ChangeNotifierProvider.value(value: transcodeProvider),
+          ChangeNotifierProvider.value(
+            value: LocaleController()..setLocale(const Locale('en')),
+          ),
+          ChangeNotifierProvider.value(value: ThemeController()),
+          ChangeNotifierProvider.value(
+            value: NavigationController()..navigateTo(AppPage.transcode),
+          ),
+        ],
+        child: const MyApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('FFmpeg binaries are missing'), findsOneWidget);
+    expect(find.text('Refresh check'), findsOneWidget);
+
+    binaryService.available = true;
+    await tester.tap(find.text('Refresh check'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('FFmpeg binaries are missing'), findsNothing);
+    expect(find.text('FFmpeg binaries detected'), findsOneWidget);
+  });
 }
 
 class _MissingBinaryService extends FfmpegBinaryService {
@@ -48,4 +83,16 @@ class _MissingBinaryService extends FfmpegBinaryService {
 
   @override
   FfmpegBinaryPaths? resolve() => null;
+}
+
+class _ToggleBinaryService extends FfmpegBinaryService {
+  bool available = false;
+
+  @override
+  FfmpegBinaryPaths? resolve() => available
+      ? const FfmpegBinaryPaths(
+          ffmpegPath: 'ffmpeg.exe',
+          ffprobePath: 'ffprobe.exe',
+        )
+      : null;
 }

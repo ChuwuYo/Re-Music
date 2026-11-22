@@ -152,6 +152,16 @@ class TranscodeProvider extends ChangeNotifier {
     _refreshDecisions();
   }
 
+  bool trySetMp3BitRateKbps(String text) {
+    final value = int.tryParse(text.trim());
+    if (value == null ||
+        !AppConstants.transcodeMp3BitRateOptions.contains(value)) {
+      return false;
+    }
+    setMp3BitRateKbps(value);
+    return true;
+  }
+
   void setAllowFormatOnlyConversion(bool value) {
     if (_allowFormatOnlyConversion == value) return;
     _allowFormatOnlyConversion = value;
@@ -187,6 +197,17 @@ class TranscodeProvider extends ChangeNotifier {
     if (_concurrency == normalized) return;
     _concurrency = normalized;
     notifyListeners();
+  }
+
+  bool trySetConcurrency(String text) {
+    final value = int.tryParse(text.trim());
+    if (value == null ||
+        value < AppConstants.transcodeConcurrencyMin ||
+        value > AppConstants.transcodeConcurrencyMax) {
+      return false;
+    }
+    setConcurrency(value);
+    return true;
   }
 
   Future<void> clearItems() async {

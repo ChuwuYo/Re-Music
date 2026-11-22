@@ -183,6 +183,7 @@ class AppConstants {
   static const int transcodeConcurrencyMax = 5;
   static const int defaultTranscodeConcurrency = 2;
   static const List<int> transcodeMp3BitRateOptions = [128, 192, 256, 320];
+  static const double transcodeSettingFieldWidth = 220;
 
   /// 转码工具打包相关
   static const String bundledToolsDirectory = 'tools';

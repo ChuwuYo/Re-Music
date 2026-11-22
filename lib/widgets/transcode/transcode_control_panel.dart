@@ -5,6 +5,8 @@ import '../../constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/transcode_provider.dart';
 import '../../services/file_service.dart';
+import '../common/app_dropdown_menu.dart';
+import '../common/number_setting_field.dart';
 import '../common/remusic_snack_bar.dart';
 import '../common/sort_filter_buttons.dart';
 
@@ -70,6 +72,20 @@ class TranscodeControlPanel extends StatelessWidget {
       );
     }
 
+    void handleRefreshBinaryStatus() {
+      context.read<TranscodeProvider>().refreshBinaryStatus();
+      if (!context.mounted) return;
+      final stillMissing =
+          context.read<TranscodeProvider>().binaryError != null;
+      ReMusicSnackBar.showFloating(
+        context,
+        message: stillMissing
+            ? l10n.transcodeRefreshBinaryStillMissing
+            : l10n.transcodeRefreshBinarySuccess,
+        adaptiveHorizontalMargin: true,
+      );
+    }
+
     return Card(
       margin: const EdgeInsets.all(AppConstants.spacingMedium),
       child: Padding(
@@ -131,6 +147,22 @@ class TranscodeControlPanel extends StatelessWidget {
                       spacing: AppConstants.spacingSmall,
                       runSpacing: AppConstants.spacingSmall,
                       children: [
+                        OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: colorScheme.error,
+                            side: BorderSide(
+                              color: colorScheme.error.withValues(
+                                alpha:
+                                    AppConstants.bannerErrorButtonBorderAlpha,
+                              ),
+                            ),
+                          ),
+                          onPressed: controlsLocked
+                              ? null
+                              : handleRefreshBinaryStatus,
+                          icon: const Icon(Icons.refresh),
+                          label: Text(l10n.transcodeRefreshBinary),
+                        ),
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: colorScheme.error,
@@ -280,140 +312,89 @@ class TranscodeControlPanel extends StatelessWidget {
             Wrap(
               spacing: AppConstants.spacingMedium,
               runSpacing: AppConstants.spacingMedium,
+              crossAxisAlignment: WrapCrossAlignment.start,
               children: [
-                SizedBox(
-                  width: 260,
-                  child: DropdownButtonFormField<TranscodeOutputFormat>(
-                    key: ValueKey(provider.outputFormat),
-                    initialValue: provider.outputFormat,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: l10n.transcodeOutputFormat,
+                AppDropdownMenu<TranscodeOutputFormat>(
+                  width: AppConstants.transcodeSettingFieldWidth,
+                  label: Text(l10n.transcodeOutputFormat),
+                  initialSelection: provider.outputFormat,
+                  enableFilter: true,
+                  enabled: !controlsLocked,
+                  entries: [
+                    DropdownMenuEntry(
+                      value: TranscodeOutputFormat.flac,
+                      label: l10n.transcodeFormatFlac,
                     ),
-                    items: [
-                      DropdownMenuItem(
-                        value: TranscodeOutputFormat.flac,
-                        child: Text(l10n.transcodeFormatFlac),
-                      ),
-                      DropdownMenuItem(
-                        value: TranscodeOutputFormat.wav,
-                        child: Text(l10n.transcodeFormatWav),
-                      ),
-                      DropdownMenuItem(
-                        value: TranscodeOutputFormat.alac,
-                        child: Text(l10n.transcodeFormatAlac),
-                      ),
-                      DropdownMenuItem(
-                        value: TranscodeOutputFormat.mp3,
-                        child: Text(l10n.transcodeFormatMp3),
-                      ),
-                    ],
-                    onChanged: controlsLocked
-                        ? null
-                        : (value) {
-                            if (value != null) {
-                              context.read<TranscodeProvider>().setOutputFormat(
-                                value,
-                              );
-                            }
-                          },
-                  ),
+                    DropdownMenuEntry(
+                      value: TranscodeOutputFormat.wav,
+                      label: l10n.transcodeFormatWav,
+                    ),
+                    DropdownMenuEntry(
+                      value: TranscodeOutputFormat.alac,
+                      label: l10n.transcodeFormatAlac,
+                    ),
+                    DropdownMenuEntry(
+                      value: TranscodeOutputFormat.mp3,
+                      label: l10n.transcodeFormatMp3,
+                    ),
+                  ],
+                  onSelected: (value) {
+                    if (value != null) {
+                      context.read<TranscodeProvider>().setOutputFormat(value);
+                    }
+                  },
                 ),
                 if (provider.outputFormat == TranscodeOutputFormat.mp3)
-                  SizedBox(
-                    width: 260,
-                    child: DropdownButtonFormField<int>(
-                      key: ValueKey(provider.mp3BitRateKbps),
-                      initialValue: provider.mp3BitRateKbps,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.transcodeMp3Bitrate,
-                      ),
-                      items: AppConstants.transcodeMp3BitRateOptions
-                          .map(
-                            (bitrate) => DropdownMenuItem(
-                              value: bitrate,
-                              child: Text('${bitrate}k'),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: controlsLocked
-                          ? null
-                          : (value) {
-                              if (value != null) {
-                                context
-                                    .read<TranscodeProvider>()
-                                    .setMp3BitRateKbps(value);
-                              }
-                            },
-                    ),
+                  NumberSettingField(
+                    key: ValueKey(provider.mp3BitRateKbps),
+                    label: l10n.transcodeMp3Bitrate,
+                    value: provider.mp3BitRateKbps,
+                    errorText: l10n.transcodeInvalidNumber,
+                    enabled: !controlsLocked,
+                    onSubmit: (text) => context
+                        .read<TranscodeProvider>()
+                        .trySetMp3BitRateKbps(text),
                   )
                 else
-                  SizedBox(
-                    width: 260,
-                    child: DropdownButtonFormField<TranscodeLosslessPreset>(
-                      key: ValueKey(provider.losslessPreset),
-                      initialValue: provider.losslessPreset,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: l10n.transcodePreset,
+                  AppDropdownMenu<TranscodeLosslessPreset>(
+                    width: AppConstants.transcodeSettingFieldWidth,
+                    label: Text(l10n.transcodePreset),
+                    initialSelection: provider.losslessPreset,
+                    enableFilter: true,
+                    enabled: !controlsLocked,
+                    entries: [
+                      DropdownMenuEntry(
+                        value: TranscodeLosslessPreset.studio24,
+                        label: l10n.transcodePresetStudio24,
                       ),
-                      items: [
-                        DropdownMenuItem(
-                          value: TranscodeLosslessPreset.studio24,
-                          child: Text(l10n.transcodePresetStudio24),
-                        ),
-                        DropdownMenuItem(
-                          value: TranscodeLosslessPreset.cd24,
-                          child: Text(l10n.transcodePresetCd24),
-                        ),
-                        DropdownMenuItem(
-                          value: TranscodeLosslessPreset.cd16,
-                          child: Text(l10n.transcodePresetCd16),
-                        ),
-                      ],
-                      onChanged: controlsLocked
-                          ? null
-                          : (value) {
-                              if (value != null) {
-                                context
-                                    .read<TranscodeProvider>()
-                                    .setLosslessPreset(value);
-                              }
-                            },
-                    ),
+                      DropdownMenuEntry(
+                        value: TranscodeLosslessPreset.cd24,
+                        label: l10n.transcodePresetCd24,
+                      ),
+                      DropdownMenuEntry(
+                        value: TranscodeLosslessPreset.cd16,
+                        label: l10n.transcodePresetCd16,
+                      ),
+                    ],
+                    onSelected: (value) {
+                      if (value != null) {
+                        context.read<TranscodeProvider>().setLosslessPreset(
+                          value,
+                        );
+                      }
+                    },
                   ),
-                SizedBox(
-                  width: 260,
-                  child: DropdownButtonFormField<int>(
-                    key: ValueKey(provider.concurrency),
-                    initialValue: provider.concurrency,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: l10n.transcodeConcurrency,
-                    ),
-                    items:
-                        List.generate(
-                              AppConstants.transcodeConcurrencyMax,
-                              (index) => index + 1,
-                            )
-                            .map(
-                              (value) => DropdownMenuItem(
-                                value: value,
-                                child: Text('$value'),
-                              ),
-                            )
-                            .toList(),
-                    onChanged: controlsLocked
-                        ? null
-                        : (value) {
-                            if (value != null) {
-                              context.read<TranscodeProvider>().setConcurrency(
-                                value,
-                              );
-                            }
-                          },
+                NumberSettingField(
+                  key: ValueKey(provider.concurrency),
+                  label: l10n.transcodeConcurrencyLabel(
+                    AppConstants.transcodeConcurrencyMin,
+                    AppConstants.transcodeConcurrencyMax,
                   ),
+                  value: provider.concurrency,
+                  errorText: l10n.transcodeInvalidNumber,
+                  enabled: !controlsLocked,
+                  onSubmit: (text) =>
+                      context.read<TranscodeProvider>().trySetConcurrency(text),
                 ),
               ],
             ),
@@ -440,31 +421,30 @@ class TranscodeControlPanel extends StatelessWidget {
       builder: (context, constraints) {
         final useDropdown = constraints.maxWidth < 640;
         if (useDropdown) {
-          return DropdownButtonFormField<TranscodeOutputMode>(
-            key: ValueKey(provider.outputMode),
-            initialValue: provider.outputMode,
-            decoration: InputDecoration(labelText: l10n.transcodeTaskOutput),
-            items: [
-              DropdownMenuItem(
+          return AppDropdownMenu<TranscodeOutputMode>(
+            label: Text(l10n.transcodeTaskOutput),
+            initialSelection: provider.outputMode,
+            leadingIcon: const Icon(Icons.folder_copy_outlined),
+            enabled: !controlsLocked,
+            entries: [
+              DropdownMenuEntry(
                 value: TranscodeOutputMode.keepOriginal,
-                child: Text(l10n.transcodeKeepOriginal),
+                label: l10n.transcodeKeepOriginal,
               ),
-              DropdownMenuItem(
+              DropdownMenuEntry(
                 value: TranscodeOutputMode.replaceOriginal,
-                child: Text(l10n.transcodeReplaceOriginal),
+                label: l10n.transcodeReplaceOriginal,
               ),
-              DropdownMenuItem(
+              DropdownMenuEntry(
                 value: TranscodeOutputMode.outputDirectory,
-                child: Text(l10n.transcodeOutputDirectory),
+                label: l10n.transcodeOutputDirectory,
               ),
             ],
-            onChanged: controlsLocked
-                ? null
-                : (value) {
-                    if (value != null) {
-                      context.read<TranscodeProvider>().setOutputMode(value);
-                    }
-                  },
+            onSelected: (value) {
+              if (value != null) {
+                context.read<TranscodeProvider>().setOutputMode(value);
+              }
+            },
           );
         }
 

@@ -385,6 +385,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get transcodeConcurrency => '并发数';
 
   @override
+  String get transcodeInvalidNumber => '请输入有效数值';
+
+  @override
+  String transcodeConcurrencyLabel(Object from, Object to) {
+    return '并发数（$from-$to）';
+  }
+
+  @override
   String get transcodeKeepOriginal => '保留原文件';
 
   @override
@@ -488,6 +496,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get transcodeOpenBinaryFolderFailed => '打开 FFmpeg 文件夹失败';
+
+  @override
+  String get transcodeRefreshBinary => '重新检测';
+
+  @override
+  String get transcodeRefreshBinarySuccess => '已检测到 FFmpeg 二进制文件';
+
+  @override
+  String get transcodeRefreshBinaryStillMissing => '仍未找到 FFmpeg 二进制文件';
 
   @override
   String get transcodeShowAll => '显示全部';

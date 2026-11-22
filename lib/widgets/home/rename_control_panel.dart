@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/audio_provider.dart';
 import '../../services/file_service.dart';
+import '../common/app_dropdown_menu.dart';
 import '../common/sort_filter_buttons.dart';
 import '../../constants.dart';
 
@@ -122,19 +123,13 @@ class _RenameControlPanelState extends State<RenameControlPanel> {
             LayoutBuilder(
               builder: (context, constraints) {
                 final dropWidth = constraints.maxWidth;
-                return DropdownMenu<String>(
+                return AppDropdownMenu<String>(
                   width: dropWidth,
                   controller: _patternController,
                   label: Text(l10n.namingMode),
                   hintText: l10n.namingModeHint('{artist}', '{title}'),
-                  enableFilter: false,
-                  requestFocusOnTap: true,
                   leadingIcon: const Icon(Icons.edit_note),
-                  inputDecorationTheme: const InputDecorationTheme(
-                    filled: true,
-                    contentPadding: EdgeInsets.symmetric(vertical: 5.0),
-                  ),
-                  dropdownMenuEntries: [
+                  entries: [
                     ...AudioProvider.predefinedPatterns.map((e) {
                       final pattern = e['pattern']!;
                       return DropdownMenuEntry<String>(

@@ -390,6 +390,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transcodeConcurrency => 'Concurrency';
 
   @override
+  String get transcodeInvalidNumber => 'Enter a valid value';
+
+  @override
+  String transcodeConcurrencyLabel(Object from, Object to) {
+    return 'Concurrency ($from-$to)';
+  }
+
+  @override
   String get transcodeKeepOriginal => 'Keep original';
 
   @override
@@ -500,6 +508,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transcodeOpenBinaryFolderFailed => 'Failed to open FFmpeg folder';
+
+  @override
+  String get transcodeRefreshBinary => 'Refresh check';
+
+  @override
+  String get transcodeRefreshBinarySuccess => 'FFmpeg binaries detected';
+
+  @override
+  String get transcodeRefreshBinaryStillMissing =>
+      'FFmpeg binaries are still missing';
 
   @override
   String get transcodeShowAll => 'Show all';
