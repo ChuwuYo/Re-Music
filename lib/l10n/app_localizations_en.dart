@@ -131,6 +131,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String renamePartial(int renamed, int failed) {
+    return 'Renamed $renamed files, $failed failed';
+  }
+
+  @override
   String get readingMetadata => 'Reading metadata...';
 
   @override
@@ -156,6 +161,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get metadataReadFailed => 'Failed to read metadata';
+
+  @override
+  String get renameFailed => 'Failed to rename file';
 
   @override
   String get unknownError => 'Unknown error';

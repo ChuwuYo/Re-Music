@@ -17,14 +17,17 @@ class AudioProvider extends ChangeNotifier {
   int get totalFilesCount => _files.length;
   ListState get listState =>
       AppConstants.resolveListState(totalFilesCount, files.length);
-  bool get hasRenameCandidates {
-    for (final file in _files) {
-      if (file.status != ProcessingStatus.success) continue;
-      final newName = file.newFileName;
-      if (newName == null) continue;
-      if (file.originalFileName != newName) return true;
+  bool get hasRenameCandidates => _files.any(_isRenameCandidate);
+
+  /// Files that can be renamed: successfully processed ones plus earlier
+  /// rename failures, so the user can retry after freeing the target name.
+  bool _isRenameCandidate(AudioFile file) {
+    if (file.status != ProcessingStatus.success &&
+        file.errorMessage != 'renameFailed') {
+      return false;
     }
-    return false;
+    final newName = file.newFileName;
+    return newName != null && file.originalFileName != newName;
   }
 
   List<AudioFile> get files {
@@ -405,37 +408,53 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<int> renameAll() async {
+  Future<({int renamed, int failed})> renameAll() async {
     _isProcessing = true;
     _progress = 0;
     notifyListeners();
 
-    final filesToRename = _files
-        .where(
-          (f) =>
-              f.status == ProcessingStatus.success &&
-              f.newFileName != null &&
-              f.originalFileName != f.newFileName,
-        )
-        .toList();
+    final filesToRename = _files.where(_isRenameCandidate).toList();
 
     if (filesToRename.isEmpty) {
       await clearFiles();
       _isProcessing = false;
       notifyListeners();
-      return 0;
+      return (renamed: 0, failed: 0);
     }
 
+    // Windows and macOS compare paths case-insensitively by default.
+    final caseInsensitive = Platform.isWindows || Platform.isMacOS;
+    String claimKey(String path) => caseInsensitive ? path.toLowerCase() : path;
+    final renameSet = filesToRename.toSet();
+    final occupied = <String>{
+      for (final f in _files)
+        if (!renameSet.contains(f)) claimKey(f.path),
+    };
+
     var successCount = 0;
+    final renamed = <AudioFile>[];
     final stopwatch = Stopwatch()..start();
     for (var i = 0; i < filesToRename.length; i++) {
       final file = filesToRename[i];
-      final success = await FileService.renameFile(
-        file.path,
-        p.basename(file.newFileName!),
-      );
+      final newName = p.basename(file.newFileName!);
+      final targetPath = p.join(p.dirname(file.path), newName);
+      final targetKey = claimKey(targetPath);
+
+      var success = false;
+      if (!occupied.contains(targetKey)) {
+        occupied.add(targetKey);
+        success = await FileService.renameFile(file.path, newName);
+        if (!success) occupied.remove(targetKey);
+      }
+
       if (success) {
         successCount++;
+        renamed.add(file);
+        file.status = ProcessingStatus.success;
+        file.errorMessage = null;
+      } else {
+        file.status = ProcessingStatus.error;
+        file.errorMessage = 'renameFailed';
       }
       _progress = (i + 1) / filesToRename.length;
 
@@ -446,10 +465,15 @@ class AudioProvider extends ChangeNotifier {
       }
     }
 
-    await clearFiles();
+    if (renamed.length == filesToRename.length) {
+      await clearFiles();
+    } else {
+      _files.removeWhere(renamed.contains);
+    }
     _isProcessing = false;
+    _progress = 0;
     notifyListeners();
-    return successCount;
+    return (renamed: successCount, failed: filesToRename.length - successCount);
   }
 
   void _sortFiles(String criteria) {

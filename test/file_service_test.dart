@@ -74,4 +74,41 @@ void main() {
       await dir.delete(recursive: true);
     }
   });
+
+  test('renameFile refuses to overwrite an existing different file', () async {
+    final dir = await Directory.systemTemp.createTemp('remusic_test_');
+    try {
+      final aPath = p.join(dir.path, 'a.mp3');
+      final bPath = p.join(dir.path, 'b.mp3');
+      await File(aPath).writeAsString('AAA');
+      await File(bPath).writeAsString('BBB');
+
+      final ok = await FileService.renameFile(aPath, 'b.mp3');
+      expect(ok, isFalse);
+      expect(await File(aPath).readAsString(), 'AAA');
+      expect(await File(bPath).readAsString(), 'BBB');
+    } finally {
+      await dir.delete(recursive: true);
+    }
+  });
+
+  test('renameFile handles case-only renames', () async {
+    final dir = await Directory.systemTemp.createTemp('remusic_test_');
+    try {
+      final oldPath = p.join(dir.path, 'a.mp3');
+      await File(oldPath).writeAsString('AAA');
+
+      final ok = await FileService.renameFile(oldPath, 'A.mp3');
+      expect(ok, isTrue);
+      expect(await File(p.join(dir.path, 'A.mp3')).readAsString(), 'AAA');
+
+      final tempFiles = dir
+          .listSync()
+          .where((e) => e.path.endsWith('.tmp'))
+          .toList();
+      expect(tempFiles, isEmpty);
+    } finally {
+      await dir.delete(recursive: true);
+    }
+  });
 }

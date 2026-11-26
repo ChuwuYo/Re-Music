@@ -59,6 +59,17 @@
       }
     }
   },
+  "renamePartial": "Renamed {renamed} files, {failed} failed",
+  "@renamePartial": {
+    "placeholders": {
+      "renamed": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
   "readingMetadata": "Reading metadata...",
   "readFailed": "Read failed",
   "nameMatches": "Name matches",
@@ -68,6 +79,7 @@
   "unknownAlbum": "Unknown album",
   "untitledTrack": "Untitled track",
   "metadataReadFailed": "Failed to read metadata",
+  "renameFailed": "Failed to rename file",
   "unknownError": "Unknown error",
   "editTags": "Edit tags",
   "metadataEditorTitle": "Edit metadata",

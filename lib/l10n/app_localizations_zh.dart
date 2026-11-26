@@ -131,6 +131,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String renamePartial(int renamed, int failed) {
+    return '已重命名 $renamed 个文件，$failed 个失败';
+  }
+
+  @override
   String get readingMetadata => '正在读取元数据...';
 
   @override
@@ -156,6 +161,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get metadataReadFailed => '无法读取元数据';
+
+  @override
+  String get renameFailed => '重命名文件失败';
 
   @override
   String get unknownError => '未知错误';

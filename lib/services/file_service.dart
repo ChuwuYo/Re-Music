@@ -62,6 +62,25 @@ class FileService {
       final newPath = p.join(dir, safeName);
       if (oldPath == newPath) return true;
 
+      final targetType = await FileSystemEntity.type(newPath);
+      if (targetType != FileSystemEntityType.notFound) {
+        final sameFile = await FileSystemEntity.identical(oldPath, newPath);
+        if (!sameFile) return false;
+        // Handle case-only renames: move aside first so the target name frees up.
+        final tempPath = p.join(
+          dir,
+          '.$safeName.${DateTime.now().microsecondsSinceEpoch}.tmp',
+        );
+        await file.rename(tempPath);
+        try {
+          await File(tempPath).rename(newPath);
+        } catch (_) {
+          await File(tempPath).rename(oldPath);
+          rethrow;
+        }
+        return true;
+      }
+
       await file.rename(newPath);
       return true;
     } catch (e) {

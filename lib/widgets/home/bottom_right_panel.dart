@@ -15,13 +15,15 @@ class BottomRightPanel extends StatelessWidget {
     BuildContext context,
     AudioProvider provider,
   ) async {
-    final count = await provider.renameAll();
+    final result = await provider.renameAll();
     if (!context.mounted) return;
     final l10n = AppLocalizations.of(context)!;
 
     ReMusicSnackBar.showFloating(
       context,
-      message: l10n.renameCompleted(count),
+      message: result.failed == 0
+          ? l10n.renameCompleted(result.renamed)
+          : l10n.renamePartial(result.renamed, result.failed),
       adaptiveHorizontalMargin: true,
     );
   }

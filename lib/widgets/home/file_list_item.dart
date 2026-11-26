@@ -76,6 +76,7 @@ class FileListItem extends StatelessWidget {
   String _errorText(AppLocalizations l10n) {
     final key = file.errorMessage;
     if (key == 'metadataReadFailed') return l10n.metadataReadFailed;
+    if (key == 'renameFailed') return l10n.renameFailed;
     return key ?? l10n.unknownError;
   }
 
@@ -124,7 +125,12 @@ class FileListItem extends StatelessWidget {
     }
 
     if (file.status == ProcessingStatus.error) {
-      return Text(l10n.readFailed, style: TextStyle(color: colorScheme.error));
+      return Text(
+        file.errorMessage == 'renameFailed'
+            ? l10n.renameFailed
+            : l10n.readFailed,
+        style: TextStyle(color: colorScheme.error),
+      );
     }
 
     if (file.originalFileName == file.newFileName) {

@@ -326,6 +326,12 @@ abstract class AppLocalizations {
   /// **'Done! Renamed {count} files'**
   String renameCompleted(int count);
 
+  /// No description provided for @renamePartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Renamed {renamed} files, {failed} failed'**
+  String renamePartial(int renamed, int failed);
+
   /// No description provided for @readingMetadata.
   ///
   /// In en, this message translates to:
@@ -379,6 +385,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to read metadata'**
   String get metadataReadFailed;
+
+  /// No description provided for @renameFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to rename file'**
+  String get renameFailed;
 
   /// No description provided for @unknownError.
   ///
